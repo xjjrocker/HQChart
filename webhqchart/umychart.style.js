@@ -45,7 +45,12 @@ var BLACK_STYLE=
         AreaPriceColor:"rgba(63,158,255,.3)",
         AvPriceColor: "rgb(255,236,0)",
         PositionColor:'rgb(218,165,32)', 
-        VolTitleColor:"rgb(190,190,190)"
+        VolTitleColor:"rgb(190,190,190)",
+        Before:
+        {
+            BGColor:"rgba(105,105,105,0.5)",
+            AvPriceColor:'rgb(248,248,255)'     //均线
+        }
     },
 
 
@@ -77,8 +82,21 @@ var BLACK_STYLE=
     FrameSplitTextColor: "rgb(101,104,112)",     //刻度文字颜色
     FrameSplitTextFont: 12*GetDevicePixelRatio() +"px 微软雅黑",        //坐标刻度文字字体
     FrameTitleBGColor: "rgb(0,0,0)",      //标题栏背景色
+    OverlayIndexTitleBGColor:'rgba(0,0,0,0.7)', //叠加指标背景色
 
-    Frame:{ XBottomOffset:1*GetDevicePixelRatio() },   //X轴文字向下偏移
+    Frame:
+    { 
+        XBottomOffset:1*GetDevicePixelRatio(), //X轴文字向下偏移
+       
+        PercentageText:      //百分比坐标文字颜色
+        { 
+            PriceColor:'rgb(101,104,112)', 
+            PercentageColor:"rgb(101,104,112)", 
+            SplitColor:"rgb(101,104,112)",
+            Font:14*GetDevicePixelRatio() +"px 微软雅黑"
+        }
+    },   
+
 
     FrameLatestPrice : {
         TextColor:'rgb(255,255,255)',   //最新价格文字颜色
@@ -96,38 +114,38 @@ var BLACK_STYLE=
 
     KLine:
     {
-        MaxMin: { Font: 12*GetDevicePixelRatio() +'px 微软雅黑', Color: 'rgb(255,250,240)' },   //K线最大最小值显示
+        MaxMin: { Font: 12*GetDevicePixelRatio() +'px 微软雅黑', Color: 'rgb(255,250,240)', RightArrow:"→", LeftArrow:"←", HighYOffset:0, LowYOffset:0 },   //K线最大最小值显示
         Info:  //信息地雷
         {
             Investor:
                 {
-                    ApiUrl:'https://opensource.zealink.com/API/NewsInteract', //互动易
+                    ApiUrl:'/API/NewsInteract', //互动易
                     IconFont: { Family:'iconfont', Text:'\ue631' , HScreenText:'\ue684', Color:'#1c65db'} //SVG 文本
                 },
                 Announcement:                                           //公告
                 {
-                    ApiUrl:'https://opensource.zealink.com/API/ReportList',
+                    ApiUrl:'/API/ReportList',
                     IconFont: { Family:'iconfont', Text:'\ue633', HScreenText:'\ue685', Color:'#f5a521' }, //SVG 文本
                     IconFont2: { Family:'iconfont', Text:'\ue634', HScreenText:'\ue686', Color:'#ed7520' } //SVG 文本 //季报
                 },
                 Pforecast:  //业绩预告
                 {
-                    ApiUrl:'https://opensource.zealink.com/API/StockHistoryDay',
+                    ApiUrl:'/API/StockHistoryDay',
                     IconFont: { Family:'iconfont', Text:'\ue62e', HScreenText:'\ue687', Color:'#986cad' } //SVG 文本
                 },
                 Research:   //调研
                 {
-                    ApiUrl:'https://opensource.zealink.com/API/InvestorRelationsList',
+                    ApiUrl:'/API/InvestorRelationsList',
                     IconFont: { Family:'iconfont', Text:'\ue632', HScreenText:'\ue688', Color:'#19b1b7' } //SVG 文本
                 },
                 BlockTrading:   //大宗交易
                 {
-                    ApiUrl:'https://opensource.zealink.com/API/StockHistoryDay',
+                    ApiUrl:'/API/StockHistoryDay',
                     IconFont: { Family:'iconfont', Text:'\ue630', HScreenText:'\ue689', Color:'#f39f7c' } //SVG 文本
                 },
                 TradeDetail:    //龙虎榜
                 {
-                    ApiUrl:'https://opensource.zealink.com/API/StockHistoryDay',
+                    ApiUrl:'/API/StockHistoryDay',
                     IconFont: { Family:'iconfont', Text:'\ue62f', HScreenText:'\ue68a' ,Color:'#b22626' } //SVG 文本
                 }
 
@@ -191,7 +209,10 @@ var BLACK_STYLE=
         BGColor:'rgba(20,20,20,0.8)',    //背景色
         BorderColor:'rgb(210,210,210)',     //边框颜色
         TitleColor:'rgb(210,210,210)',       //标题颜色
-        TitleFont:13*GetDevicePixelRatio() +'px 微软雅黑'   //字体
+        TitleFont:13*GetDevicePixelRatio() +'px 微软雅黑',   //字体
+        DateTimeColor:'rgb(210,210,210)',
+        VolColor:"rgb(210,210,210)",       //标题成交量
+        AmountColor:"rgb(210,210,210)",    //成交金额
     },
 
     //走势图 信息地雷
@@ -232,6 +253,15 @@ var BLACK_STYLE=
             Font:14*GetDevicePixelRatio() +"px 微软雅黑",
             LineHeight:16   //单行高度
         }
+    },
+
+    //区间选择
+    RectSelect:
+    {
+        LineColor:"rgb(115,83,64)",          //竖线  
+        LineWidth:1*GetDevicePixelRatio(),
+        LineDotted:[3,3], 
+        AreaColor:"rgba(26,13,7,0.5)",     //面积
     }
     
 };

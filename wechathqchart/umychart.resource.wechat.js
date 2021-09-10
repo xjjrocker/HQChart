@@ -92,7 +92,7 @@ function JSChartResource()
 
     this.KLine =
         {
-            MaxMin: { Font: '12px 微软雅黑', Color: 'rgb(111,111,111)' },   //K线最大最小值显示
+            MaxMin: { Font: '12px 微软雅黑', Color: 'rgb(111,111,111)', RightArrow:"→", LeftArrow:"←", HighYOffset:0, LowYOffset:0 },   //K线最大最小值显示
             Info:  //信息地雷
             {
                 Color: 'rgb(205,149,12)',
@@ -270,6 +270,16 @@ function JSChartResource()
     this.DRAWABOVE=
     {
         YOffset:0   //y坐标向上偏移
+    }
+
+    this.CIRCLEDOT=
+    {
+        Radius:1.3
+    }
+
+    this.POINTDOT=
+    {
+        Radius:2
     }
 
     //深度图
@@ -467,6 +477,18 @@ function JSChartResource()
                 if (this.IsNumber(border.Bottom)) this.DepthCorss.Tooltip.Border.Bottom=border.Bottom;
                 if (this.IsNumber(border.Center)) this.DepthCorss.Tooltip.Border.Center=border.Center;
             }
+        }
+
+        if (style.CIRCLEDOT)
+        {
+            var item=style.CIRCLEDOT;
+            if (this.IsNumber(item.Radius)) this.CIRCLEDOT.Radius=item.Radius;
+        }
+
+        if (style.POINTDOT)
+        {
+            var item=style.POINTDOT;
+            if (this.IsNumber(item.Radius)) this.POINTDOT.Radius=item.Radius;
         }
     }
 

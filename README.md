@@ -17,6 +17,12 @@ HQChart是第1个基于国内传统PC股票客户端软件(C++)移植到js/py平
 源码地址:[https://github.com/jones2000/HQChart](https://github.com/jones2000/HQChart)<br>
 镜像地址:[https://gitee.com/jones2000/HQChart](https://gitee.com/jones2000/HQChart)<br>
 
+uniapp 版本:
+新版插件 ：[https://ext.dcloud.net.cn/plugin?id=4591](https://ext.dcloud.net.cn/plugin?id=4591)<br>
+老版本手动导入插件 : [https://ext.dcloud.net.cn/plugin?id=790](https://ext.dcloud.net.cn/plugin?id=790)<br>
+
+[HQChart用户使用协议](/用户协议.txt) <br>
+
 如果你觉得我们的行情模块对你有帮助， 请给我们点下star. (●ˇ∀ˇ●) <br>
 
 py版本的麦语法指标计算引擎，已单独迁移到[https://github.com/jones2000/hqchartPy2](https://github.com/jones2000/hqchartPy2),
@@ -53,9 +59,13 @@ npm install hqchart <br>
 VUE 例子:[demo-vue.md](/教程/demo-vue.md) <br>
 React 例子:[demo-react.md](/教程/demo-react.md) <br>
 
+# 本地调试
+内置测试数据不支持跨域，如果要在本地chrome调试代码，参看教程[解决Chrome本地调试跨域](https://jones2000.blog.csdn.net/article/details/120008624). VUE项目本地调试请使用127.0.0.1:8080站点调试
+
 # 声明
   本项目只提供行情图形库及麦语法脚本执行器.<br>
   页面中所有的行情数据都来自互联网或测试假数据, 不能确保数据的正确性, 仅供开发调试使用. 任何行情数据问题都与本项目无关. 请自行去交易所购买正版行情。
+
 
 # HQChart 3.0
 * 分网页版本 及 微信小程序版本 <br>
@@ -116,8 +126,8 @@ React 例子:[demo-react.md](/教程/demo-react.md) <br>
 ![走势图2](/小程序行情模块用例/image/hqchart_minute3.png)
 * 支持指数领先指标(2019-7-15  新加功能)  <br>
 ![领先指标](/小程序行情模块用例/image/hqchart_kline_lock3.png)
-* 支持信息地雷 <br>
-![信息地雷](/小程序行情模块用例/image/hqchart_minute_info.png)
+* 支持信息标识 <br>
+![信息标识](/小程序行情模块用例/image/hqchart_minute_info.png)
 * 支持涨停坐标 <br>
 
 
@@ -202,11 +212,20 @@ React 例子:[demo-react.md](/教程/demo-react.md) <br>
 59. [HQChart使用教程67-鼠标点击K线柱子监听事件](https://blog.csdn.net/jones2000/article/details/109119390)<br>
 60. [HQChart使用教程68-配置DRAWTEXT,DRAWICON,DRAWNUMBER字体大小](https://blog.csdn.net/jones2000/article/details/109244069)<br>
 61. [HQChart使用教程69-获取指定股票的K线数据](https://blog.csdn.net/jones2000/article/details/111736960)<br>
-62. [HQChart使用教程70-通达信指标翻译](https://blog.csdn.net/jones2000/article/details/112998609)<br>
+62. [HQChart使用教程70 -通达信语法检测/指标翻译](https://blog.csdn.net/jones2000/article/details/112998609)<br>
 63. [HQChart使用教程71-如何自定义Y轴刻度线](https://blog.csdn.net/jones2000/article/details/113666565)<br>
 64. [HQChart使用教程72-画图工具波浪尺刻度配置](https://blog.csdn.net/jones2000/article/details/113923817)<br>
 65. [HQChart使用教程73-使用Vue3.0创建HQChart图形](https://blog.csdn.net/jones2000/article/details/114954091)<br>
 66. [HQChart使用教程74-使用快速创建数字币深度图](https://blog.csdn.net/jones2000/article/details/115322752)<br>
+67. [HQChart使用教程75-K线图鼠标单击事件接口](https://blog.csdn.net/jones2000/article/details/115707759)<br>
+68. [HQChart使用教程76-K线图手势事件接口](https://blog.csdn.net/jones2000/article/details/115862159)<br>
+69. [HQChart使用教程77-Y轴刻度文字创建事件回调](https://blog.csdn.net/jones2000/article/details/116376898)<br>
+70. [HQChart使用教程78-分时图集合竞价](https://blog.csdn.net/jones2000/article/details/116523681)<br>
+71. [HQChart使用教程79-异常处理接口](https://blog.csdn.net/jones2000/article/details/117524401)<br>
+72. [HQChart使用教程80-自定义指标标题信息](https://blog.csdn.net/jones2000/article/details/117803420)<br>
+73. [HQChart使用教程81-自定义指标窗口高度](https://jones2000.blog.csdn.net/article/details/118652171)<br>
+74. [HQChart使用教程82-动态修改叠加指标参数](https://jones2000.blog.csdn.net/article/details/118681399)<br>
+75. [HQChart使用教程83-K线图最高最低价显示配置](https://jones2000.blog.csdn.net/article/details/118856130)<br>
 
 ## 小程序教程
 1. [HQChart小程序教程1-如何快速的创建一个K线图](https://developers.weixin.qq.com/community/develop/article/doc/0006c451ac81589915b89d1c55bc13) <br>
@@ -214,13 +233,15 @@ React 例子:[demo-react.md](/教程/demo-react.md) <br>
 3. [HQChart小程序教程3-新版2D单画布如何切换K线图和分时图](https://blog.csdn.net/jones2000/article/details/108378355)<br>
 
 ## uni-app教程
-1. [HQChart使用教程35-如何在uni-app创建K线图(h5)](https://blog.csdn.net/jones2000/article/details/101039026) <br>
-2. [HQChart使用教程36-如何在uni-app创建走势图(h5)](https://blog.csdn.net/jones2000/article/details/101039673) <br>
-3. [HQChart使用教程37-如何在uni-app创建k线图(app)](https://blog.csdn.net/jones2000/article/details/101075683) <br>
-4. [HQChart使用教程38-如何在uni-app创建走势图(app)](https://blog.csdn.net/jones2000/article/details/101481960) <br>
-5. [HQChart使用教程44-uniapp使用条件编译同时支持h5,app,小程序](https://blog.csdn.net/jones2000/article/details/102529190) <br>
-6. [HQChart使用教程60-解决uniapp-app页面隐藏后在显示白屏的问题](https://blog.csdn.net/jones2000/article/details/105484202) <br>
-7. [HQChart使用教程63-uniapp使用renderjs+hqchart(h5)](https://blog.csdn.net/jones2000/article/details/106933985)<br>
+1. [HQChart使用教程79-uniapp中hqchart内置组件使用教程](https://blog.csdn.net/jones2000/article/details/116592718)<br>
+2. [HQChart使用教程35-如何在uni-app创建K线图(h5)](https://blog.csdn.net/jones2000/article/details/101039026) <br>
+3. [HQChart使用教程36-如何在uni-app创建走势图(h5)](https://blog.csdn.net/jones2000/article/details/101039673) <br>
+4. [HQChart使用教程37-如何在uni-app创建k线图(app)](https://blog.csdn.net/jones2000/article/details/101075683) <br>
+5. [HQChart使用教程38-如何在uni-app创建走势图(app)](https://blog.csdn.net/jones2000/article/details/101481960) <br>
+6. [HQChart使用教程44-uniapp使用条件编译同时支持h5,app,小程序](https://blog.csdn.net/jones2000/article/details/102529190) <br>
+7. [HQChart使用教程60-解决uniapp-app页面隐藏后在显示白屏的问题](https://blog.csdn.net/jones2000/article/details/105484202) <br>
+8. [HQChart使用教程63-uniapp使用renderjs+hqchart(h5)](https://blog.csdn.net/jones2000/article/details/106933985)<br>
+9. [HQChart实战教程40-如何制作hqchart组件(uniapp版本)](https://blog.csdn.net/jones2000/article/details/116034602)<br>
 
 ## 第3方数据前端接入教程(走势图)
 1. [HQChart使用教程29-走势图如何对接第3方数据1](https://blog.csdn.net/jones2000/article/details/100132357) <br>
@@ -252,7 +273,7 @@ React 例子:[demo-react.md](/教程/demo-react.md) <br>
 17. [HQChart使用教程30-K线图如何对接第3方数据17-分钟K叠加股票](https://blog.csdn.net/jones2000/article/details/102887690) <br>
 18. [HQChart使用教程30-K线图如何对接第3方数据18-如何绘制自定义柱子](https://blog.csdn.net/jones2000/article/details/104417736)<br>
 19. [HQChart使用教程30-K线图如何对接第3方数据19-如何绘制彩色K线柱](https://blog.csdn.net/jones2000/article/details/104859784)<br>
-20. [HQChart使用教程30-K线图如何对接第3方数据20-信息地雷公告数据](https://blog.csdn.net/jones2000/article/details/105876161)<br>
+20. [HQChart使用教程30-K线图如何对接第3方数据20-信息公告数据](https://blog.csdn.net/jones2000/article/details/105876161)<br>
 21. [HQChart使用教程30-K线图如何对接第3方数据21-跨周期函数数据](https://blog.csdn.net/jones2000/article/details/109063625)<br>
 22. [HQChart使用教程30-K线图如何对接第3方数据22-FINVALUE函数数据](https://blog.csdn.net/jones2000/article/details/111387095)<br>
 23. [HQChart使用教程30-K线图如何对接第3方数据23-FINANCE函数数据](https://blog.csdn.net/jones2000/article/details/111999910)<br>
@@ -260,6 +281,8 @@ React 例子:[demo-react.md](/教程/demo-react.md) <br>
 25. [HQChart使用教程30-K线图如何对接第3方数据25-指标脚本自定义变量](https://blog.csdn.net/jones2000/article/details/112755911)<br>
 26. [HQChart使用教程30-K线图如何对接第3方数据26-指标脚本自定义函数](https://blog.csdn.net/jones2000/article/details/112809781)<br>
 27. [HQChart使用教程30-K线图如何对接第3方数据27-如何在指标中渲染DOM元素](https://blog.csdn.net/jones2000/article/details/114006164)<br>
+28. [HQChart使用教程30-K线图如何对接第3方数据28-大盘数据](https://blog.csdn.net/jones2000/article/details/117712105)<br>
+29. [HQChart使用教程30-K线图如何对接第3方数据29-板块字符串函数数据](https://jones2000.blog.csdn.net/article/details/118887416)<br>
 
 
 ## 实战教程
@@ -275,6 +298,7 @@ React 例子:[demo-react.md](/教程/demo-react.md) <br>
 10. [HQChart实战教程14-K线图对接第3方http/https数据教程整理](https://blog.csdn.net/jones2000/article/details/106064879)<br>
 11. [HQChart实战教程17-K线沙盘推演](https://blog.csdn.net/jones2000/article/details/106776837) <br>
 12. [HQChart实战教程18-多股同列](https://blog.csdn.net/jones2000/article/details/107193410)<br>
+13. [HQChart实战教程45-自定义指标窗口背景](https://jones2000.blog.csdn.net/article/details/119886468)<br>
 
 ## 火币对接完整教程（付费文章）
 1. [HQChart实战教程10-全ws数据对接HQChart(数字货币对接实战)](https://blog.csdn.net/jones2000/article/details/105698038) <br>
@@ -284,8 +308,10 @@ React 例子:[demo-react.md](/教程/demo-react.md) <br>
 5. [HQChart实战教程15-火币网ws数据对接拖拽下载历史K线图](https://blog.csdn.net/jones2000/article/details/106205584)<br>
 6. [HQChart实战教程16-K线图风格配色篇-仿火币网H5配色](https://blog.csdn.net/jones2000/article/details/106226272)<br>
 
-## 币安对接(源码收费)
-1. [HQChart实战教程36-数字货币安币对接-uniapp版本](https://blog.csdn.net/jones2000/article/details/114468807)<br>
+## 源码收费
+1. [HQChart实战教程36-数字货币币安对接-uniapp版本](https://blog.csdn.net/jones2000/article/details/114468807)<br>
+2. [HQChart实战教程41-新浪+腾讯A股数据源对接-uniapp版本](https://blog.csdn.net/jones2000/article/details/117139756)<br>
+3. [HQChart实战教程42-新浪期货数据源对接-uniapp版本](https://blog.csdn.net/jones2000/article/details/117757956)<br>
 
 ## httpA股数据对接教程(付费文章)
 ### 日K线
@@ -302,6 +328,7 @@ React 例子:[demo-react.md](/教程/demo-react.md) <br>
 1. [HQChart实战教程36-A股后台指标对接-uniapp版本](https://blog.csdn.net/jones2000/article/details/114991081)<br>
 ### 新浪接口对接
 1. [HQChart实战教程37-新浪分钟K线数据对接-js版本](https://blog.csdn.net/jones2000/article/details/115388377)<br>
+2. [HQChart实战教程38-新浪期货数据对接-js版本](https://blog.csdn.net/jones2000/article/details/115408971)<br>
 
 ## 高级应用实战教程（付费文章）
 1. [HQChart实战教程19 - PC端分时图定制tooltip](https://blog.csdn.net/jones2000/article/details/108633991)<br>
@@ -317,6 +344,9 @@ React 例子:[demo-react.md](/教程/demo-react.md) <br>
 11. [HQChart实战教程27 - 走势图最后一个数据增加动画点](https://blog.csdn.net/jones2000/article/details/111599341)<br>
 12. [HQChart实战教程28 - 动态切换颜色风格](https://blog.csdn.net/jones2000/article/details/112563596)<br>
 13. [HQChart实战教程29 - 指标参数保存到本地缓存](https://blog.csdn.net/jones2000/article/details/113349967)<br>
+14. [HQChart实战教程39 - K线图键盘事件重载](https://blog.csdn.net/jones2000/article/details/115921430)<br>
+15. [HQChart实战教程43 - K线面积图最后一个数据增加动画点](https://jones2000.blog.csdn.net/article/details/118774299)<br>
+16. [HQChart实战教程44-多指标窗口动态增长高度](https://jones2000.blog.csdn.net/article/details/119188383)<br>
 
 
 

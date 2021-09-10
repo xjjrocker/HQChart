@@ -438,7 +438,18 @@ var MARKET_SUFFIX_NAME=
     GetNYMEXMarketStatus: function (symbol) 
     {
         return g_NYMEXTimeData.GetMarketStatus(symbol);
-    }
+    },
+
+    GetLimitPriceRange:function(symbol, name) //涨停范围
+    {
+        if (!this.IsSHSZStockA(symbol)) return null;
+        if (this.IsSHStockSTAR(symbol)) return {Max:0.2 , Min:-0.2};    //科创板 [20%- -20%]
+        
+        if (!name) return null;
+        if (name.indexOf('ST')>=0) return { Max:0.05, Min:-0.05 }; //ST 股票 [5% - -5%]
+        
+        return {Max:0.1 , Min:-0.1}; //[10% - -10%]
+    },
 }
 
 
@@ -1395,10 +1406,13 @@ function FuturesTimeData()
         [MARKET_SUFFIX_NAME.SHFE + '-WR', { Time: 0, Decimal: 0 }],
         [MARKET_SUFFIX_NAME.SHFE + '-AG', { Time: 5, Decimal: 0 }],
         [MARKET_SUFFIX_NAME.SHFE + '-AU', { Time: 5, Decimal: 2 }],
+        [MARKET_SUFFIX_NAME.SHFE + '-SP', { Time: 5, Decimal: 2 }],
+        [MARKET_SUFFIX_NAME.SHFE + '-SS', { Time: 5, Decimal: 2 }],
         //上期能源
         [MARKET_SUFFIX_NAME.SHFE + '-NR', {Time:6,Decimal:1,Name:'20号胶'}],
         [MARKET_SUFFIX_NAME.SHFE + '-SC', {Time:6,Decimal:1,Name:'中质含硫原油'}],
         [MARKET_SUFFIX_NAME.SHFE + '-LU', {Time:6,Decimal:0,Name:'低硫燃料油'}],
+        [MARKET_SUFFIX_NAME.SHFE + '-BC', {Time:6,Decimal:0,Name:'国际铜'}],
 
         //郑州期货交易所
         [MARKET_SUFFIX_NAME.CZCE + '-CF', { Time: 3, Decimal: 0 }],
@@ -1426,6 +1440,12 @@ function FuturesTimeData()
         [MARKET_SUFFIX_NAME.CZCE + '-LR', { Time: 0, Decimal: 0 }],
         [MARKET_SUFFIX_NAME.CZCE + '-SF', { Time: 0, Decimal: 0 }],
         [MARKET_SUFFIX_NAME.CZCE + '-SM', { Time: 0, Decimal: 0 }],
+        [MARKET_SUFFIX_NAME.CZCE + '-PK', { Time: 0, Decimal: 0, Name:"花生" }],
+        [MARKET_SUFFIX_NAME.CZCE + '-CJ', { Time: 0, Decimal: 0, Name:"红枣"}],
+        [MARKET_SUFFIX_NAME.CZCE + '-CY', { Time: 0, Decimal: 0, Name:"棉纱" }],
+        [MARKET_SUFFIX_NAME.CZCE + '-UR', { Time: 0, Decimal: 0, Name:"尿素" }],
+        [MARKET_SUFFIX_NAME.CZCE + '-PF', { Time: 0, Decimal: 0, Name:"短纤" }],
+        [MARKET_SUFFIX_NAME.CZCE + '-SA', { Time: 0, Decimal: 0, Name:"纯碱" }],
         
         //中期所
         [MARKET_SUFFIX_NAME.CFFEX + '-TF', {Time:1,Decimal:3,Name:"二债"}],

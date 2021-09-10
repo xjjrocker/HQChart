@@ -41,8 +41,6 @@ module.exports = (options = {}) => ({
         loader: 'vue-loader',
         options: {
             loaders: {
-                scss: 'style-loader!css-loader!sass-loader',
-                sass: 'style-loader!css-loader!sass-loader?indentedSyntax',
                 less: "style-loader!css-loader!less-loader"
             }
         }
@@ -89,10 +87,10 @@ module.exports = (options = {}) => ({
   },
   devServer: {
     host: '127.0.0.1',
-    port: 8005,
+    port: 8080,
     proxy: {
       '/api/': {
-        target: 'http://127.0.0.1:8005',
+        target: 'http://127.0.0.1:8080',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''

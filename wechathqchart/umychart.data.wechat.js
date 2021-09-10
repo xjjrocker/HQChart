@@ -1080,6 +1080,62 @@ function ChartData()
         return result;
     }
 
+    //财务数据拟合到分钟数据上 返回 SingleData 数组
+    this.GetMinuteFittingFinanceData=function(financeData)
+    {
+        var result=[];
+        if (!Array.isArray(financeData) || financeData.length<=0) return result;
+
+        var i=0;
+        var firstItem=financeData[0];
+        for(i=0;i<this.Data.length;++i)
+        {
+            var date=this.Data[i].Date;
+            var time=this.Data[i].Time;
+            if (date>firstItem.Date || (date==firstItem.Date && time>=firstItem.Time))
+            {
+                break;
+            }    
+        }
+
+        for(var j=0;i<this.Data.length;)
+        {
+            var date=this.Data[i].Date;
+            var time=this.Data[i].Time;
+
+            if (j+1<financeData.length)
+            {
+                if ((financeData[j].Date<date && financeData[j+1].Date<=date) ||
+                    (financeData[j].Date==date && financeData[j].Time<time && financeData[j+1].Time<=time) )
+                {
+                    ++j;
+                    continue;
+                }
+            }
+
+            var item=new SingleData();
+            item.Date=date;
+            item.Time=time;
+            if (j<financeData.length)
+            {
+                item.Value=financeData[j].Value;
+                item.FinanceDate=financeData[j].Date;   //财务日期 调试用
+                item.FinanceTime=financeData[j].Time;   //财务日期 调试用
+            }
+            else
+            {
+                item.Value=null;
+                item.FinanceDate=null;
+                item.FinanceTime=null;
+            }
+            result[i]=item;
+
+            ++i;
+        }
+
+        return result;
+    }
+
     //市值计算 financeData.Value 是股数
     this.GetFittingMarketValueData = function (financeData) 
     {
@@ -1413,19 +1469,37 @@ function ChartData()
         return result;
     }
 
-    this.GetMinuteFittingTradeData=function(tradeData, nullValue)
+    this.GetMinuteFittingTradeData=function(tradeData, nullValue,bExactMatch)
     {
         var result=[];
+        var bMatch=false;
+
         for(var i=0,j=0;i<this.Data.length;)
         {
             var date=this.Data[i].Date;
             var time=this.Data[i].Time;
 
+            if (j<tradeData.length)
+            {
+                if (tradeData[j].Date>date || (tradeData[j].Date==date && tradeData[j].Time>time))
+                {
+                    var item=new SingleData();
+                    item.Date=date;
+                    item.Time=time;
+                    item.Value=nullValue;
+                    result[i]=item;
+                    ++i;
+                    continue;
+                }
+            }
+
             if (j+1<tradeData.length)
             {
-                if (tradeData[j].Date<date && tradeData[j+1].Date<=date)
+                if ( (tradeData[j].Date<date && tradeData[j+1].Date<=date) || 
+                    (tradeData[j].Date==date && tradeData[j].Time<time && tradeData[j+1].Time<=time) )
                 {
                     ++j;
+                    bMatch=false;
                     continue;
                 }
             }
@@ -1438,10 +1512,25 @@ function ChartData()
             if (j<tradeData.length)
             {
                 var tradeItem=tradeData[j];
-                if (tradeItem.Date==item.Date)  //完全匹配
+                if (this.Period==4 && bExactMatch===true) //1分钟线完全匹配
                 {
-                    item.Value=tradeItem.Value;
-                    item.FinanceDate=tradeItem.Date;   //财务日期 调试用
+                    if (tradeItem.Date==item.Date && tradeItem.Time==item.Time)  //完全匹配
+                    {
+                        item.Value=tradeItem.Value;
+                        item.FinanceDate=tradeItem.Date;   //财务日期 调试用
+                        item.FinanceTime=tradeItem.Time;
+                        bMatch=true;
+                    }
+                }
+                else    //其他日线周期
+                {
+                    if (bMatch==false)
+                    {
+                        item.Value=tradeItem.Value;
+                        item.FinanceDate=tradeItem.Date;   //财务日期 调试用
+                        item.FinanceTime=tradeItem.Time;
+                        bMatch=true;
+                    }
                 }
             }
 
@@ -1451,6 +1540,7 @@ function ChartData()
 
         return result;
     }
+
 }
 
 ChartData.IsNumber=function(value)
@@ -1593,6 +1683,82 @@ function ToFixedRect(value)
     return rounded = (0.5 + value) << 0;
 }
 
+var JSCHART_EVENT_ID =
+{
+    RECV_INDEX_DATA: 2,  //接收指标数据
+    RECV_HISTROY_DATA: 3,//接收到历史数据
+    RECV_TRAIN_MOVE_STEP: 4,    //接收K线训练,移动一次K线
+    CHART_STATUS: 5,            //每次Draw() 以后会调用
+    BARRAGE_PLAY_END: 6,        //单个弹幕播放完成
+    RECV_START_AUTOUPDATE: 9,    //开始自动更新
+    RECV_STOP_AUTOUPDATE: 10,    //停止自动更新
+    ON_TITLE_DRAW: 12,           //标题信息绘制事件
+    RECV_MINUTE_DATA: 14,          //分时图数据到达
+    ON_CLICK_INDEXTITLE:15,       //点击指标标题事件
+    RECV_KLINE_UPDATE_DATA: 16,   //K线日,分钟更新数据到达 
+    ON_INDEXTITLE_DRAW: 19,       //指标标题重绘事件 
+    ON_CUSTOM_VERTICAL_DRAW: 20,  //自定义X轴绘制事件 
+    ON_ENABLE_SPLASH_DRAW:22,          //开启/关闭过场动画事件
+
+    ON_DRAW_DEPTH_TOOLTIP:25,             //绘制深度图tooltip事件
+    ON_PHONE_TOUCH:27,                   //手势点击事件 包含 TouchStart 和 TouchEnd
+
+    ON_SPLIT_YCOORDINATE:29,             //分割Y轴及格式化刻度文字
+}
+
+function PhoneDBClick()
+{
+    this.Start=[];
+
+    this.Clear=function()
+    {
+        this.Start=[];
+    }
+
+    this.AddTouchStart=function(x, y, time)
+    {
+        if (this.Start.length>0)
+        {
+            var item=this.Start[this.Start.length-1];
+            var spanTime=time-item.Time;
+            if (spanTime>0 && spanTime<300)
+            {
+                this.Start.push({ X:x, Y:y, Time:time });
+            }
+            else
+            {
+                this.Start=[];
+            }
+        }
+        else
+        {
+            this.Start.push({ X:x, Y:y, Time:time });
+        }
+    }
+
+    this.IsVaildDBClick=function()
+    {
+        if (this.Start.length==2) return true;
+
+        return false;
+    }
+
+    this.AddTouchEnd=function(time)
+    {
+        if (this.Start.length<=0) return;
+
+        var item=this.Start[this.Start.length-1];
+        var spanTime=time-item.Time;
+        if (spanTime>=0 && spanTime<150)
+        {
+            
+        }
+        else
+        {
+            this.Start=[];
+        }
+    }
+}
 
 //导出统一使用JSCommon命名空间名
 module.exports =
@@ -1605,6 +1771,8 @@ module.exports =
         MinuteData: MinuteData,
         Rect: Rect,
         DataPlus: DataPlus,
+        JSCHART_EVENT_ID:JSCHART_EVENT_ID,
+        PhoneDBClick:PhoneDBClick,
     },
 
     //单个类导出
@@ -1623,4 +1791,6 @@ module.exports =
     JSCommon_Guid: Guid,
     JSCommon_ToFixedPoint: ToFixedPoint,
     JSCommon_ToFixedRect: ToFixedRect,
+    JSCommon_JSCHART_EVENT_ID:JSCHART_EVENT_ID,
+    JSCommon_PhoneDBClick:PhoneDBClick,
 };

@@ -434,7 +434,9 @@ function ScriptIndex(name, script, args, option)
 
         let titleIndex = windowIndex + 1;
         chartMACD.Data.Data = varItem.Data;
-        hqChart.TitlePaint[titleIndex].Data[id] = new DynamicTitleData(chartMACD.Data, varItem.Name, this.GetDefaultColor(id));
+        var clrTitle=this.GetDefaultColor(id);
+        if (varItem.Color) clrTitle= this.GetColor(varItem.Color);
+        hqChart.TitlePaint[titleIndex].Data[id] = new DynamicTitleData(chartMACD.Data, varItem.Name, clrTitle);
 
         hqChart.ChartPaint.push(chartMACD);
     }
@@ -801,6 +803,7 @@ function ScriptIndex(name, script, args, option)
         {
             let item = this.OutVar[i];
             if (item.IsExData === true) continue; //扩展数据不显示图形
+            if (item.Type==1000 || item.Type==1001) continue;      //数据集合, 字符串
 
             if (item.Type == 0) 
             {

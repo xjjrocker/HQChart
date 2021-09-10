@@ -277,7 +277,7 @@ function DynamicKLineTitlePainting()
         if (this.IsShowSettingInfo && this.Data.Period != null && this.Data.Right != null) 
         {
             var periodName = this.GetPeriodName(this.Data.Period);
-            var rightName = this.GetRightName(this.Data.Right);
+            var rightName = this.GetRightName(this.Data.Right,this.Data.Period);
             var text = "(" + periodName + ")";
             if (rightName) text = "(" + periodName + " " + rightName + ")";
             if (!this.DrawKLineText(text, this.SettingColor, position)) return;
@@ -309,7 +309,7 @@ function DynamicKLineTitlePainting()
         if (this.IsShowSettingInfo && this.Data.Period != null && this.Data.Right != null) 
         {
             var periodName = this.GetPeriodName(this.Data.Period);
-            var rightName = this.GetRightName(this.Data.Right);
+            var rightName = this.GetRightName(this.Data.Right,this.Data.Period);
             var text = "(" + periodName + ")";
             if (rightName) text = "(" + periodName + " " + rightName + ")";
             if (!this.DrawKLineText(text, this.SettingColor, position)) return;
@@ -439,7 +439,7 @@ function DynamicKLineTitlePainting()
         if (this.IsShowSettingInfo) //周期 复权信息
         {
             var periodName = this.GetPeriodName(this.Data.Period);
-            var rightName = this.GetRightName(this.Data.Right);
+            var rightName = this.GetRightName(this.Data.Right,this.Data.Period);
             var text = "(" + periodName + ")";
             if (rightName) text = "(" + periodName + " " + rightName + ")";
             if (!this.DrawKLineText(text, this.SettingColor, position, bDrawTitle==true)) return;
@@ -991,7 +991,8 @@ function DynamicTitleData(data, name, color)    //指标标题数据
     this.DataType;      //数据类型
     this.StringFormat = STRING_FORMAT_TYPE.DEFAULT;   //字符串格式
     this.FloatPrecision = 2;                          //小数位数
-    this.GetTextCallback;                           //自定义数据转文本回调
+    this.GetTextCallback;                             //自定义数据转文本回调
+    this.IsShow=true;
 }
 
 //指标标题
@@ -1180,6 +1181,8 @@ function DynamicChartTitlePainting()
         this.IsDrawTitleBG=this.Frame.IsDrawTitleBG;
         if (this.Frame.ChartBorder.TitleHeight < 5) return;
         if (this.Frame.IsShowTitle == false) return;
+        if (this.Frame.IsMinSize) return;
+        
         this.IsShowIndexName = this.Frame.IsShowIndexName;
         this.ParamSpace = this.Frame.IndexParamSpace;
 
@@ -1344,8 +1347,8 @@ function DynamicChartTitlePainting()
             {
                 var item = this.Data[i];
                 if (!item || !item.Data || !item.Data.Data) continue;
-    
                 if (item.Data.Data.length <= 0) continue;
+                if (item.IsShow==false) continue;
     
                 var value = null;
                 var valueText = null;
