@@ -57,6 +57,7 @@ var BLACK_STYLE=
     DefaultTextColor: "rgb(101,104,112)",
     DefaultTextFont: 14*GetDevicePixelRatio() +'px 微软雅黑',
     TitleFont: 13*GetDevicePixelRatio() +'px 微软雅黑',    //标题字体(动态标题 K线及指标的动态信息字体)
+    IndexTitleColor:"rgb(101,104,112)",                           //指标名字颜色
 
     UpTextColor: "rgb(238,21,21)",
     DownTextColor: "rgb(25,158,0)",
@@ -111,6 +112,26 @@ var BLACK_STYLE=
     CorssCursorTextFont: 12*GetDevicePixelRatio() +"px 微软雅黑",
     CorssCursorHPenColor: "rgb(130,130,130)",           //十字光标线段颜色
     CorssCursorVPenColor: "rgb(130,130,130)",           //十字光标线段颜色
+
+    CorssCursor:
+    { 
+        RightButton : 
+        { 
+            BGColor:'rgb(43,54,69)', 
+            PenColor:'rgb(255,255,255)',
+            Icon: { Text:'\ue6a3', Color:'rgb(255,255,255)', Family:"iconfont", Size:18 }
+        } 
+    },
+
+    //订单流配置
+    OrderFlow:
+    { 
+        UpColor:{BG:'rgb(223,191,180)', Border:"rgb(196,84,86)" },          //阳线
+        DownColor:{ BG:"rgb(176,212,184)", Border:'rgb(66,94,74)' },        //阴线
+        UnchagneColor: {BG:"rgb(216,221,177)", Border:"rgb(209,172,129)"},  //平盘
+        Text:{ Color: "rgb(248,248,255)" , Family:'Arial', FontMaxSize:16, MaxValue:"8888" },  //文字
+        Line:{ UpDownColor: "rgb(220,220,220)", MiddleColor:"rgb(211,211,211)" }  //最大, 最低,中间 竖线
+    },
 
     KLine:
     {
@@ -200,8 +221,16 @@ var BLACK_STYLE=
 
     DrawPicture:  //画图工具
     {
-        LineColor: "rgb(30,144,255)",
-        PointColor: "rgb(105,105,105)",
+        LineColor: 
+        [
+            "rgb(255,255,0)"
+        ],
+
+        PointColor: 
+        [
+            "rgb(228,228,228)",
+            "rgb(192,192,192)"
+        ],
     },
 
     TooltipPaint : 

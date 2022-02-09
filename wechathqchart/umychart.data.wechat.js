@@ -25,6 +25,13 @@ function Guid()
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
 
+function IsPlusNumber(value)
+{
+    if (value==null) return false;
+    if (isNaN(value)) return false;
+    return value>0;
+}
+
 //历史K线数据
 function HistoryData()
 {
@@ -45,6 +52,11 @@ function HistoryData()
     this.Up;    //上涨
     this.Down;  //下跌
     this.Unchanged; //平盘
+
+    this.ExtendData;    //扩展数据
+
+    this.BFactor;   //前复权
+    this.AFactor;   //后复权
 }
 
 //数据复制
@@ -52,6 +64,7 @@ HistoryData.Copy=function(data)
 {
     var newData=new HistoryData();
     newData.Date=data.Date;
+    if (IsPlusNumber(data.Time)) newData.Time=data.Time;
     newData.YClose=data.YClose;
     newData.Open=data.Open;
     newData.Close=data.Close;
@@ -59,15 +72,19 @@ HistoryData.Copy=function(data)
     newData.Low=data.Low;
     newData.Vol=data.Vol;
     newData.Amount=data.Amount;
-    newData.Time=data.Time;
-    newData.FlowCapital = data.FlowCapital;
-    newData.Position = data.Position;
+    
+    if (IsPlusNumber(data.FlowCapital)) newData.FlowCapital = data.FlowCapital;
+    if (IsPlusNumber(data.Position)) newData.Position = data.Position;
 
     //指数才有的数据
-    newData.Stop = data.Stop;
-    newData.Up = data.Up;
-    newData.Down = data.Down;
-    newData.Unchanged = data.Unchanged;
+    if (IsPlusNumber(data.Stop)) newData.Stop = data.Stop;
+    if (IsPlusNumber(data.Up)) newData.Up = data.Up;
+    if (IsPlusNumber(data.Down)) newData.Down = data.Down;
+    if (IsPlusNumber(data.Unchanged)) newData.Unchanged = data.Unchanged;
+
+    //复权因子
+    if (IsPlusNumber(data.BFactor)) newData.BFactor = data.BFactor;
+    if (IsPlusNumber(data.AFactor)) newData.AFactor = data.AFactor;
 
     return newData;
 }
@@ -83,13 +100,18 @@ HistoryData.CopyTo = function (dest, src)
     dest.Low = src.Low;
     dest.Vol = src.Vol;
     dest.Amount = src.Amount;
-    dest.Time = src.Time;
-    dest.FlowCapital = src.FlowCapital;
+    if (IsPlusNumber(src.Time))  dest.Time = src.Time;
+    if (IsPlusNumber(src.FlowCapital)) dest.FlowCapital = src.FlowCapital;
 
-    dest.Stop = src.Stop;
-    dest.Up = src.Up;
-    dest.Down = src.Down;
-    dest.Unchanged = src.Unchanged;
+     //指数才有的数据
+    if (IsPlusNumber(src.Stop)) dest.Stop = src.Stop;
+    if (IsPlusNumber(src.Up)) dest.Up = src.Up;
+    if (IsPlusNumber(src.Down)) dest.Down = src.Down;
+    if (IsPlusNumber(src.Unchanged)) dest.Unchanged = src.Unchanged;
+
+     //复权因子
+     if (IsPlusNumber(src.BFactor)) dest.BFactor = src.BFactor;
+     if (IsPlusNumber(src.AFactor)) dest.AFactor = src.AFactor;
 }
 
 //数据复权拷贝
@@ -278,12 +300,14 @@ function ChartData()
         return result;
     }
 
-    this.GetVol=function()
+    this.GetVol=function(unit)
     {
-        var result=new Array();
+        var value=1;
+        if (ChartData.IsNumber(unit)) value=unit;
+        var result=[];
         for(var i in this.Data)
         {
-            result[i]=this.Data[i].Vol;
+            result[i]=this.Data[i].Vol/value;
         }
 
         return result;
@@ -788,11 +812,23 @@ function ChartData()
         if (period == 5 || period == 6 || period == 7 || period == 8 || period == 11 || period == 12 ||(period > CUSTOM_MINUTE_PERIOD_START && period <= CUSTOM_MINUTE_PERIOD_END)) return this.GetMinutePeriodData(period);
     }
 
-    //复权  0 不复权 1 前复权 2 后复权
-    this.GetRightDate=function(right)
+    //复权  0 不复权 1 前复权 2 后复权 option={ AlgorithmType:1 复权系数模式 }
+    this.GetRightData=function(right, option)
     {
         var result=[];
         if (this.Data.length<=0) return result;
+
+        if (option && option.AlgorithmType==1)  //使用复权因子计算
+        {
+            for(var i=0;i<this.Data.length;++i)
+            {
+                var item=this.Data[i];
+                var seed=(right==1?item.BFactor:item.AFactor);
+                result[i]=HistoryData.CopyRight(item,seed);
+            }
+
+            return result;
+        }
 
         if (right==1)
         {
@@ -846,6 +882,8 @@ function ChartData()
 
         return result;
     }
+
+    this.GetRightDate=this.GetRightData;
 
     //叠加数据和主数据拟合,去掉主数据没有日期的数据
     this.GetOverlayData=function(overlayData)
@@ -1319,6 +1357,12 @@ function ChartData()
 
     this.MergeMinuteData = function (data) //合并数据
     {
+        if (!this.Data || this.Data.length<=0)
+        {
+            this.Data=data;
+            return true;
+        }
+        
         var sourceFirstItem = this.Data[0];
         var firstItemID = 0;
         var firstItem = null;
@@ -1402,6 +1446,161 @@ function ChartData()
 
         //console.log('[ChartData::MergeMinuteData] ', this.Data, data);
         return true;
+    }
+
+    //拟合其他K线数据指标   
+    this.FitKLineIndex=function(kLineData, outVar, peirod, indexPeriod)
+    {
+        var count=this.Data.length;         //原始K线数据
+        var indexCount=kLineData.length;    //拟合K线数据
+        var isMinutePeriod=[ChartData.IsMinutePeriod(peirod,true), ChartData.IsMinutePeriod(indexPeriod,true) ]; //0=原始K线 1=需要拟合的K线
+        var isDayPeriod=[ChartData.IsDayPeriod(peirod,true), ChartData.IsDayPeriod(indexPeriod,true)  ];   //0=原始K线 1=需要拟合的K线
+        var firstItem=ChartData.GetKLineDataTime(this.Data[0]);
+
+        //计算拟合以后的数据索引
+        var aryFixDataID=[];
+        var indexStart=indexCount;
+        for(var i=0;i<indexCount;++i)
+        {
+            var item=ChartData.GetKLineDataTime(kLineData[i]);
+
+            if ( (isDayPeriod[0] && isDayPeriod[1]) || (isMinutePeriod[0] && isDayPeriod[1]) )   //日线(拟合) => 日线(原始)    日线(拟合 => 分钟(原始)
+            {
+                if (item.Date>=firstItem.Date)
+                {
+                    indexStart = i;
+                    break;
+                }
+            }
+            else if (isMinutePeriod[0] && isMinutePeriod[1]) //分钟(拟合 => 分钟(原始)
+            {
+                if (item.Date>firstItem.Date)
+                {
+                    indexStart = i;
+                    break;
+                }
+
+                if (item.Date == firstItem.Date && item.Time >= firstItem.Time )
+                {
+                    indexStart = i;
+                    break;
+                }
+            }
+        }
+
+        for(var i=0, j=indexStart; i<count; )
+        {
+            var item=ChartData.GetKLineDataTime(this.Data[i]);
+            if (j>=indexCount)
+            {
+                var fitItem={ Date:item.Date, Time:item.Time, Index:-1 };
+                aryFixDataID[i]=fitItem;
+                ++i;
+                continue;
+            }
+
+            var destItem=ChartData.GetKLineDataTime(kLineData[j]);
+            if ( (isDayPeriod[0] && isDayPeriod[1]) || (isMinutePeriod[0] && isDayPeriod[1]) )  //日线(拟合) => 日线(原始)    日线(拟合 => 分钟(原始)
+            {
+                if (destItem.Date == item.Date)
+                {
+                    var fitItem={ Date:item.Date, Time:item.Time, Index:j, Data2:destItem.Date, Time2:destItem.Time };
+                    aryFixDataID[i]=fitItem;
+                    ++i;
+                }
+                else 
+                {
+                    if (j+1<indexCount)
+                    {
+                        var nextDestItem=ChartData.GetKLineDataTime(kLineData[j+1]);
+                        if ( destItem.Date<=item.Date && nextDestItem.Date>item.Date )
+                        {
+                            var fitItem={ Date:item.Date, Time:item.Time, Index:j+1, Data2:nextDestItem.Date, Time2:nextDestItem.Time };
+                            aryFixDataID[i]=fitItem;
+                            ++i;
+                        }
+                        else if (nextDestItem.Date <= item.Date )
+                        {
+                            ++j;
+                        }
+                        else
+                        {
+                            var fitItem={ Date:item.Date, Time:item.Time, Index:-1 };
+                            aryFixDataID[i]=fitItem;
+                            ++i;
+                        }
+                    }
+                    else
+                    {
+                        ++j;
+                    }
+                }
+            }
+            else if (isMinutePeriod[0] && isMinutePeriod[1])    //分钟(拟合 => 分钟(原始)
+            {
+                if (destItem.Date == item.Date && destItem.Time == item.Time)
+                {
+                    var fitItem={ Date:item.Date, Time:item.Time, Index:j, Data2:destItem.Date, Time2:destItem.Time };
+                    aryFixDataID[i]=fitItem;
+                    ++i;
+                }
+                else
+                {
+                    if (j+1<indexCount)
+                    {
+                        var nextDestItem=ChartData.GetKLineDataTime(kLineData[j+1]);
+                        if ( (destItem.Date<item.Date && nextDestItem.Date>item.Date) || 
+                            (destItem.Date == item.Date && destItem.Time < item.Time && nextDestItem.Date == item.Date && nextDestItem.Time > item.Time) ||
+                            (destItem.Date == item.Date && destItem.Time < item.Time && nextDestItem.Date > item.Date) ||
+                            (destItem.Date < item.Date && nextDestItem.Date == item.Date && nextDestItem.Time > item.Time) )
+                        {
+                            var fitItem={ Date:item.Date, Time:item.Time, Index:j+1, Data2:nextDestItem.Date, Time2:nextDestItem.Time };
+                            aryFixDataID[i]=fitItem;
+                            ++i;
+                        }
+                        else if (nextDestItem.Date < item.Date || (nextDestItem.Date == item.Date && nextDestItem.Time <= item.Time) )
+                        {
+                            ++j;
+                        }
+                        else
+                        {
+                            var fitItem={ Date:item.Date, Time:item.Time, Index:-1 };
+                            aryFixDataID[i]=fitItem;
+                            ++i;
+                        }
+                    }
+                    else
+                    {
+                        ++j;
+                    }
+                }
+            }
+        }
+
+        //拟合数据
+        var result=[];
+        for(var i in outVar)
+        {
+            var item=outVar[i];
+            if (Array.isArray(item.Data)) 
+            {
+                var data=[];
+                result[i]={ Data:data, Name:item.Name } ;
+                for(var j=0;j<aryFixDataID.length;++j)
+                {
+                    var dataItem=aryFixDataID[j];
+                    data[j]=null;
+                    if ( dataItem && dataItem.Index>=0 && dataItem.Index<item.Data.length )
+                        data[j]=item.Data[dataItem.Index];
+                }
+            }
+            else 
+            {
+                result[i]={ Data:item.Data, Name:item.Name} ;
+            }
+        }
+
+        return result;
     }
 
     //日线拟合交易数据, 不做平滑处理
@@ -1549,6 +1748,19 @@ ChartData.IsNumber=function(value)
     if (isNaN(value)) return false;
 
     return true;
+}
+
+ChartData.DateTimeToNumber=function(kItem)
+{
+    return kItem.Date*10000+kItem.Time;
+}
+
+ChartData.GetKLineDataTime=function(kLineItem)   //获取K线的 日期和时间 如果时间没有就用0
+{
+    var result={ Date:kLineItem.Date, Time:0 };
+    if (ChartData.IsNumber(kLineItem.Time)) result.Time=kLineItem.Time;
+
+    return result;
 }
 
 ChartData.GetFirday=function(value)
@@ -1704,7 +1916,17 @@ var JSCHART_EVENT_ID =
     ON_PHONE_TOUCH:27,                   //手势点击事件 包含 TouchStart 和 TouchEnd
 
     ON_SPLIT_YCOORDINATE:29,             //分割Y轴及格式化刻度文字
+    
+    ON_DRAW_KLINE_LAST_POINT:35,          //K线图绘制回调事件,返回最后一个点的坐标
 }
+
+var HQ_DATA_TYPE=
+{
+    KLINE_ID:0,         //K线
+    MINUTE_ID:2,        //当日走势图
+    HISTORY_MINUTE_ID:3,//历史分钟走势图
+    MULTIDAY_MINUTE_ID:4,//多日走势图
+};
 
 function PhoneDBClick()
 {
@@ -1773,6 +1995,7 @@ module.exports =
         DataPlus: DataPlus,
         JSCHART_EVENT_ID:JSCHART_EVENT_ID,
         PhoneDBClick:PhoneDBClick,
+        HQ_DATA_TYPE:HQ_DATA_TYPE,
     },
 
     //单个类导出
@@ -1793,4 +2016,5 @@ module.exports =
     JSCommon_ToFixedRect: ToFixedRect,
     JSCommon_JSCHART_EVENT_ID:JSCHART_EVENT_ID,
     JSCommon_PhoneDBClick:PhoneDBClick,
+    JSCommon_HQ_DATA_TYPE:HQ_DATA_TYPE,
 };

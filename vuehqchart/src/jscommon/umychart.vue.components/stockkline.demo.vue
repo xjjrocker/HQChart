@@ -116,6 +116,8 @@ DefaultData.GetMinuteOption=function()
         EnableSelectRect:true,
 
         EnableZoomIndexWindow:true,
+        IsDrawPictureXY:true,
+        EnableNewIndex:true,
 
         Border: //边框
         {
@@ -128,9 +130,9 @@ DefaultData.GetMinuteOption=function()
             AutoRight:{ Blank:10, MinWidth:40 },
         },
 
-        KLineTitle: //标题设置
+        MinuteTitle: //标题设置
         {
-            
+            IsTitleShowLatestData:true,
         },
 
         Frame: //子框架设置,刻度小数位数设置
@@ -180,6 +182,8 @@ DefaultData.GetKLineOption=function()
             ZoomType:1,         //PC页面版 缩放以十字光标为中心两边缩放
             DataWidth:10,
         },
+
+        IsDrawPictureXY:true,
 
         KLineTitle: //标题设置
         {
@@ -1483,16 +1487,18 @@ a
     .divchart{
         position: relative;
         .bottomToolForChart{
-            width: 50%;
-            height: 80px;
+            width: 400px;
+            // width: 50%;
+            height: 60px;
             position: absolute;
-            bottom: 0;
-            left: 25%;
+            bottom: 20px;
+            left: 50%;
             display: flex;
             flex-direction: row;
             justify-content: center;
             align-items: center;
             z-index: 999;
+            transform: translateX(-50%);
             .iconBg{
                 width: 28px;
                 height: 28px;

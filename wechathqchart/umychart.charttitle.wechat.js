@@ -27,6 +27,7 @@ import
     JSCommon_CUSTOM_MINUTE_PERIOD_END as CUSTOM_MINUTE_PERIOD_END,
     JSCommon_CUSTOM_SECOND_PERIOD_START as CUSTOM_SECOND_PERIOD_START,
     JSCommon_CUSTOM_SECOND_PERIOD_END as CUSTOM_SECOND_PERIOD_END,
+    JSCommon_JSCHART_EVENT_ID as JSCHART_EVENT_ID,
 } from "./umychart.data.wechat.js";
 
 import 
@@ -61,6 +62,7 @@ function IChartTitlePainting()
     this.LanguageID = JSCHART_LANGUAGE_ID.LANGUAGE_CHINESE_ID;
     this.UpdateUICallback;              //通知外面更新标题(老接口废弃)
     this.OnDrawEvent;                   //外部事件通知
+    this.GetEventCallback;              //事件回调,新的版本同意都用这个
 }
 
 var PERIOD_NAME = ["日线", "周线", "月线", "年线", "1分", "5分", "15分", "30分", "60分", "季线", "分笔", "2小时", "4小时", "", ""];
@@ -77,6 +79,7 @@ function DynamicKLineTitlePainting()
     this.IsShow = true;       //是否显示
     this.LineCount = 1;         //默认显示1行
     this.SpaceWidth = 1;        //空格宽度  
+    this.TextSpace=-1;           //文字之间的间距
     this.Period;                //周期  
 
     this.UpColor = g_JSChartResource.UpTextColor;
@@ -188,17 +191,10 @@ function DynamicKLineTitlePainting()
 
     this.GetRightName = function (rightID, periodID)
     {
-        //分钟K线没有复权
-        if (ChartData.IsMinutePeriod(periodID, true) || ChartData.IsSecondPeriod(periodID))
-            return null;
+        if (!MARKET_SUFFIX_NAME.IsEnableRight(periodID, this.Symbol)) return null;
 
-        if (MARKET_SUFFIX_NAME.IsSHSZStockA(this.UpperSymbol))   //A股有复权
-        {
-            var rightName = RIGHT_NAME[rightID];
-            return rightName
-        }
-
-        return null;
+        var rightName = RIGHT_NAME[rightID];
+        return rightName
     }
 
     this.FullDraw=function()
@@ -211,7 +207,9 @@ function DynamicKLineTitlePainting()
             return;
         }
 
-        this.SpaceWidth = this.Canvas.measureText(' ').width;
+        if (this.TextSpace>=0) this.SpaceWidth=this.TextSpace;
+        else  this.SpaceWidth = this.Canvas.measureText(' ').width;
+
         var index = this.CursorIndex;
         index = parseInt(index.toFixed(0));
         var dataIndex = this.Data.DataOffset + index;
@@ -224,6 +222,8 @@ function DynamicKLineTitlePainting()
 
         var item = this.Data.Data[dataIndex];
         this.OnDrawEventCallback(item, 'DynamicKLineTitlePainting::FullDraw');
+
+        //console.log('[FullDraw]', item);
 
         if (this.Frame.IsHScreen === true) 
         {
@@ -449,9 +449,10 @@ function DynamicKLineTitlePainting()
         if (!this.DrawKLineText(text, this.DateTimeColor, position)) return;
 
         //时间
+        //console.log(`[DrawSingleLine] ${this.Period} ${item.Time} ${item.Date}`);
         if (ChartData.IsMinutePeriod(this.Period, true) && IFrameSplitOperator.IsNumber(item.Time))
         {
-            var text = IFrameSplitOperator.FormatTimeString(item.Time);
+            var text = IFrameSplitOperator.FormatTimeString(item.Time,"HH:MM");
             if (!this.DrawKLineText(text, this.DateTimeColor, position)) return;
         }
         else if (ChartData.IsSecondPeriod(this.Period) && IFrameSplitOperator.IsNumber(item.Time))
@@ -937,6 +938,9 @@ function DynamicMinuteTitlePainting()
             return;
         }
 
+        if (this.TextSpace>=0) this.SpaceWidth=this.TextSpace;
+        else  this.SpaceWidth = this.Canvas.measureText(' ').width;
+        
         var index = this.CursorIndex;
         index = parseInt(index.toFixed(0));
         var dataIndex = index + this.Data.DataOffset;
@@ -1015,10 +1019,12 @@ function DynamicChartTitlePainting()
 
     this.TitleRect;              //指标名字显示区域
     this.IsDrawTitleBG=false;    //是否绘制指标名字背景色
-    this.BGColor=g_JSChartResource.IndexTitleBGColor;
+    this.BGColor=g_JSChartResource.IndexTitleBGColor;   //指标名字背景颜色
+    this.TitleColor = g_JSChartResource.IndexTitleColor;   //指标名字颜色
 
     this.IsShowIndexName = true;     //是否显示指标名字
     this.ParamSpace = 2;             //参数显示的间距
+    this.TitleSpace=2;              //指标名字和参数之间的间距
     this.OutName=null;               //动态标题
     this.IsFullDraw=true;            //手势离开屏幕以后是否显示最后的价格
 
@@ -1178,13 +1184,16 @@ function DynamicChartTitlePainting()
     {
         this.EraseRect = null;
         this.TitleRect=null;
-        this.IsDrawTitleBG=this.Frame.IsDrawTitleBG;
+        if (this.Frame.IsMinSize) return;
+
+        this.OnDrawTitleEvent();
+
         if (this.Frame.ChartBorder.TitleHeight < 5) return;
         if (this.Frame.IsShowTitle == false) return;
-        if (this.Frame.IsMinSize) return;
-        
+        this.IsDrawTitleBG=this.Frame.IsDrawTitleBG;
         this.IsShowIndexName = this.Frame.IsShowIndexName;
         this.ParamSpace = this.Frame.IndexParamSpace;
+        this.TitleSpace=this.Frame.IndexTitleSpace;
 
         if (this.Frame.IsHScreen === true) 
         {
@@ -1239,6 +1248,7 @@ function DynamicChartTitlePainting()
 
         this.IsShowIndexName = this.Frame.IsShowIndexName;
         this.ParamSpace = this.Frame.IndexParamSpace;
+        this.TitleSpace=this.Frame.IndexTitleSpace;
 
         if (this.Frame.IsHScreen === true) 
         {
@@ -1327,6 +1337,7 @@ function DynamicChartTitlePainting()
                 this.Canvas.fillText(this.Title, left, bottom, textWidth);
             }
             left += textWidth;
+            left+=this.TitleSpace;
         }
 
         if (this.Text && this.Text.length > 0) 
@@ -1397,6 +1408,7 @@ function DynamicChartTitlePainting()
                     text=valueText;
                 }
                 textWidth = this.Canvas.measureText(text).width + this.ParamSpace;    //后空2个像素
+                if (textWidth+left>right) break;    //画不下了就不画了
                 this.Canvas.fillText(text, left, bottom, textWidth);
                 left += textWidth;
             }
@@ -1440,6 +1452,27 @@ function DynamicChartTitlePainting()
                 }
             }
         }
+    }
+
+    this.OnDrawTitleEvent=function()
+    {
+        var event=this.GetEventCallback(JSCHART_EVENT_ID.ON_INDEXTITLE_DRAW);
+        if (!event) return;
+        
+        var data={ Index:null, Data:this.Data ,Title:this.Title, FrameID:this.Frame.Identify };
+        if (IFrameSplitOperator.IsNumber(this.CursorIndex))
+        {
+            var index=Math.abs(this.CursorIndex);
+            index=parseInt(index.toFixed(0));
+            data.Index=index;   //当前屏数据索引
+        }
+
+        var border=this.Frame.GetBorder();
+        data.Left=border.LeftEx;
+        data.Top=border.Top;
+        data.Right=border.RightEx;
+
+        event.Callback(event,data,this);
     }
 }
 

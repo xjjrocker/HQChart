@@ -276,6 +276,17 @@ IFrameSplitOperator.FormatValueString=function(value, floatPrecision,languageID)
         else 
             return (value/1000000000000).toFixed(floatPrecision)+"T";
     }
+    else if (languageID===JSCHART_LANGUAGE_ID.LANGUAGE_TRADITIONAL_CHINESE_ID)  //繁体
+    {
+        if (absValue < 10000)
+            return value.toFixed(floatPrecision);
+        else if (absValue < 100000000)
+            return (value/10000).toFixed(floatPrecision)+"萬";
+        else if (absValue < 1000000000000)
+            return (value/100000000).toFixed(floatPrecision)+"億";
+        else
+            return (value/1000000000000).toFixed(floatPrecision)+"萬億";
+    }
     else
     {
         if (absValue < 10000)
@@ -1395,7 +1406,7 @@ function FrameSplitMinutePriceY()
 
             if (IFrameSplitOperator.IsNumber(item.Increase)) //涨幅计算价格
             {
-                if (!IFrameSplitOperator.IsNumber(this.YClose)) conintue;
+                if (!IFrameSplitOperator.IsNumber(this.YClose)) continue;
                 info.Value = this.YClose * (1 + item.Increase);
             }
             else 
