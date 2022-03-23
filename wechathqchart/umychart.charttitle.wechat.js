@@ -207,9 +207,15 @@ function DynamicKLineTitlePainting()
             return;
         }
 
-        if (this.TextSpace>=0) this.SpaceWidth=this.TextSpace;
-        else  this.SpaceWidth = this.Canvas.measureText(' ').width;
-
+        if (this.TextSpace>=0) 
+		{
+			this.SpaceWidth=this.TextSpace;
+		}
+        else  
+		{
+			this.Canvas.font = this.Font;
+			this.SpaceWidth = this.Canvas.measureText(' ').width;
+		}
         var index = this.CursorIndex;
         index = parseInt(index.toFixed(0));
         var dataIndex = this.Data.DataOffset + index;
@@ -479,19 +485,19 @@ function DynamicKLineTitlePainting()
 
         if (IFrameSplitOperator.IsNumber(item.Vol))
         {
-            var text = g_JSChartLocalization.GetText('KTitle-Vol', this.LanguageID) + IFrameSplitOperator.FormatValueString(item.Vol, 2);
+            var text = g_JSChartLocalization.GetText('KTitle-Vol', this.LanguageID) + IFrameSplitOperator.FormatValueString(item.Vol, 2, this.LanguageID);
             if (!this.DrawKLineText(text, this.VolColor, position)) return;
         }
 
         if (IFrameSplitOperator.IsNumber(item.Amount))
         {
-            var text = g_JSChartLocalization.GetText('KTitle-Amount', this.LanguageID) + IFrameSplitOperator.FormatValueString(item.Amount, 2);
+            var text = g_JSChartLocalization.GetText('KTitle-Amount', this.LanguageID) + IFrameSplitOperator.FormatValueString(item.Amount, 2, this.LanguageID);
             if (!this.DrawKLineText(text, this.AmountColor, position)) return;
         }
 
         if (MARKET_SUFFIX_NAME.IsChinaFutures(this.UpperSymbol) && IFrameSplitOperator.IsNumber(item.Position))
         {
-            var text = g_JSChartLocalization.GetText('KTitle-Position', this.LanguageID) + IFrameSplitOperator.FormatValueString(item.Position, 2);
+            var text = g_JSChartLocalization.GetText('KTitle-Position', this.LanguageID) + IFrameSplitOperator.FormatValueString(item.Position, 2, this.LanguageID);
             if (!this.DrawKLineText(text, this.PositionColor, position)) return;
         }
     }
@@ -938,8 +944,15 @@ function DynamicMinuteTitlePainting()
             return;
         }
 
-        if (this.TextSpace>=0) this.SpaceWidth=this.TextSpace;
-        else  this.SpaceWidth = this.Canvas.measureText(' ').width;
+        if (this.TextSpace>=0) 
+		{
+			this.SpaceWidth=this.TextSpace;
+		}
+        else  
+		{
+			this.Canvas.font = this.Font;
+			this.SpaceWidth = this.Canvas.measureText(' ').width;
+		}
         
         var index = this.CursorIndex;
         index = parseInt(index.toFixed(0));

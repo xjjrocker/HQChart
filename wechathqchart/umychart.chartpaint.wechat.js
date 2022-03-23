@@ -17,6 +17,7 @@ import
     JSCommon_SingleData as SingleData, JSCommon_MinuteData as MinuteData,
     JSCommon_Rect as Rect,
     JSCommon_JSCHART_EVENT_ID as JSCHART_EVENT_ID,
+    JSCommon_OVERLAY_STATUS_ID as OVERLAY_STATUS_ID,
 } from "./umychart.data.wechat.js";
 
 import 
@@ -48,6 +49,23 @@ function JSChartPaintResource()
     }
 }
 var g_JSChartPaintResource = new JSChartPaintResource();
+
+
+function GetFontHeight(context, font, word)
+{
+    if (!context) return null;
+
+    if (font) context.font=font;
+
+    var text='擎';
+    if (IFrameSplitOperator.IsString(word)) text=word;
+
+    var fontInfo=context.measureText(text);
+    //var textHeight=fontInfo.fontBoundingBoxAscent + fontInfo.fontBoundingBoxDescent;
+    var textHeight=fontInfo.width+2;
+
+    return textHeight;
+}
 
 
 //图新画法接口类
@@ -192,6 +210,11 @@ function IChartPainting()
             this.Canvas.fillStyle = color;
         }
     }
+
+    this.GetFontHeight=function(font)
+    {
+        return GetFontHeight(this.Canvas, font, "擎");
+    }
 }
 
 //K线画法
@@ -203,7 +226,7 @@ function ChartKLine()
 
     this.ClassName = 'ChartKLine';
     this.Symbol;        //股票代码
-    this.DrawType = 0;    // 0=K线  1=收盘价线 2=美国线 3=空心K线柱子 4=收盘价面积
+    this.DrawType = 0;    // 0=K线  1=收盘价线 2=美国线 3=空心K线柱子 4=收盘价面积 6=空心阴线阳线柱
     this.CloseLineColor = g_JSChartResource.CloseLineColor;
     this.CloseLineAreaColor = g_JSChartResource.CloseLineAreaColor;
     this.UpColor = g_JSChartResource.UpBarColor;
@@ -567,9 +590,10 @@ function ChartKLine()
 
     this.DrawKBar_Up = function(data, dataWidth, upColor, drawType, x, y, left, right, yLow, yHigh, yOpen, yClose, isHScreen) //阳线
     {
+        var isEmptyBar=(drawType==3 || drawType==6);
         if (dataWidth >= this.MinBarWidth) 
         {
-            if (drawType==3)
+            if (isEmptyBar)
             {
                 if ((dataWidth%2)!=0) dataWidth-=1;
             }
@@ -585,7 +609,7 @@ function ChartKLine()
                 }
                 else 
                 {
-                    if (drawType==3)
+                    if (isEmptyBar)
                     {
                         var xFixed=left+dataWidth/2;
                         this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(y));
@@ -614,7 +638,7 @@ function ChartKLine()
                 }
                 else 
                 {
-                    if (drawType == 3) //空心柱
+                    if (isEmptyBar) //空心柱
                     {
                         this.Canvas.beginPath();
                         this.Canvas.rect(ToFixedPoint(y), ToFixedPoint(left), ToFixedRect(yOpen - y), ToFixedRect(dataWidth));
@@ -636,7 +660,7 @@ function ChartKLine()
                 }
                 else 
                 {
-                    if (drawType == 3) //空心柱
+                    if (isEmptyBar) //空心柱
                     {
                         this.Canvas.beginPath();
                         this.Canvas.rect(ToFixedPoint(left), ToFixedPoint(y), ToFixedRect(dataWidth), ToFixedRect(yOpen - y));
@@ -659,7 +683,7 @@ function ChartKLine()
                 }
                 else 
                 {
-                    if (drawType==3)
+                    if (isEmptyBar)
                     {
                         var xFixed=left+dataWidth/2;
                         this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(Math.max(yClose,yOpen)));
@@ -694,21 +718,37 @@ function ChartKLine()
 
     this.DrawKBar_Down=function(data, dataWidth, downColor, drawType, x, y, left, right, yLow, yHigh, yOpen, yClose, isHScreen) //阴线
     {
+        var isEmptyBar=(drawType==6);
         if (dataWidth >= this.MinBarWidth) 
         {
+            if (isEmptyBar)
+            {
+                if ((dataWidth%2)!=0) dataWidth-=1;
+            }
+
             this.Canvas.strokeStyle = downColor;
             if (data.High > data.Close)   //上影线
             {
                 this.Canvas.beginPath();
                 if (isHScreen)
-                    {
+                {
                     this.Canvas.moveTo(ToFixedPoint(y), ToFixedPoint(x));
                     this.Canvas.lineTo(ToFixedPoint(yOpen), ToFixedPoint(x));
                 }
                 else 
                 {
-                    this.Canvas.moveTo(ToFixedPoint(x), ToFixedPoint(y));
-                    this.Canvas.lineTo(ToFixedPoint(x), ToFixedPoint(yOpen));
+                    if (isEmptyBar)
+                    {
+                        var xFixed=left+dataWidth/2;
+                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(y));
+                        this.Canvas.lineTo(ToFixedPoint(xFixed),ToFixedPoint(Math.min(yClose,yOpen)));
+                    }
+                    else
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(x), ToFixedPoint(y));
+                        this.Canvas.lineTo(ToFixedPoint(x), ToFixedPoint(yOpen));
+                    }
+                    
                 }
                 this.Canvas.stroke();
                 y = yOpen;
@@ -733,8 +773,23 @@ function ChartKLine()
             }
             else 
             {
-                if (Math.abs(yClose - y) < 1) this.Canvas.fillRect(ToFixedRect(left), ToFixedRect(y), ToFixedRect(dataWidth), 1);    //高度小于1,统一使用高度1
-                else this.Canvas.fillRect(ToFixedRect(left), ToFixedRect(y), ToFixedRect(dataWidth), ToFixedRect(yClose - y));
+                if (Math.abs(yClose - y) < 1) 
+                {
+                    this.Canvas.fillRect(ToFixedRect(left), ToFixedRect(y), ToFixedRect(dataWidth), 1);    //高度小于1,统一使用高度1
+                }
+                else 
+                {
+                    if (isEmptyBar) //空心柱
+                    {
+                        this.Canvas.beginPath();
+                        this.Canvas.rect(ToFixedPoint(left), ToFixedPoint(y), ToFixedRect(dataWidth), ToFixedRect(yClose - y));
+                        this.Canvas.stroke();
+                    }
+                    else
+                    {
+                        this.Canvas.fillRect(ToFixedRect(left), ToFixedRect(y), ToFixedRect(dataWidth), ToFixedRect(yClose - y));
+                    }
+                }
             }
 
             if (data.Open > data.Low) //下影线
@@ -747,8 +802,17 @@ function ChartKLine()
                 }
                 else 
                 {
-                    this.Canvas.moveTo(ToFixedPoint(x), ToFixedPoint(y));
-                    this.Canvas.lineTo(ToFixedPoint(x), ToFixedPoint(yLow));
+                    if (isEmptyBar)
+                    {
+                        var xFixed=left+dataWidth/2;
+                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(Math.max(yClose,yOpen)));
+                        this.Canvas.lineTo(ToFixedPoint(xFixed),ToFixedPoint(yLow));
+                    }
+                    else
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(x), ToFixedPoint(y));
+                        this.Canvas.lineTo(ToFixedPoint(x), ToFixedPoint(yLow));
+                    }
                 }
                 this.Canvas.stroke();
             }
@@ -1922,6 +1986,7 @@ function ChartSingleText()
     this.FixedFontSize=-1;      //固定字体大小
     this.YOffset = 0;
     this.Position;          //指定输出位置
+    this.TextBG;            //{ Color:"rgb(0,0,92)", Border:"rgb(205,0,92)", Margin:[0,1,1,1],  }   // { Color:背景色, Border:边框颜色, Margin=[上,下,左, 右] }
 
     this.TextSize=
     {
@@ -1986,17 +2051,32 @@ function ChartSingleText()
 
         var isArrayText = Array.isArray(this.Text);
         var text;
-        
+        var drawTextInfo={ Text:{ }, Font:{ } };
+
         //上下位置
-        if (this.Direction == 1) this.Canvas.textBaseline = 'bottom';
-        else if (this.Direction == 2) this.Canvas.textBaseline = 'top';
-        else this.Canvas.textBaseline = 'middle';
+        if (this.Direction == 1) 
+        {
+            this.Canvas.textBaseline = 'bottom';
+            drawTextInfo.Text={ Baseline: 'bottom'};
+        }
+        else if (this.Direction == 2) 
+        {
+            this.Canvas.textBaseline = 'top';
+            drawTextInfo.Text={ Baseline: 'top'};
+        }
+        else 
+        {
+            this.Canvas.textBaseline = 'middle';
+            drawTextInfo.Text={ Baseline: 'middle'};
+        }
 
         //字体大小
         if (this.FixedFontSize>0) 
             this.TextFont=`${this.FixedFontSize}px ${this.TextSize.FontName}`;
         else
             this.TextFont = this.GetDynamicFontEx(dataWidth,distanceWidth,this.TextSize.Max,this.TextSize.Min,this.TextSize.Zoom,this.TextSize.FontName);
+
+        drawTextInfo.Font={ Height:this.GetFontHeight(this.TextFont) };
         for (var i = this.Data.DataOffset, j = 0; i < this.Data.Data.length && j < xPointCount; ++i, ++j) 
         {
             var value = this.Data.Data[i];
@@ -2009,6 +2089,11 @@ function ChartSingleText()
             this.Canvas.textAlign = this.TextAlign;
             this.Canvas.fillStyle = this.Color;
             this.Canvas.font = this.TextFont;
+
+            drawTextInfo.Text.Color=this.Color;
+            drawTextInfo.Text.Align=this.TextAlign;
+            drawTextInfo.X=x;
+            drawTextInfo.Y=y;
 
             if (this.YOffset > 0 && this.Direction > 0) 
             {
@@ -2073,12 +2158,23 @@ function ChartSingleText()
                         else if (this.Direction==2) y+=4;
                     }
                 }
-               
-                this.DrawText(text, x, y, isHScreen);
+
+                if (this.Name=="DRAWTEXT") 
+                    this.DrawTextV2(text,drawTextInfo,isHScreen);
+                else
+                    this.DrawText(text, x, y, isHScreen);
             }
             else 
             {
-                this.DrawText(this.Text, x, y, isHScreen);
+                if (this.Name=="DRAWTEXT")
+                {
+                    this.DrawTextV2(this.Text,drawTextInfo,isHScreen);
+                }
+                else
+                {
+                    this.DrawText(this.Text, x, y, isHScreen);
+                }
+               
             }
         }
     }
@@ -2125,6 +2221,89 @@ function ChartSingleText()
         else
         {
             this.Canvas.fillText(text, x, y);
+        }
+    }
+
+    this.DrawTextV2=function(text, drawInfo, isHScreen)
+    {
+        var textWidth=this.Canvas.measureText(text).width;
+
+        if (isHScreen)
+        {
+            var x=drawInfo.Y;
+            var y=drawInfo.X;
+
+            if (drawInfo.Text.Align=="right") y=y-textWidth;
+            else if (drawInfo.Text.Align=="center") y=y-textWidth/2;
+
+            if (drawInfo.Text.Baseline=="top") x-=drawInfo.Font.Height;
+            else if (drawInfo.Text.Baseline=="middle") x-=drawInfo.Font.Height/2;
+
+            if (this.TextBG && (this.TextBG.Color || this.TextBG.Border))
+            {
+                var margin=this.TextBG.Margin;  //0=上 1=下 2=左 3=右
+                var xRect=x-margin[0];
+                var yRect=y-margin[2];
+                var bgWidth=textWidth+margin[2]+margin[3];
+                var bgHeight=drawInfo.Font.Height+margin[0]+margin[1];
+                if (this.TextBG.Color)
+                {
+                    this.Canvas.fillStyle=this.TextBG.Color;
+                    this.Canvas.fillRect(xRect,yRect,bgHeight,bgWidth);
+                }
+
+                if (this.TextBG.Border)
+                {
+                    this.Canvas.strokeStyle=this.TextBG.Border;
+                    this.Canvas.strokeRect(ToFixedPoint(xRect),ToFixedPoint(yRect),ToFixedRect(bgHeight),ToFixedRect(bgWidth));
+                }
+            }
+
+            this.Canvas.textBaseline="bottom";
+            this.Canvas.textAlign="left";
+            this.Canvas.fillStyle=drawInfo.Text.Color;
+
+            this.Canvas.save(); 
+            this.Canvas.translate(x, y);
+            this.Canvas.rotate(90 * Math.PI / 180);
+            this.Canvas.fillText(text,0,0);
+            this.Canvas.restore();
+        }
+        else
+        {
+            var x=drawInfo.X;
+            var y=drawInfo.Y;
+            if (drawInfo.Text.Align=="right") x=x-textWidth;
+            else if (drawInfo.Text.Align=="center") x=x-textWidth/2;
+
+            if (drawInfo.Text.Baseline=="top") y+=drawInfo.Font.Height;
+            else if (drawInfo.Text.Baseline=="middle") y+=drawInfo.Font.Height/2;
+
+            if (this.TextBG && (this.TextBG.Color || this.TextBG.Border))
+            {
+                var margin=this.TextBG.Margin;  //0=上 1=下 2=左 3=右
+                var xRect=x-margin[2];
+                var yRect=y-drawInfo.Font.Height-margin[1];
+                var bgWidth=textWidth+margin[2]+margin[3];
+                var bgHeight=drawInfo.Font.Height+margin[0]+margin[1];
+                if (this.TextBG.Color)
+                {
+                   
+                    this.Canvas.fillStyle=this.TextBG.Color;
+                    this.Canvas.fillRect(xRect,yRect,bgWidth,bgHeight);
+                }
+
+                if (this.TextBG.Border)
+                {
+                    this.Canvas.strokeStyle=this.TextBG.Border;
+                    this.Canvas.strokeRect(ToFixedPoint(xRect),ToFixedPoint(yRect),ToFixedRect(bgWidth),ToFixedRect(bgHeight));
+                }
+            }
+
+            this.Canvas.textBaseline="bottom";
+            this.Canvas.textAlign="left";
+            this.Canvas.fillStyle=drawInfo.Text.Color;
+            this.Canvas.fillText(text,x,y);
         }
     }
 }
@@ -2826,7 +3005,8 @@ function ChartOverlayKLine()
     this.DrawType = 0;
     this.ClassName ='ChartOverlayKLine';
     this.CustomDrawType = null;       //图形类型
-
+    this.Status=OVERLAY_STATUS_ID.STATUS_NONE_ID;
+    
     this.SetOption = function (option) 
     {
         if (!option) return;
@@ -4082,6 +4262,8 @@ function ChartBuySell()
     this.BuyIcon = g_JSChartResource.KLineTrain.BuyIcon; //{Color:'rgb(0,0,205)',Text:'B'};
     this.SellIcon = g_JSChartResource.KLineTrain.SellIcon; //{Color:'rgb(0,0,205)',Text:'S'};
     this.BuySellData = new Map();   //Key=数据索引index Value:Data:[ { Op: 买/卖 0=buy 1=sell, Date:, Time, Price: Vol:}, ] 
+    this.LastDataDrawType=0;    //0=画在最后一个数据上 1=画在指定索引上
+    this.LastDataIndex=-1;
 
     this.AddTradeItem = function (tradeItem) 
     {
@@ -4129,7 +4311,17 @@ function ChartBuySell()
             if (value == null) continue;
             if (x > chartright) break;
 
-            if (i == this.Data.Data.length - 1) 
+            var bDrawLastData=false;
+            if (this.LastDataDrawType==1)
+            {
+                if (i==this.LastDataIndex) bDrawLastData=true;
+            }
+            else
+            {
+                if (i==this.Data.Data.length-1) bDrawLastData=true;
+            }
+
+            if (bDrawLastData) 
             {
                 var x = this.ChartFrame.GetXFromIndex(j);
                 var yHigh = this.ChartFrame.GetYFromData(value.High);
@@ -4904,7 +5096,14 @@ function ChartVolStick()
                 //高度调整为整数
                 var height = ToFixedRect(Math.abs(yBottom - y)>=1 ? yBottom - y : 1);
                 y = yBottom - height;
-                if (bUp && (this.KLineDrawType == 1 || this.KLineDrawType == 2 || this.KLineDrawType == 3)) //空心柱子
+                if (this.KLineDrawType==6)
+                {
+                    this.Canvas.strokeStyle = bUp? this.UpColor: this.DownColor;
+                    this.Canvas.beginPath();
+                    this.Canvas.rect(ToFixedPoint(left), ToFixedPoint(y), ToFixedRect(dataWidth), height);
+                    this.Canvas.stroke();
+                }
+                else if (bUp && (this.KLineDrawType == 1 || this.KLineDrawType == 2 || this.KLineDrawType == 3)) //空心柱子
                 {
                     this.Canvas.strokeStyle = this.UpColor;
                     this.Canvas.beginPath();

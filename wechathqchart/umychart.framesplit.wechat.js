@@ -31,12 +31,13 @@ var WEEK_NAME=["日","一","二","三","四","五","六"];
 //坐标信息
 function CoordinateInfo() 
 {
-    this.Value;                                                 //坐标数据
+    this.Value;                                                   //坐标数据
     this.Message = new Array();                                   //坐标输出文字信息
     this.TextColor = g_JSChartResource.FrameSplitTextColor        //文字颜色
     this.Font = g_JSChartResource.FrameSplitTextFont;             //字体
     this.LineColor = g_JSChartResource.FrameSplitPen;             //线段颜色
-    this.LineType = 1;                                            //线段类型 -1 不画线段
+    this.LineDash=null;                                           //当线段类型==2时 可以设置虚线样式
+    this.LineType = 1;                                            //线段类型 -1=不画线段,  2=虚线
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,7 +122,7 @@ function IFrameSplitOperator()
         if (keepZero)   //如果不存在0轴,增加一个0轴,刻度信息部显示
         {
             var bExsitZero = false;
-            for (var i = 0; i < data; ++i) 
+            for (var i = 0; i < data.length; ++i) 
             {
                 var item = data[i];
                 if (Math.abs(item.Value) < 0.00000001) 
@@ -325,6 +326,8 @@ IFrameSplitOperator.FormatDateString=function(value,format,languageID)
     {
         case 'MM-DD':
             return IFrameSplitOperator.NumberToString(month) + '-' + IFrameSplitOperator.NumberToString(day);
+        case "YYYY-MM":
+            return `${year}-${IFrameSplitOperator.NumberToString(month)}`;
         case "YYYY/MM/DD":
             return year.toString() + '/' + IFrameSplitOperator.NumberToString(month) + '/' + IFrameSplitOperator.NumberToString(day);
         case "YYYY/MM/DD/W":
@@ -661,7 +664,8 @@ function FrameSplitKLinePriceY()
 
         if (IFrameSplitOperator.IsNumber(option.LineType)) info.LineType=option.LineType;
         if (option.IsShowLine == false) info.LineType = -1;
-
+        if (option.CountDown===true) info.CountDown=true;   //倒计时设置
+        
         return info;
     }
 
@@ -1071,7 +1075,8 @@ function FrameSplitKLineX()
         var xPointCount = this.Frame.XPointCount;
         var minDistance = 12;
         var isFirstYear = true;
-        for (var i = 0, index = xOffset, distance = minDistance; i < xPointCount && index < this.Frame.Data.Data.length; ++i, ++index) {
+        for (var i = 0, index = xOffset, distance = minDistance; i < xPointCount && index < this.Frame.Data.Data.length; ++i, ++index) 
+        {
             var year = parseInt(this.Frame.Data.Data[index].Date / 10000);
             //var month=parseInt(this.Frame.Data.Data[index].Date/100)%100;
             //var day=parseInt(this.Frame.Data.Data[index].Date%100);
@@ -1100,6 +1105,15 @@ function FrameSplitKLineX()
 
             this.Frame.VerticalInfo.push(info);
             distance = 0;
+        }
+
+        if (this.Frame.VerticalInfo.length==1)  //只有1个刻度, 就显示年+月
+        {
+            var item=this.Frame.VerticalInfo[0];
+            var index=item.Value+xOffset;
+            var kitem=this.Frame.Data.Data[index];
+            var text=IFrameSplitOperator.FormatDateString(kitem.Date,'YYYY-MM');
+            if (this.ShowText) item.Message[0]=text;
         }
     }
 

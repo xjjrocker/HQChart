@@ -2785,27 +2785,68 @@ function JSAlgorithm(errorHandler, symbolData)
     }
 
     //指数平均数指标 EMA(close,10)
+    //N  支持周期数组
     this.EMA=function(data,dayCount)
     {
         var result = [];
+        if (data.length<=0) return result;
 
-        var offset=0;
-        if (offset>=data.length) return result;
-
-        //取首个有效数据
-        for(;offset<data.length;++offset)
+        if (Array.isArray(dayCount))
         {
-            if (data[offset]!=null && !isNaN(data[offset]))
-                break;
+            for(var i=0;i<dayCount.length;++i)
+            {
+                var period=dayCount[i];
+                if (!this.IsNumber(period)) continue;
+                period=parseInt(period);    //周期用整数
+                if (period<=0) continue;
+
+                if (period>i+1) period=i+1;
+                //EMA(N) = 2/(N+1)*C + (N-1)/(N+1)*EMA', EMA'为前一天的ema
+                var EMAFactor=[ 2/ (period + 1), (period - 1) / (period + 1)];
+
+                var ema=null;
+                var lastEMA=null;
+                for(var j=0;j<period;++j)
+                {
+                    var index=i-(period-j-1);
+                    var value=data[index];
+                    if (!this.IsNumber(value)) coninue;
+                    if (lastEMA==null)
+                    {
+                        ema=value;  //第一个EMA为第一个数据的价格
+                        lastEMA=ema;  
+                    }
+                    else
+                    {
+                        ema = EMAFactor[0] * value + EMAFactor[1] * lastEMA;
+                        lastEMA=ema;
+                    } 
+                }
+
+                result[i]=ema;
+            }
+
         }
-
-        var p1Index=offset;
-        var p2Index=offset+1;
-
-        result[p1Index]=data[p1Index];
-        for(var i=offset+1;i<data.length;++i,++p1Index,++p2Index)
+        else
         {
-            result[p2Index]=((2*data[p2Index]+(dayCount-1)*result[p1Index]))/(dayCount+1);
+            if (dayCount<=0) return result;
+            
+            var offset=0;
+            //取首个有效数据
+            for(;offset<data.length;++offset)
+            {
+                if (data[offset]!=null && !isNaN(data[offset]))
+                    break;
+            }
+    
+            var p1Index=offset;
+            var p2Index=offset+1;
+    
+            result[p1Index]=data[p1Index];
+            for(var i=offset+1;i<data.length;++i,++p1Index,++p2Index)
+            {
+                result[p2Index]=((2*data[p2Index]+(dayCount-1)*result[p1Index]))/(dayCount+1);
+            }
         }
 
         return result;
@@ -8114,6 +8155,21 @@ function JSDraw(errorHandler, symbolData)
         var rgba = `rgba(${r},${g},${b},${a})`;
         return rgba;
     }
+
+    //该函数和DRAWTEXT连用
+    //{ Color:背景色, Border:边框颜色, Margin=[上,下,左, 右] }
+    this.BACKGROUND=function(color, borderColor, left, right, top, bottom)
+    {
+        var bg={ Margin:[0,1,1,1] };
+        if (color) bg.Color=color;
+        if (borderColor) bg.Border=borderColor;
+        if (IFrameSplitOperator.IsNumber(left)) bg.Margin[2]=left;
+        if (IFrameSplitOperator.IsNumber(right)) bg.Margin[3]=right;
+        if (IFrameSplitOperator.IsNumber(top)) bg.Margin[0]=top;
+        if (IFrameSplitOperator.IsNumber(bottom)) bg.Margin[1]=bottom;
+
+        return bg;
+    }
 }
 
 
@@ -11292,6 +11348,7 @@ function JSExecute(ast,option)
                     //ALIGN0,ALIGN1,ALIGN2 设置文字水平对齐方式（左中右）
                     var drawAlign=-1, drawVAlign=-1;
                     var fontSize=-1;
+                    var bgConfig=null;
                     for(let j=0 ; j<item.Expression.Expression.length; ++j)
                     {
                         let itemExpression=item.Expression.Expression[j];
@@ -11404,6 +11461,11 @@ function JSExecute(ast,option)
 
                                     varName=null;
                                 }
+                                else if (itemExpression.Callee.Name=="BACKGROUND")
+                                {
+                                    bgConfig=itemExpression.Draw;
+                                    varName=null;
+                                }
                             }
                         }
                         else if (itemExpression.Type==Syntax.BinaryExpression)
@@ -11487,6 +11549,7 @@ function JSExecute(ast,option)
                         if (drawAlign>=0) outVar.DrawAlign=drawAlign;
                         if (drawVAlign>=0) outVar.DrawVAlign=drawVAlign;
                         if (fontSize>0) outVar.DrawFontSize=fontSize;
+                        if (bgConfig) outVar.Background=bgConfig;
                         this.OutVarTable.push(outVar);
                     }
                     else if (varName) 
@@ -11649,6 +11712,10 @@ function JSExecute(ast,option)
                 break;
             case "ICON":
                 node.Draw=this.Draw.ICON(args[0],args[1]);
+                node.Out=[];
+                break;
+            case "BACKGROUND":
+                node.Draw=this.Draw.BACKGROUND(args[0],args[1],args[2],args[3],args[4],args[5]);
                 node.Out=[];
                 break;
             case 'DRAWLINE':
@@ -12961,6 +13028,7 @@ module.exports =
     JSCommonComplier:
     {
         JSComplier: JSComplier,
+        g_JSComplierResource: g_JSComplierResource,
     },
 
      //单个类导出

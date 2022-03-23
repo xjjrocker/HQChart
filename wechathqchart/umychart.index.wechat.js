@@ -19,6 +19,11 @@ import { JSCommonComplier } from "./umychart.complier.wechat.js";     //通达�
 //日志
 import { JSConsole } from "./umychart.console.wechat.js"
 
+import {
+    JSCommon_ChartData as ChartData, JSCommon_HistoryData as HistoryData,
+    JSCommon_SingleData as SingleData, JSCommon_MinuteData as MinuteData,
+} from "./umychart.data.wechat.js";
+
 //图形库
 import {
     JSCommonChartPaint_IChartPainting as IChartPainting, 
@@ -189,6 +194,7 @@ function ScriptIndex(name, script, args, option)
     this.LockText = null;
     this.LockFont = null;
     this.LockCount = 10;
+    this.TitleFont=g_JSChartResource.DynamicTitleFont;     //标题字体
 
     if (option) 
     {
@@ -199,6 +205,7 @@ function ScriptIndex(name, script, args, option)
         if (option.InstructionType) this.InstructionType = option.InstructionType;
         if (option.YSpecificMaxMin) this.YSpecificMaxMin = option.YSpecificMaxMin;
         if (option.YSplitScale) this.YSplitScale = option.YSplitScale;
+        if (option.TitleFont) this.TitleFont=option.TitleFont;
         if (option.OutName) this.OutName=option.OutName;
     }
 
@@ -434,7 +441,7 @@ function ScriptIndex(name, script, args, option)
         }
 
         if (varItem.DrawFontSize>0) chartText.FixedFontSize=varItem.DrawFontSize;
-
+        if (varItem.Background) chartText.TextBG=varItem.Background;
         //hqChart.TitlePaint[titleIndex].Data[id]=new DynamicTitleData(bar.Data,varItem.Name,bar.Color);
         hqChart.ChartPaint.push(chartText);
     }
@@ -979,7 +986,8 @@ function ScriptIndex(name, script, args, option)
         }
 
         if (indexParam.length > 0) hqChart.TitlePaint[titleIndex].Title = this.Name + '(' + indexParam + ')';
-
+        if (this.TitleFont) hqChart.TitlePaint[titleIndex].Font=this.TitleFont;
+        
         if (hqChart.UpdateUICallback) hqChart.UpdateUICallback('ScriptIndex', this.OutVar,
             { WindowIndex: windowIndex, Name: this.Name, Arguments: this.Arguments, HistoryData: hisData });  //通知上层回调
 
@@ -1232,6 +1240,9 @@ function APIScriptIndex(name, script, args, option)     //后台执行指标
                 if (draw.DrawType == 'DRAWICON')  //图标
                 {
                     drawItem.Icon = draw.Icon;
+                    //小程序不支持svg, 只能转文字
+                    if (IFrameSplitOperator.IsNumber(draw.IconType))
+                        drawItem.Icon=JSCommonComplier.g_JSComplierResource.GetDrawTextIcon(draw.IconType);
                     drawItem.Name = draw.Name;
                     drawItem.DrawType = draw.DrawType;
                     drawItem.DrawData = this.FittingArray(draw.DrawData, date, time, hqChart);

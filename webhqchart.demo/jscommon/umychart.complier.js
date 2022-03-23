@@ -3226,6 +3226,8 @@ function JSAlgorithm(errorHandler,symbolData)
         }
         else
         {
+            if (dayCount<=0) return result;
+            
             var offset=0;
             //取首个有效数据
             for(;offset<data.length;++offset)
@@ -9387,7 +9389,7 @@ function JSDraw(errorHandler,symbolData)
         if (!icon) icon={Symbol:'🚩'};
 
         let drawData=[];
-        let result={DrawData:drawData, DrawType:'DRAWICON',Icon:icon};
+        let result={ DrawData:drawData, DrawType:'DRAWICON',Icon:icon, IconType:type };
         if (condition.length<=0) return result;
 
         var IsNumber=typeof(data)=="number";
@@ -10246,6 +10248,28 @@ function JSDraw(errorHandler,symbolData)
         }
 
         return result;
+    }
+
+    //该函数和DRAWTEXT连用
+    //{ Color:背景色, Border:边框颜色, Margin=[上,下,左, 右] }
+    this.BACKGROUND=function(color, borderColor, left, right, top, bottom)
+    {
+        var bg={ Margin:[0,1,1,1] };
+        if (color) bg.Color=color;
+        if (borderColor) bg.Border=borderColor;
+        if (IFrameSplitOperator.IsNumber(left)) bg.Margin[2]=left;
+        if (IFrameSplitOperator.IsNumber(right)) bg.Margin[3]=right;
+        if (IFrameSplitOperator.IsNumber(top)) bg.Margin[0]=top;
+        if (IFrameSplitOperator.IsNumber(bottom)) bg.Margin[1]=bottom;
+
+        return bg;
+    }
+
+    //该函数和DRAWTEXT, DRAWICON连用
+    //{ color:线段颜色, data:位置, lineType:线段样式}
+    this.VLINE=function(color, data, lineWidth, lineType, dot)
+    {
+
     }
 }
 
@@ -15609,6 +15633,7 @@ function JSExecute(ast,option)
                     //ALIGN0,ALIGN1,ALIGN2 设置文字水平对齐方式（左中右）
                     var drawAlign=-1, drawVAlign=-1;
                     var fontSize=-1;
+                    var bgConfig=null;    //背景设置
                     for(let j=0; j<item.Expression.Expression.length; ++j)
                     {
                         let itemExpression=item.Expression.Expression[j];
@@ -15727,6 +15752,11 @@ function JSExecute(ast,option)
 
                                     varName=null;
                                 }
+                                else if (itemExpression.Callee.Name=="BACKGROUND")
+                                {
+                                    bgConfig=itemExpression.Draw;
+                                    varName=null;
+                                }
                             }
                         }
                         else if (itemExpression.Type==Syntax.BinaryExpression)
@@ -15817,6 +15847,7 @@ function JSExecute(ast,option)
                         if (drawAlign>=0) outVar.DrawAlign=drawAlign;
                         if (drawVAlign>=0) outVar.DrawVAlign=drawVAlign;
                         if (fontSize>0) outVar.DrawFontSize=fontSize;
+                        if (bgConfig) outVar.Background=bgConfig;
                         this.OutVarTable.push(outVar);
                     }
                     else if (varName)
@@ -16000,6 +16031,14 @@ function JSExecute(ast,option)
                 break;
             case "ICON":
                 node.Draw=this.Draw.ICON(args[0],args[1]);
+                node.Out=[];
+                break;
+            case "BACKGROUND":
+                node.Draw=this.Draw.BACKGROUND(args[0],args[1],args[2],args[3],args[4],args[5]);
+                node.Out=[];
+                break;
+            case "VLINE":
+                node.Draw=this.Draw.VLine(args[0],args[1],args[2],args[3],args[4],args[5]);
                 node.Out=[];
                 break;
             case 'DRAWLINE':
@@ -18005,6 +18044,7 @@ function ScriptIndex(name,script,args,option)
         }
 
         if (varItem.DrawFontSize>0) chartText.FixedFontSize=varItem.DrawFontSize;
+        if (varItem.Background) chartText.TextBG=varItem.Background;
         
         //hqChart.TitlePaint[titleIndex].Data[id]=new DynamicTitleData(bar.Data,varItem.Name,bar.Color);
 
@@ -19192,6 +19232,10 @@ function OverlayScriptIndex(name,script,args,option)
                     case "MULTI_HTMLDOM":
                         this.CreateMulitHtmlDom(hqChart,windowIndex,item,i);
                         break;
+
+                    case "KLINE_BG":
+                        this.CreateBackgroud(hqChart,windowIndex,item,i);
+                        break;
                 }
             }
             else if (item.Type==2)
@@ -19722,6 +19766,29 @@ function OverlayScriptIndex(name,script,args,option)
             if (IFrameSplitOperator.IsNumber(item.Length)) chart.ArrawLength=item.Length;
             if (IFrameSplitOperator.IsNumber(item.LineWidth)) chart.ArrawLineWidth=item.LineWidth;
         }
+        frame.ChartPaint.push(chart);
+    }
+
+    this.CreateBackgroud=function(hqChart,windowIndex,varItem,i)
+    {
+        var overlayIndex=this.OverlayIndex;
+        var frame=overlayIndex.Frame;
+        let chart=new ChartBackground();
+        chart.Canvas=hqChart.Canvas;
+        chart.Name=varItem.Name;
+        chart.ChartBorder=frame.Frame.ChartBorder;
+        chart.ChartFrame=frame.Frame;
+        chart.Identify=overlayIndex.Identify;
+
+        if (varItem.Draw && varItem.Draw.DrawData)
+        {
+            var drawData=varItem.Draw.DrawData;
+            chart.Color=drawData.Color;
+            chart.ColorAngle=drawData.Angle;
+
+            if (drawData.Data) chart.Data.Data=drawData.Data;
+        }
+
         frame.ChartPaint.push(chart);
     }
 

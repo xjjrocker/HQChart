@@ -22,6 +22,7 @@ uniapp 版本:
 老版本手动导入插件 : [https://ext.dcloud.net.cn/plugin?id=790](https://ext.dcloud.net.cn/plugin?id=790)<br>
 
 [HQChart用户使用协议](/用户协议.txt) <br>
+[HQChart商业使用说明及用户使用协议](https://blog.csdn.net/jones2000/article/details/123170153)<br>
 
 第3放数据对接案例:<br>
 源码地址:[https://github.com/jones2000/HQChart-Super](https://github.com/jones2000/HQChart-Super)<br>
@@ -236,6 +237,8 @@ React 例子:[demo-react.md](/教程/demo-react.md) <br>
 77. [HQChart使用教程85-股票复权计算](https://jones2000.blog.csdn.net/article/details/120700837)<br>
 78. [HQChart使用教程86-技术指标OX图](https://jones2000.blog.csdn.net/article/details/122635700)<br>
 79. [HQChart使用教程87-HQChart在VUE插件模式下源码调试配置](https://blog.csdn.net/jones2000/article/details/122759837)<br>
+80. [HQChart使用教程88-DRAWTEXT添加背景色及边框](https://blog.csdn.net/jones2000/article/details/123132528)<br>
+81. [HQChart使用教程89-最后一根k线倒计时功能](https://jones2000.blog.csdn.net/article/details/123674077)<br>
 
 ## 小程序教程
 1. [HQChart小程序教程1-如何快速的创建一个K线图](https://developers.weixin.qq.com/community/develop/article/doc/0006c451ac81589915b89d1c55bc13) <br>
@@ -295,6 +298,9 @@ React 例子:[demo-react.md](/教程/demo-react.md) <br>
 29. [HQChart使用教程30-K线图如何对接第3方数据29-板块字符串函数数据](https://jones2000.blog.csdn.net/article/details/118887416)<br>
 30. [HQChart使用教程30-K线图如何对接第3方数据30-即时行情数据DYNAINFO](https://jones2000.blog.csdn.net/article/details/120276612)<br>
 31. [HQChart使用教程30-K线图如何对接第3方数据31-获取指定品种的K线数据](https://blog.csdn.net/jones2000/article/details/122391707)<br>
+32. [HQChart使用教程30-K线图如何对接第3方数据32-订单流](https://jones2000.blog.csdn.net/article/details/122888661)<br>
+33. [HQChart使用教程30-K线图如何对接第3方数据33-日线叠加品种拖拽下载历史数据](https://blog.csdn.net/jones2000/article/details/123211234)<br>
+34. [HQChart使用教程30-K线图如何对接第3方数据34-分钟K线叠加品种拖拽下载历史数据](https://blog.csdn.net/jones2000/article/details/123211941)<br>
 
 
 ## 实战教程
@@ -367,6 +373,8 @@ React 例子:[demo-react.md](/教程/demo-react.md) <br>
 17. [HQChart实战教程46 - 十字光标右侧按钮点击增加刻度线](https://jones2000.blog.csdn.net/article/details/120563461)<br>
 18. [HQChart实战教程48 - 远程指标获取当前屏K线的范围](https://jones2000.blog.csdn.net/article/details/121913369)<br>
 19. [HQChart实战教程49 - 点击修改K线颜色及背景色](https://jones2000.blog.csdn.net/article/details/121938122)<br>
+20. [HQChart实战教程50 - 自定义指标栏工具按钮](https://blog.csdn.net/jones2000/article/details/122950050)<br>
+21. [HQChart实战教程51 - 自定义指标列表](https://blog.csdn.net/jones2000/article/details/123538617)<br>
 
 
 
