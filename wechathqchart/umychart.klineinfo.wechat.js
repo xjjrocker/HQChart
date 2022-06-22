@@ -11,7 +11,7 @@
 */
 
 import {
-    JSCommonResource_Global_JSChartResource as g_JSChartResource,
+    g_JSChartResource,
 } from './umychart.resource.wechat.js'
 
 var KLINE_INFO_TYPE=
@@ -68,7 +68,7 @@ JSKLineInfoMap.Get=function(id)
 
 function IKLineInfo()
 {
-    this.MaxReqeustDataCount=1000;
+    this.MaxRequestDataCount=1000;
     this.StartDate=20160101;
     this.Data;
     this.ClassName='IKLineInfo';
@@ -86,7 +86,7 @@ function IKLineInfo()
         var obj=
         { 
             Symbol:hqChart.Symbol ,
-            MaxReqeustDataCount: hqChart.MaxReqeustDataCount,            //日线数据个数
+            MaxRequestDataCount: hqChart.MaxRequestDataCount,            //日线数据个数
             MaxRequestMinuteDayCount:hqChart.MaxRequestMinuteDayCount,    //分钟数据请求的天数
             Period:hqChart.Period       //周期
         };
@@ -162,7 +162,7 @@ function InvestorInfo()
                 "symbol": [param.HQChart.Symbol],
                 "querydate":{"StartDate":this.StartDate,"EndDate":this.GetToday()},
                 "start":0,
-                "end":this.MaxReqeustDataCount,
+                "end":this.MaxRequestDataCount,
             },
             method:"post",
             dataType: "json",
@@ -232,7 +232,7 @@ function AnnouncementInfo()
                 "symbol": [param.HQChart.Symbol],
                 "querydate":{"StartDate":this.StartDate,"EndDate":this.GetToday()},
                 "start":0,
-                "end":this.MaxReqeustDataCount,
+                "end":this.MaxRequestDataCount,
             },
             method:"post",
             dataType: "json",
@@ -316,7 +316,7 @@ function PforecastInfo()
                 ],
                 "symbol": [param.HQChart.Symbol],
                 "start":0,
-                "end":this.MaxReqeustDataCount,
+                "end":this.MaxRequestDataCount,
             },
             method:"post",
             dataType: "json",
@@ -388,7 +388,7 @@ function ResearchInfo()
                 "querydate":{"StartDate":this.StartDate,"EndDate":this.GetToday()},
                 "symbol": [param.HQChart.Symbol],
                 "start":0,
-                "end":this.MaxReqeustDataCount,
+                "end":this.MaxRequestDataCount,
             },
             method:"post",
             dataType: "json",
@@ -455,7 +455,7 @@ function BlockTrading()
                 ],
                 "symbol": [param.HQChart.Symbol],
                 "start":0,
-                "end":this.MaxReqeustDataCount,
+                "end":this.MaxRequestDataCount,
             },
             method:"post",
             dataType: "json",
@@ -536,7 +536,7 @@ function TradeDetail()
                 ],
                 "symbol": [param.HQChart.Symbol],
                 "start":0,
-                "end":this.MaxReqeustDataCount,
+                "end":this.MaxRequestDataCount,
             },
             method:"post",
             dataType: "json",
@@ -621,7 +621,7 @@ function PolicyInfo()
             "condition": [
               { "item": ["date", "int32", "gte", this.StartDate, "lte", this.GetToday()] }],
             "start": 0,
-            "end": this.MaxReqeustDataCount
+            "end": this.MaxRequestDataCount
           },
           method: "post",
           dataType: "json",
@@ -771,6 +771,14 @@ function MarketEventInfo()
 }
 
 //导出统一使用JSCommon命名空间名
+export
+{
+    JSKLineInfoMap,
+    KLINE_INFO_TYPE,
+    JSMinuteInfoMap,
+};
+
+/*
 module.exports =
 {
     JSCommonKLineInfo:
@@ -785,3 +793,4 @@ module.exports =
     JSCommon_KLINE_INFO_TYPE: KLINE_INFO_TYPE,
     JSCommon_JSMinuteInfoMap: JSMinuteInfoMap,
 };
+*/

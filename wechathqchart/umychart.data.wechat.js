@@ -12,7 +12,7 @@
 
 import 
 {
-    JSCommonCoordinateData_MARKET_SUFFIX_NAME as MARKET_SUFFIX_NAME
+   MARKET_SUFFIX_NAME
 } from "./umychart.coordinatedata.wechat.js";
 
 function Guid() 
@@ -1281,6 +1281,23 @@ function ChartData()
         return result;
     }
 
+    this.GetObject=function()
+    {
+        var result=[];
+        for(var i in this.Data)
+        {
+            if (this.Data[i] && this.Data[i].Value)
+            { 
+                var item=this.Data[i].Value;
+                result[i]=item;
+            }
+            else
+                result[i]=null;
+        }
+
+        return result;
+    }
+
     this.GetPeriodSingleData=function(period)
     {
         var result=new Array();
@@ -1920,6 +1937,27 @@ var JSCHART_EVENT_ID =
     ON_DRAW_KLINE_LAST_POINT:35,          //K线图绘制回调事件,返回最后一个点的坐标
 
     ON_DRAW_COUNTDOWN:41,                 //K线倒计时
+    ON_BIND_DRAWICON:42,                  //绑定DRAWICON回调
+
+    ON_DRAW_DEAL_VOL_COLOR:43,              //成交明细 成交量颜色 (h5)
+    ON_DRAW_DEAL_TEXT:44,                   //成交明细 自定义字段 (h5)
+    ON_FILTER_DEAL_DATA:45,                 //成交明细 数据过滤回调 (h5)
+
+    ON_FILTER_REPORT_DATA:46,               //报价列表 数据过滤回调
+    ON_CLICK_REPORT_ROW:47,                 //点击报价列表
+    ON_REPORT_MARKET_STATUS:48,             //报价列表交易状态
+    ON_DBCLICK_REPORT_ROW:49,               //双击报价列表 (h5)
+    ON_RCLICK_REPORT_ROW:50,                //右键点击列表
+    ON_CLICK_REPORT_HEADER:51,              //单击表头
+    ON_RCLICK_REPORT_HEADER:52,             //右键点击表头
+    ON_REPORT_LOCAL_SORT:53,                //报价列表本地排序
+    ON_DRAW_REPORT_NAME_COLOR:54,           //报价列表股票名称列颜色
+    ON_DRAW_CUSTOM_TEXT:55,                 //报价列表自定义列
+    ON_CLICK_REPORT_TAB:56,                 //报价列表标签点击 (h5)
+    ON_CLICK_REPORT_TABMENU:57,             //报价列表标签菜单点击 (h5)
+    ON_DRAW_REPORT_FIXEDROW_TEXT:58,        //报价列表固定行绘制
+    ON_CLICK_REPORT_FIXEDROW:59,            //点击报价列表点击固定行
+    ON_RCLICK_REPORT_FIXEDROW:60,           //点击报价列表右键点击固定行
 }
 
 var HQ_DATA_TYPE=
@@ -1994,6 +2032,46 @@ function PhoneDBClick()
 }
 
 //导出统一使用JSCommon命名空间名
+var JSCommonData=
+{
+    HistoryData: HistoryData,
+    ChartData: ChartData,
+    SingleData: SingleData,
+    MinuteData: MinuteData,
+    Rect: Rect,
+    DataPlus: DataPlus,
+    JSCHART_EVENT_ID:JSCHART_EVENT_ID,
+    PhoneDBClick:PhoneDBClick,
+    HQ_DATA_TYPE:HQ_DATA_TYPE,
+    OVERLAY_STATUS_ID:OVERLAY_STATUS_ID,
+};
+
+export
+{
+    JSCommonData,
+
+    ChartData,
+    HistoryData,
+    SingleData,
+    MinuteData,
+    CUSTOM_DAY_PERIOD_START,
+    CUSTOM_DAY_PERIOD_END,
+    CUSTOM_MINUTE_PERIOD_START,
+    CUSTOM_MINUTE_PERIOD_END,
+    CUSTOM_SECOND_PERIOD_START,
+    CUSTOM_SECOND_PERIOD_END,
+    Rect,
+    DataPlus,
+    Guid,
+    ToFixedPoint,
+    ToFixedRect,
+    JSCHART_EVENT_ID,
+    PhoneDBClick,
+    HQ_DATA_TYPE,
+    OVERLAY_STATUS_ID
+};
+
+/*
 module.exports =
 {
     JSCommonData:
@@ -2031,3 +2109,4 @@ module.exports =
     JSCommon_HQ_DATA_TYPE:HQ_DATA_TYPE,
     JSCommon_OVERLAY_STATUS_ID:OVERLAY_STATUS_ID,
 };
+*/

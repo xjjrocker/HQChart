@@ -13,214 +13,146 @@
 //日志
 import { JSConsole } from "./umychart.console.wechat.js"
 
+import { JSNetwork } from "./umychart.network.wechart.js"
+
+import { JSCanvasElement } from "./umychart.element.wechart.js";
+
 //行情数据结构体 及涉及到的行情算法(复权,周期等) 
 import {
-    JSCommon_ChartData as ChartData, JSCommon_HistoryData as HistoryData,
-    JSCommon_SingleData as SingleData, JSCommon_MinuteData as MinuteData,
-    JSCommon_CUSTOM_DAY_PERIOD_START as CUSTOM_DAY_PERIOD_START,
-    JSCommon_CUSTOM_DAY_PERIOD_END as CUSTOM_DAY_PERIOD_END,
-    JSCommon_CUSTOM_MINUTE_PERIOD_START as CUSTOM_MINUTE_PERIOD_START,
-    JSCommon_CUSTOM_MINUTE_PERIOD_END as CUSTOM_MINUTE_PERIOD_END,
-    JSCommon_CUSTOM_SECOND_PERIOD_START as CUSTOM_SECOND_PERIOD_START,
-    JSCommon_CUSTOM_SECOND_PERIOD_END as CUSTOM_SECOND_PERIOD_END,
-    JSCommon_Rect as Rect,
-    JSCommon_DataPlus as DataPlus,
-    JSCommon_JSCHART_EVENT_ID as JSCHART_EVENT_ID,
-    JSCommon_PhoneDBClick as PhoneDBClick,
-    JSCommon_OVERLAY_STATUS_ID as OVERLAY_STATUS_ID,
+    ChartData, HistoryData,
+    SingleData, MinuteData,
+    CUSTOM_DAY_PERIOD_START,
+    CUSTOM_DAY_PERIOD_END,
+    CUSTOM_MINUTE_PERIOD_START,
+    CUSTOM_MINUTE_PERIOD_END,
+    CUSTOM_SECOND_PERIOD_START,
+    CUSTOM_SECOND_PERIOD_END,
+    Rect,
+    DataPlus,
+    JSCHART_EVENT_ID,
+    PhoneDBClick,
+    OVERLAY_STATUS_ID,
 } from "./umychart.data.wechat.js";
 
 import {
-    JSCommon_JSKLineInfoMap as JSKLineInfoMap, 
-    JSCommon_KLINE_INFO_TYPE as KLINE_INFO_TYPE, 
-    JSCommon_JSMinuteInfoMap as JSMinuteInfoMap,
+    JSKLineInfoMap, 
+    KLINE_INFO_TYPE, 
+    JSMinuteInfoMap,
 } from "./umychart.klineinfo.wechat.js";
 
 import 
 { 
-    JSCommonCoordinateData as JSCommonCoordinateData,
-    JSCommonCoordinateData_MARKET_SUFFIX_NAME as MARKET_SUFFIX_NAME ,
-    JSCommonCoordinateData_Global_FuturesTimeData as g_FuturesTimeData,
-    JSCommonCoordinateData_Global_NYMEXTimeData as g_NYMEXTimeData,
-    JSCommonCoordinateData_Global_COMEXTimeData as g_COMEXTimeData,
-    JSCommonCoordinateData_Global_NYBOTTimeData as g_NYBOTTimeData,
-    JSCommonCoordinateData_Global_LMETimeData as g_LMETimeData,
-    JSCommonCoordinateData_Global_CBOTTimeData as g_CBOTTimeData,
-    JSCommonCoordinateData_Global_TOCOMTimeData as g_TOCOMTimeData,
-    JSCommonCoordinateData_Global_IPETimeData as g_IPETimeData,
+    JSCommonCoordinateData,
+    MARKET_SUFFIX_NAME ,
+    g_FuturesTimeData,
+    g_NYMEXTimeData,
+    g_COMEXTimeData,
+    g_NYBOTTimeData,
+    g_LMETimeData,
+    g_CBOTTimeData,
+    g_TOCOMTimeData,
+    g_IPETimeData,
 } from "./umychart.coordinatedata.wechat.js";
 
 import { JSCommonComplier } from "./umychart.complier.wechat.js";     //通达信编译器
 import { JSCommonIndexScript } from "./umychart.index.data.wechat.js"; //系统指标定义
-import { JSCommon_HQIndexFormula as HQIndexFormula } from "./umychart.hqIndexformula.wechat.js";     //通达信编译器
+import { HQIndexFormula } from "./umychart.hqIndexformula.wechat.js";     //通达信编译器
 
 //图形库
 import {
-    JSCommonChartPaint_IChartPainting as IChartPainting, 
-    JSCommonChartPaint_ChartSingleText as ChartSingleText, 
-    JSCommonChartPaint_ChartKLine as ChartKLine,
-    JSCommonChartPaint_ChartLine as ChartLine,
-    JSCommonChartPaint_ChartSubLine as ChartSubLine,
-    JSCommonChartPaint_ChartPointDot as ChartPointDot, 
-    JSCommonChartPaint_ChartStick as ChartStick,
-    JSCommonChartPaint_ChartLineStick as ChartLineStick,
-    JSCommonChartPaint_ChartStickLine as ChartStickLine,
-    JSCommonChartPaint_ChartOverlayKLine as ChartOverlayKLine,
-    JSCommonChartPaint_ChartMinuteInfo as ChartMinuteInfo,
-    JSCommonChartPaint_ChartRectangle as ChartRectangle,
-    JSCommonChartPaint_ChartMultiText as ChartMultiText,
-    JSCommonChartPaint_ChartMultiLine as ChartMultiLine,
-    JSCommonChartPaint_ChartMultiBar as ChartMultiBar,
-    JSCommonChartPaint_ChartPie as ChartPie,
-    JSCommonChartPaint_ChartCircle as ChartCircle,
-    JSCommonChartPaint_ChartChinaMap as ChartChinaMap,
-    JSCommonChartPaint_ChartRadar as ChartRadar,
-    JSCommonChartPaint_ChartCorssCursor as ChartCorssCursor,
-    JSCommonChartPaint_ChartBuySell as ChartBuySell,
-    JSCommonChartPaint_ChartMACD as ChartMACD,
-    JSCommonChartPaint_ChartSplashPaint as ChartSplashPaint,
-    JSCommonChartPaint_ChartBackground as ChartBackground,
-    JSCommonChartPaint_ChartMinuteVolumBar as ChartMinuteVolumBar,
-    JSCommonChartPaint_ChartMultiHtmlDom as ChartMultiHtmlDom,
-    JSCommonChartPaint_ChartLock as ChartLock,
-    JSCommonChartPaint_ChartVolStick as ChartVolStick,
-    JSCommonChartPaint_ChartBand as ChartBand,
-    JSCommonChartPaint_ChartOverlayMinutePriceLine as ChartOverlayMinutePriceLine,
-    JSCommonChartPaint_ChartLineMultiData as ChartLineMultiData,
-    JSCommonChartPaint_ChartStraightLine as ChartStraightLine,
-    JSCommonChartPaint_DepthChartCorssCursor as DepthChartCorssCursor,
-    JSCommonChartPaint_ChartOrderbookDepth as ChartOrderbookDepth,
-    JSCommonChartPaint_ChartMinutePriceLine as ChartMinutePriceLine,
-    JSCommonChartPaint_ChartText as ChartText ,
-    JSCommonChartPaint_ChartStraightArea as ChartStraightArea,
+    IChartPainting, 
+    ChartSingleText, 
+    ChartKLine,
+    ChartLine,
+    ChartSubLine,
+    ChartPointDot, 
+    ChartStick,
+    ChartLineStick,
+    ChartStickLine,
+    ChartOverlayKLine,
+    ChartMinuteInfo,
+    ChartRectangle,
+    ChartMultiText,
+    ChartMultiLine,
+    ChartMultiBar,
+    ChartPie,
+    ChartCircle,
+    ChartChinaMap,
+    ChartRadar,
+    ChartCorssCursor,
+    ChartBuySell,
+    ChartMACD,
+    ChartSplashPaint,
+    ChartBackground,
+    ChartMinuteVolumBar,
+    ChartMultiHtmlDom,
+    ChartLock,
+    ChartVolStick,
+    ChartBand,
+    ChartOverlayMinutePriceLine,
+    ChartLineMultiData,
+    ChartStraightLine,
+    DepthChartCorssCursor,
+    ChartOrderbookDepth,
+    ChartMinutePriceLine,
+    ChartText,
+    ChartStraightArea,
 } from "./umychart.chartpaint.wechat.js";
 
 //扩展画法图形库
 import {
-    JSCommonExtendChartPaint_IExtendChartPainting as IExtendChartPainting,
-    JSCommonExtendChartPaint_KLineTooltipPaint as KLineTooltipPaint, 
-    JSCommonExtendChartPaint_BarragePaint as BarragePaint,
-    JSCommonExtendChartPaint_MinuteTooltipPaint as MinuteTooltipPaint,
-    JSCommonExtendChartPaint_BackgroundPaint as BackgroundPaint,
+    IExtendChartPainting,
+    KLineTooltipPaint, 
+    BarragePaint,
+    MinuteTooltipPaint,
+    BackgroundPaint,
 } from "./umychart.extendchart.wechat.js";
 
 import {
-    JSCommonIndex_IndexInfo as IndexInfo,
-    JSCommonIndex_BaseIndex as BaseIndex,
-    JSCommonIndex_ScriptIndex as ScriptIndex,
-    JSCommonIndex_APIScriptIndex as APIScriptIndex,
+    IndexInfo,
+    BaseIndex,
+    ScriptIndex,
+    APIScriptIndex,
 } from './umychart.index.wechat.js'
 
 import{
-    JSCommonResource_Global_JSChartResource as g_JSChartResource,
-    JSCommonResource_JSCHART_LANGUAGE_ID as JSCHART_LANGUAGE_ID,
-    JSCommonResource_Global_JSChartLocalization as g_JSChartLocalization,
+    g_JSChartResource,
+    JSCHART_LANGUAGE_ID,
+    g_JSChartLocalization,
 } from './umychart.resource.wechat.js'
-
-import { JSCommonUniApp } from './umychart.uniapp.canvas.helper.js'
 
 import 
 { 
-    JSCommonSplit_CoordinateInfo as CoordinateInfo,
-    JSCommonSplit_IFrameSplitOperator as IFrameSplitOperator,
-    JSCommonSplit_FrameSplitKLinePriceY as FrameSplitKLinePriceY,
-    JSCommonSplit_FrameSplitY as FrameSplitY,
-    JSCommonSplit_FrameSplitKLineX as FrameSplitKLineX,
-    JSCommonSplit_FrameSplitMinutePriceY as FrameSplitMinutePriceY,
-    JSCommonSplit_FrameSplitMinuteX as FrameSplitMinuteX,
-    JSCommonSplit_FrameSplitXData as FrameSplitXData,
-    JSCommonSplit_SplitData as SplitData,
-    JSCommonSplit_PriceSplitData as PriceSplitData,
-    JSCommonSplit_FrameSplitXDepth as FrameSplitXDepth,
+    CoordinateInfo,
+    IFrameSplitOperator,
+    FrameSplitKLinePriceY,
+    FrameSplitY,
+    FrameSplitKLineX,
+    FrameSplitMinutePriceY,
+    FrameSplitMinuteX,
+    FrameSplitXData,
+    SplitData,
+    PriceSplitData,
+    FrameSplitXDepth,
 
-    JSCommonFormat_IChangeStringFormat as IChangeStringFormat,
-    JSCommonFormat_HQPriceStringFormat as HQPriceStringFormat,
-    JSCommonFormat_HQDateStringFormat as HQDateStringFormat,
-    JSCommonFormat_HQMinuteTimeStringFormat as HQMinuteTimeStringFormat,
-    JSCommonFormat_Global_DataFormat as g_DivTooltipDataForamt,
+    IChangeStringFormat,
+    HQPriceStringFormat,
+    HQDateStringFormat,
+    HQMinuteTimeStringFormat,
+    g_DivTooltipDataForamt,
 } from './umychart.framesplit.wechat.js'
 
 import
 {
-    JSCommonChartTitle_IChartTitlePainting as IChartTitlePainting, 
-    JSCommonChartTitle_DynamicKLineTitlePainting as DynamicKLineTitlePainting,
-    JSCommonChartTitle_DynamicMinuteTitlePainting as DynamicMinuteTitlePainting,
-    JSCommonChartTitle_DynamicChartTitlePainting as DynamicChartTitlePainting,
-    JSCommonChartTitle_DynamicTitleData as DynamicTitleData,
-    JSCommonChartTitle_STRING_FORMAT_TYPE as STRING_FORMAT_TYPE,
+    IChartTitlePainting, 
+    DynamicKLineTitlePainting,
+    DynamicMinuteTitlePainting,
+    DynamicChartTitlePainting,
+    DynamicTitleData,
+    STRING_FORMAT_TYPE,
 } from './umychart.charttitle.wechat.js'
 
 
-function JSCanvasElement() 
-{
-    this.Height;
-    this.Width;
-    this.ID;
-    this.WebGLCanvas;
-    this.IsUniApp=false;
-    this.CanvasNode=null;
-    this.ComponentObject=null;  //在自定义组件下，当前组件实例的this，表示在这个自定义组件下查找拥有 canvas-id 的 canvas ，如果省略则不在任何自定义组件内查找
-
-    //获取画布
-    this.GetContext = function () 
-	  {
-        var canvas;
-        if (this.CanvasNode && this.CanvasNode.node) 
-        {
-            const width = this.CanvasNode.width;
-            const height = this.CanvasNode.height;
-
-            var node = this.CanvasNode.node;
-            node._height = height;
-            node._width = width;
-            JSConsole.Chart.Log("[JSCanvasElement::GetContext] create by getContext('2d')");
-            canvas = node.getContext('2d');
-            const dpr = wx.getSystemInfoSync().pixelRatio;
-            node.width = width * dpr;
-            node.height = height * dpr;
-            canvas.restore();
-            canvas.save();
-            canvas.scale(dpr, dpr);
-            canvas.draw = (bDraw, callback) => { if (callback) callback(); };
-            canvas.DomNode = node;
-        }
-        else 
-        {
-            if (this.ComponentObject)   //小程序自定义组件
-                canvas=wx.createCanvasContext(this.ID,this.ComponentObject);
-            else
-                canvas=wx.createCanvasContext(this.ID);
-        }
-
-        if (this.IsUniApp)
-        {
-            JSConsole.Chart.Log('[JSCanvasElement::GetContext] measureText() => JSUniAppCanvasHelper.MeasureText()');
-            canvas.measureText = function (text) //uniapp 计算宽度需要自己计算
-            {
-                var width = JSCommonUniApp.JSUniAppCanvasHelper.MeasureText(text, canvas);
-                return { width: width };
-            }
-			
-            canvas.fillText_backup=canvas.fillText;	//uniapp fillText 填了最大长度就会失真, 所以去掉
-            canvas.fillText=function(text,x,y,maxWidth)
-            {
-                canvas.fillText_backup(text,x,y);
-            }
-        }
-
-        return canvas;
-    }
-
-    this.GetWebGLCanvas=function(id)
-    {
-        var self=this;
-        const query = wx.createSelectorQuery();
-        query.select(id).node().exec((res) => {
-            JSConsole.Chart.Log('[JSCanvasElement::GetWebGLCanvas] res ', res)
-            self.WebGLCanvas = res[0].node;
-        })
-    }
-}
 
 function JSChart(element) 
 {
@@ -270,6 +202,35 @@ function JSChart(element)
         }
     }
 
+    this.SetChartBorder=function(chart, option)
+    {
+        if (!option.Border) return;
+        
+        var item=option.Border;
+        if (IFrameSplitOperator.IsNumber(option.Border.Left)) chart.Frame.ChartBorder.Left=option.Border.Left;
+        else option.Border.Left=chart.Frame.ChartBorder.Left;
+        if (IFrameSplitOperator.IsNumber(option.Border.Right)) chart.Frame.ChartBorder.Right=option.Border.Right;
+        else option.Border.Right=chart.Frame.ChartBorder.Right;
+        if (IFrameSplitOperator.IsNumber(option.Border.Top)) chart.Frame.ChartBorder.Top=option.Border.Top;
+        else option.Border.Top=chart.Frame.ChartBorder.Top;
+        if (IFrameSplitOperator.IsNumber(option.Border.Bottom)) chart.Frame.ChartBorder.Bottom=option.Border.Bottom;
+        else option.Border.Bottom=chart.Frame.ChartBorder.Bottom;
+
+        if (item.AutoLeft) 
+        {
+            chart.Frame.AutoLeftBorder={ };
+            if (IFrameSplitOperator.IsNumber(item.AutoLeft.Blank)) chart.Frame.AutoLeftBorder.Blank=item.AutoLeft.Blank;
+            if (IFrameSplitOperator.IsNumber(item.AutoLeft.MinWidth)) chart.Frame.AutoLeftBorder.MinWidth=item.AutoLeft.MinWidth;
+        }
+        
+        if (item.AutoRight) 
+        {
+            chart.Frame.AutoRightBorder={ };
+            if (IFrameSplitOperator.IsNumber(item.AutoRight.Blank)) chart.Frame.AutoRightBorder.Blank=item.AutoRight.Blank;
+            if (IFrameSplitOperator.IsNumber(item.AutoRight.MinWidth)) chart.Frame.AutoRightBorder.MinWidth=item.AutoRight.MinWidth;
+        }
+    }
+
     //历史K线图
     this.CreateKLineChartContainer = function (option) 
     {
@@ -284,7 +245,7 @@ function JSChart(element)
             if (option.KLine.DragMode >= 0) chart.DragMode = option.KLine.DragMode;
             if (option.KLine.Right >= 0) chart.Right = option.KLine.Right;
             if (option.KLine.Period >= 0) chart.Period = option.KLine.Period;
-            if (option.KLine.MaxReqeustDataCount > 0) chart.MaxReqeustDataCount = option.KLine.MaxReqeustDataCount;
+            if (option.KLine.MaxRequestDataCount > 0) chart.MaxRequestDataCount = option.KLine.MaxRequestDataCount;
             if (option.KLine.Info && option.KLine.Info.length > 0) chart.SetKLineInfo(option.KLine.Info, false);
             if (option.KLine.Policy && option.KLine.Policy.length > 0) chart.SetPolicyInfo(option.KLine.Policy, false);
             if (option.KLine.KLineDoubleClick == false) chart.MinuteDialog = this.MinuteDialog = null;
@@ -312,18 +273,8 @@ function JSChart(element)
         //创建子窗口
         chart.Create(option.Windows.length);
 
-        if (option.Border) 
-        {
-            var item=option.Border;
-            if (!isNaN(option.Border.Left)) chart.Frame.ChartBorder.Left = option.Border.Left;
-            if (!isNaN(option.Border.Right)) chart.Frame.ChartBorder.Right = option.Border.Right;
-            if (!isNaN(option.Border.Top)) chart.Frame.ChartBorder.Top = option.Border.Top;
-            if (!isNaN(option.Border.Bottom)) chart.Frame.ChartBorder.Bottom = option.Border.Bottom;
-
-            if (item.AutoLeft) chart.Frame.AutoLeftBorder=item.AutoLeft;
-            if (item.AutoRight) chart.Frame.AutoRightBorder=item.AutoRight;
-        }
-
+        this.SetChartBorder(chart, option);
+    
         if (option.KLine) 
         {
             if (option.KLine.PageSize > 0) 
@@ -357,6 +308,8 @@ function JSChart(element)
             if (IFrameSplitOperator.IsNumber(option.CorssCursorInfo.HPenType)) chart.ChartCorssCursor.HPenType = option.CorssCursorInfo.HPenType;
             if (option.CorssCursorInfo.VPenType > 0) chart.ChartCorssCursor.VPenType = option.CorssCursorInfo.VPenType;
             if (IFrameSplitOperator.IsNumber(item.DateFormatType)) chart.ChartCorssCursor.StringFormatX.DateFormatType=item.DateFormatType;
+            if (IFrameSplitOperator.IsNumber(item.PriceFormatType)) chart.ChartCorssCursor.StringFormatY.PriceFormatType=item.PriceFormatType;
+            if (IFrameSplitOperator.IsNumber(item.DataFormatType)) chart.ChartCorssCursor.StringFormatY.DataFormatType=item.DataFormatType;
         }
 
         if (typeof (option.UpdateUICallback) == 'function') //数据到达回调
@@ -383,7 +336,11 @@ function JSChart(element)
                 if (item.TopSpace >= 0) chart.Frame.SubFrame[i].Frame.ChartBorder.TopSpace = item.TopSpace;
                 if (item.BottomSpace >= 0) chart.Frame.SubFrame[i].Frame.ChartBorder.BottomSpace = item.BottomSpace;
                 if (item.Custom) chart.Frame.SubFrame[i].Frame.YSplitOperator.Custom = item.Custom;
-                if (IFrameSplitOperator.IsNumber(item.SplitType)) chart.Frame.SubFrame[i].Frame.YSplitOperator.SplitType = item.SplitType;
+                if (IFrameSplitOperator.IsNumber(item.SplitType)) 
+                {
+                    chart.Frame.SubFrame[i].Frame.YSplitOperator.SplitType = item.SplitType;
+                    chart.Frame.SubFrame[i].Frame.YSplitOperator.DefaultSplitType=item.SplitType;
+                }
                 if (IFrameSplitOperator.IsNumber(item.FloatPrecision)) chart.Frame.SubFrame[i].Frame.YSplitOperator.FloatPrecision = item.FloatPrecision;   //强制指定小数位数(主图有效)
                 if (IFrameSplitOperator.IsNumber(item.BorderLine)) chart.Frame.SubFrame[i].Frame.BorderLine=item.BorderLine;
                 if (IFrameSplitOperator.IsNumber(item.YTextBaseline)) chart.Frame.SubFrame[i].Frame.YTextBaseline=item.YTextBaseline;
@@ -503,7 +460,7 @@ function JSChart(element)
       if (option.KLine.DragMode >= 0) chart.DragMode = option.KLine.DragMode;
       if (option.KLine.Right >= 0) chart.Right = option.KLine.Right;
       if (option.KLine.Period >= 0) chart.Period = option.KLine.Period;
-      if (option.KLine.MaxReqeustDataCount > 0) chart.MaxReqeustDataCount = option.KLine.MaxReqeustDataCount;
+      if (option.KLine.MaxRequestDataCount > 0) chart.MaxRequestDataCount = option.KLine.MaxRequestDataCount;
       if (option.KLine.Info && option.KLine.Info.length > 0) chart.SetKLineInfo(option.KLine.Info, false);
       if (option.KLine.KLineDoubleClick == false) chart.MinuteDialog = this.MinuteDialog = null;
       if (option.KLine.PageSize > 0) chart.PageSize = option.KLine.PageSize;
@@ -609,36 +566,34 @@ function JSChart(element)
         if (option.IsFullDraw == true) chart.IsFullDraw = option.IsFullDraw;
         if (option.CorssCursorInfo)     //十字光标设置
         {
+            var item=option.CorssCursorInfo;
             if (!isNaN(option.CorssCursorInfo.Left)) chart.ChartCorssCursor.ShowTextMode.Left = option.CorssCursorInfo.Left;
             if (!isNaN(option.CorssCursorInfo.Right)) chart.ChartCorssCursor.ShowTextMode.Right = option.CorssCursorInfo.Right;
             if (!isNaN(option.CorssCursorInfo.Bottom)) chart.ChartCorssCursor.ShowTextMode.Bottom = option.CorssCursorInfo.Bottom;
             if (option.CorssCursorInfo.IsShowCorss === false) chart.ChartCorssCursor.IsShowCorss = option.CorssCursorInfo.IsShowCorss;
             if (IFrameSplitOperator.IsBool(option.CorssCursorInfo.IsFixXLastTime)) chart.ChartCorssCursor.IsFixXLastTime=option.CorssCursorInfo.IsFixXLastTime;
+            if (IFrameSplitOperator.IsNumber(item.PriceFormatType)) chart.ChartCorssCursor.StringFormatY.PriceFormatType=item.PriceFormatType;
+            if (IFrameSplitOperator.IsNumber(item.DataFormatType)) chart.ChartCorssCursor.StringFormatY.DataFormatType=item.DataFormatType;
         }
 
         if (option.MinuteInfo) chart.CreateMinuteInfo(option.MinuteInfo);
         if (option.DayCount > 1) chart.DayCount = option.DayCount;
 
-        if (option.Border) 
-        {
-            var item=option.Border;
-            if (!isNaN(option.Border.Left)) chart.Frame.ChartBorder.Left = option.Border.Left;
-            if (!isNaN(option.Border.Right)) chart.Frame.ChartBorder.Right = option.Border.Right;
-            if (!isNaN(option.Border.Top)) chart.Frame.ChartBorder.Top = option.Border.Top;
-            if (!isNaN(option.Border.Bottom)) chart.Frame.ChartBorder.Bottom = option.Border.Bottom;
-
-            if (item.AutoLeft) chart.Frame.AutoLeftBorder=item.AutoLeft;
-            if (item.AutoRight) chart.Frame.AutoRightBorder=item.AutoRight;
-        }
+        this.SetChartBorder(chart, option);
 
         if (option.Frame) 
         {
-            for (var i in option.Frame) 
+            for (var i=0 ;i<option.Frame.length;++i) 
             {
                 var item = option.Frame[i];
                 if (!chart.Frame.SubFrame[i]) continue;
                 if (item.SplitCount) chart.Frame.SubFrame[i].Frame.YSplitOperator.SplitCount = item.SplitCount;
                 if (item.StringFormat) chart.Frame.SubFrame[i].Frame.YSplitOperator.StringFormat = item.StringFormat;
+                if (IFrameSplitOperator.IsNumber(item.SplitType)) 
+                {
+                    chart.Frame.SubFrame[i].Frame.YSplitOperator.SplitType=item.SplitType;
+                    chart.Frame.SubFrame[i].Frame.YSplitOperator.DefaultSplitType=item.SplitType;
+                }
                 if (item.XMessageAlign == 'bottom') chart.Frame.SubFrame[i].Frame.XMessageAlign = item.XMessageAlign;
                 if (item.IsShowLeftText === false || item.IsShowLeftText===true ) chart.Frame.SubFrame[i].Frame.IsShowYText[0] = item.IsShowLeftText;            //显示左边刻度
                 if (item.IsShowRightText === false || item.IsShowRightText===true) chart.Frame.SubFrame[i].Frame.IsShowYText[1] = item.IsShowRightText;         //显示右边刻度
@@ -710,18 +665,24 @@ function JSChart(element)
         let scriptData = new JSCommonIndexScript.JSIndexScript();
         for (var i=0; i<option.Windows.length; ++i)   //分钟数据指标从第3个指标窗口设置
         {
+            var index=i+2;
             var item = option.Windows[i];
             if (item.Script) 
             {
-                chart.WindowIndex[2 + parseInt(i)] = new ScriptIndex(item.Name, item.Script, item.Args, item);    //脚本执行
+                chart.WindowIndex[2+i] = new ScriptIndex(item.Name, item.Script, item.Args, item);    //脚本执行
+            }
+            else if (item.API)  //使用API挂接指标数据 API:{ Name:指标名字, Script:指标脚本可以为空, Args:参数可以为空, Url:指标执行地址 }
+            {
+                var apiItem = item.API;
+                chart.WindowIndex[2+i] = new APIScriptIndex(apiItem.Name, apiItem.Script, apiItem.Args, item);
             }
             else 
             {
                 var indexItem = JSIndexMap.Get(item.Index);
                 if (indexItem) 
                 {
-                    chart.WindowIndex[2 + parseInt(i)] = indexItem.Create();       //创建子窗口的指标
-                    chart.CreateWindowIndex(2 + parseInt(i));
+                    chart.WindowIndex[2+i] = indexItem.Create();       //创建子窗口的指标
+                    chart.CreateWindowIndex(index);
                 }
                 else 
                 {
@@ -731,13 +692,15 @@ function JSChart(element)
                     if (item.Args) args = item.Args;
                     if (item.Lock) indexInfo.Lock = item.Lock;
                     if (item.TitleFont) indexInfo.TitleFont=item.TitleFont;
-                    chart.WindowIndex[2 + parseInt(i)] = new ScriptIndex(indexInfo.Name, indexInfo.Script, args, indexInfo);    //脚本执行
-                    if (item.StringFormat > 0) chart.WindowIndex[2 + parseInt(i)].StringFormat = item.StringFormat;
-                    if (item.FloatPrecision >= 0) chart.WindowIndex[2 + parseInt(i)].FloatPrecision = item.FloatPrecision;
+                    chart.WindowIndex[2+i] = new ScriptIndex(indexInfo.Name, indexInfo.Script, args, indexInfo);    //脚本执行
+                    if (item.StringFormat > 0) chart.WindowIndex[index].StringFormat = item.StringFormat;
+                    if (item.FloatPrecision >= 0) chart.WindowIndex[index].FloatPrecision = item.FloatPrecision;
                 }
             }
 
-            if (!isNaN(item.TitleHeight)) chart.Frame.SubFrame[2 + parseInt(i)].Frame.ChartBorder.TitleHeight = item.TitleHeight;   //指标标题高度
+            if (!isNaN(item.TitleHeight)) chart.Frame.SubFrame[index].Frame.ChartBorder.TitleHeight = item.TitleHeight;   //指标标题高度
+            if (IFrameSplitOperator.IsBool(item.IsDrawTitleBG))  chart.Frame.SubFrame[index].Frame.IsDrawTitleBG=item.IsDrawTitleBG;
+            if (IFrameSplitOperator.IsNumber(item.YSplitType)) chart.Frame.SubFrame[index].Frame.YSplitOperator.SplitType=item.YSplitType;
         }
 
         return chart;
@@ -828,7 +791,7 @@ function JSChart(element)
         {
             if (option.KLine.Right >= 0) chart.Right = option.KLine.Right;
             if (option.KLine.Period >= 0) chart.Period = option.KLine.Period;
-            if (option.KLine.MaxReqeustDataCount > 0) chart.MaxReqeustDataCount = option.KLine.MaxReqeustDataCount;
+            if (option.KLine.MaxRequestDataCount > 0) chart.MaxRequestDataCount = option.KLine.MaxRequestDataCount;
             if (option.KLine.Info && option.KLine.Info.length > 0) chart.SetKLineInfo(option.KLine.Info, false);
             if (option.KLine.PageSize > 0) chart.PageSize = option.KLine.PageSize;
             if (option.KLine.IsShowTooltip == false) chart.IsShowTooltip = false;
@@ -848,17 +811,7 @@ function JSChart(element)
         //创建子窗口
         chart.Create(option.Windows.length);
 
-        if (option.Border) 
-        {
-            var item=option.Border;
-            if (!isNaN(option.Border.Left)) chart.Frame.ChartBorder.Left = option.Border.Left;
-            if (!isNaN(option.Border.Right)) chart.Frame.ChartBorder.Right = option.Border.Right;
-            if (!isNaN(option.Border.Top)) chart.Frame.ChartBorder.Top = option.Border.Top;
-            if (!isNaN(option.Border.Bottom)) chart.Frame.ChartBorder.Bottom = option.Border.Bottom;
-
-            if (item.AutoLeft) chart.Frame.AutoLeftBorder=item.AutoLeft;
-            if (item.AutoRight) chart.Frame.AutoRightBorder=item.AutoRight;
-        }
+        this.SetChartBorder(chart, option);
 
         if (option.ExtendChart) //创建扩展画法
         {
@@ -1505,7 +1458,7 @@ function JSChartContainer(uielement)
             var url=`${atob(value)}?width=${width}&height=${height}&type=uniapp`;
             if (JSChart.LastVersion!=null) return;  //只请求一次
 
-            wx.request({
+            JSNetwork.HttpRequest({
                 url: url,
                 method:"get",
                 dataType: "json",
@@ -3176,26 +3129,33 @@ function IChartFramePainting()
         }   
     }
 
-  //设施上锁
-  this.SetLock = function (lockData) {
-    if (!lockData)  //空数据不上锁
+    //设施上锁
+    this.SetLock = function (lockData) 
     {
-      this.IsLocked = false;
-      return;
+        if (!lockData)  //空数据不上锁
+        {
+            this.IsLocked = false;
+            return;
+        }
+
+        this.IsLocked = true;
+        if (!this.LockPaint) this.LockPaint = new ChartLock();    //创建锁
+        if (lockData.Callback) this.LockPaint.Callback = lockData.Callback;       //回调
+        if (lockData.IndexName) this.LockPaint.IndexName = lockData.IndexName;    //指标名字
+        if (lockData.ID) this.LockPaint.LockID = lockData.ID;                     //锁ID
+        if (lockData.BG) this.LockPaint.BGColor = lockData.BG;                    //背景色 
+        if (lockData.Text) this.LockPaint.Title = lockData.Text;
+        if (lockData.TextColor) this.LockPaint.TextColor = lockData.TextColor;
+        if (lockData.Font) this.LockPaint.Font = lockData.Font;
+        if (lockData.Count) this.LockPaint.LockCount = lockData.Count;
     }
 
-    this.IsLocked = true;
-    if (!this.LockPaint) this.LockPaint = new ChartLock();    //创建锁
-
-    if (lockData.Callback) this.LockPaint.Callback = lockData.Callback;       //回调
-    if (lockData.IndexName) this.LockPaint.IndexName = lockData.IndexName;    //指标名字
-    if (lockData.ID) this.LockPaint.LockID = lockData.ID;                     //锁ID
-    if (lockData.BG) this.LockPaint.BGColor = lockData.BG;                    //背景色 
-    if (lockData.Text) this.LockPaint.Title = lockData.Text;
-    if (lockData.TextColor) this.LockPaint.TextColor = lockData.TextColor;
-    if (lockData.Font) this.LockPaint.Font = lockData.Font;
-    if (lockData.Count) this.LockPaint.LockCount = lockData.Count;
-  }
+    this.GetLockRect=function()
+    {
+        if (!this.IsLocked) return null;
+        if (!this.LockPaint) return null; 
+        return this.LockPaint.LockRect;
+    }
 }
 
 
@@ -7074,14 +7034,14 @@ function KLineChartContainer(uielement)
     this.IsApiPeriod = false;             //使用API计算周期
     this.Right = 0;                       //复权 0 不复权 1 前复权 2 后复权
     this.SourceData;                      //原始的历史数据
-    this.MaxReqeustDataCount = 3000;      //数据个数
+    this.MaxRequestDataCount = 3000;      //数据个数
     this.MaxRequestMinuteDayCount = 5;    //分钟数据请求的天数
     this.PageSize = 200;                  //每页数据个数
     this.KLineDrawType = 0;               //0=K线 1=收盘价线 2=美国线
     this.LoadDataSplashTitle = '下载历史数据';
     this.IsAutoUpdate = false;                    //是否自动更新行情数据
     this.AutoUpdateFrequency = 30000;             //30秒更新一次数据
-    this.AutoUpdateTimer;                         //自动定时器
+    this.AutoUpdateTimer=null;                         //自动定时器
     this.RightSpaceCount=1;
     this.SourceDataLimit = new Map();     //每个周期缓存数据最大个数 key=周期 value=最大个数  
     this.IsZoomLockRight=false; 
@@ -7611,7 +7571,7 @@ function KLineChartContainer(uielement)
                     Url: self.KLineApiUrl, Type: 'POST',
                     Data: 
                     { 
-                        symbol: self.Symbol, count: self.MaxReqeustDataCount, field: ["name", "symbol", "yclose", "open", "price", "high", "low", "vol"] ,
+                        symbol: self.Symbol, count: self.MaxRequestDataCount, field: ["name", "symbol", "yclose", "open", "price", "high", "low", "vol"] ,
                         period:this.Period,
                         right:this.Right
                     }
@@ -7629,14 +7589,14 @@ function KLineChartContainer(uielement)
             if (obj.PreventDefault == true) return;   //已被上层替换,不调用默认的网络请求
         }
 
-        wx.request({
+        JSNetwork.HttpRequest({
         url: this.KLineApiUrl,
         data:
         {
             "field": ["name","symbol","yclose","open","price","high","low","vol"],
             "symbol": self.Symbol,
             "start": -1,
-            "count": self.MaxReqeustDataCount
+            "count": self.MaxRequestDataCount
         },
         method: 'POST',
         dataType: 'json',
@@ -7763,7 +7723,7 @@ function KLineChartContainer(uielement)
             if (obj.PreventDefault == true) return;   //已被上层替换,不调用默认的网络请求
         }
 
-        wx.request({
+        JSNetwork.HttpRequest({
             url: this.MinuteKLineApiUrl,
             data:
             {
@@ -7884,7 +7844,7 @@ function KLineChartContainer(uielement)
             if (obj.PreventDefault == true) return;   //已被上层替换,不调用默认的网络请求
         }
 
-        wx.request({
+        JSNetwork.HttpRequest({
             url: this.RealtimeApiUrl,
             data:
             {
@@ -8023,7 +7983,7 @@ function KLineChartContainer(uielement)
             if (obj.PreventDefault == true) return;   //已被上层替换,不调用默认的网络请求
         }
 
-        wx.request({
+        JSNetwork.HttpRequest({
             url: this.RealtimeApiUrl,
             data:
             {
@@ -8205,6 +8165,17 @@ function KLineChartContainer(uielement)
         return false;
     }
 
+    this.ClearIndexPaint=function() //清空指标
+    {
+        if (this.Frame && this.Frame.SubFrame)
+        {
+            for(var i=0;i<this.Frame.SubFrame.length;++i)
+            {
+                this.DeleteIndexPaint(i, true);
+            }
+        }
+    }
+
     //周期切换
     this.ChangePeriod = function (period, option) 
     {
@@ -8272,6 +8243,7 @@ function KLineChartContainer(uielement)
 
         if (ChartData.IsDayPeriod(this.Period, true)) 
         {
+            this.ClearIndexPaint();
             this.CancelAutoUpdate();                    //先停止更新
             this.AutoUpdateEvent(false,"KLineChartContainer::ChangePeriod");
             this.RequestHistoryData();                  //请求日线数据
@@ -8279,6 +8251,7 @@ function KLineChartContainer(uielement)
         }
         else if (ChartData.IsMinutePeriod(this.Period, true) || ChartData.IsSecondPeriod(this.Period))
         {
+            this.ClearIndexPaint();
             this.CancelAutoUpdate();                    //先停止更新
             this.AutoUpdateEvent(false,"KLineChartContainer::ChangePeriod");
             this.ReqeustHistoryMinuteData();            //请求分钟数据
@@ -8319,28 +8292,39 @@ function KLineChartContainer(uielement)
         }
     }
 
-  //删除某一个窗口的指标
-  this.DeleteIndexPaint = function (windowIndex) {
-    let paint = new Array();  //踢出当前窗口的指标画法
-    for (let i in this.ChartPaint) {
-      let item = this.ChartPaint[i];
+  //删除某一个窗口的指标 bCallDestory=是否调用图形销毁函数
+    this.DeleteIndexPaint = function (windowIndex, bCallDestroy) 
+    {
+        let paint = new Array();  //踢出当前窗口的指标画法
+        for (var i=0;i<this.ChartPaint.length; ++i) 
+        {
+            let item = this.ChartPaint[i];
+            if (i == 0 || item.ChartFrame != this.Frame.SubFrame[windowIndex].Frame)
+            {
+                paint.push(item);
+            }
+            else
+            {
+                if (bCallDestroy===true) 
+                {
+                    if (item && item.OnDestroy) item.OnDestroy();   //图形销毁
+                }
+            }
+        }
 
-      if (i == 0 || item.ChartFrame != this.Frame.SubFrame[windowIndex].Frame)
-        paint.push(item);
+        var subFrame=this.Frame.SubFrame[windowIndex].Frame;
+        subFrame.YSpecificMaxMin = null;          //清空指定最大最小值
+        subFrame.IsLocked = false;                //解除上锁
+        subFrame.YSplitScale = null;              //清空固定刻度
+        subFrame.YSplitOperator.SplitType=subFrame.YSplitOperator.DefaultSplitType;  //还原Y坐标分割模式
+
+        this.ChartPaint = paint;
+
+        //清空东条标题
+        var titleIndex = windowIndex + 1;
+        this.TitlePaint[titleIndex].Data = [];
+        this.TitlePaint[titleIndex].Title = null;
     }
-
-    
-    this.Frame.SubFrame[windowIndex].Frame.YSpecificMaxMin = null;          //清空指定最大最小值
-    this.Frame.SubFrame[windowIndex].Frame.IsLocked = false;                //解除上锁
-    this.Frame.SubFrame[windowIndex].Frame.YSplitScale = null;              //清空固定刻度
-
-    this.ChartPaint = paint;
-
-    //清空东条标题
-    var titleIndex = windowIndex + 1;
-    this.TitlePaint[titleIndex].Data = [];
-    this.TitlePaint[titleIndex].Title = null;
-  }
 
   
     this.ShowKLine = function (isShow) //显示隐藏主图K线
@@ -8413,7 +8397,7 @@ function KLineChartContainer(uielement)
     //切换成 脚本指标
     this.ChangeScriptIndex = function (windowIndex, indexData) 
     {
-        this.DeleteIndexPaint(windowIndex);
+        this.DeleteIndexPaint(windowIndex, true);
         this.WindowIndex[windowIndex] = new ScriptIndex(indexData.Name, indexData.Script, indexData.Args, indexData);    //脚本执行
 
         var bindData = this.ChartPaint[0].Data;
@@ -8427,7 +8411,7 @@ function KLineChartContainer(uielement)
     //切换api指标
     this.ChangeAPIIndex = function (windowIndex, indexData) 
     {
-        this.DeleteIndexPaint(windowIndex);
+        this.DeleteIndexPaint(windowIndex, true);
         //使用API挂接指标数据 API:{ Name:指标名字, Script:指标脚本可以为空, Args:参数可以为空, Url:指标执行地址 }
         var apiItem = indexData.API;
         this.WindowIndex[windowIndex] = new APIScriptIndex(apiItem.Name, apiItem.Script, apiItem.Args, indexData);
@@ -8567,7 +8551,7 @@ function KLineChartContainer(uielement)
         //清空所有的指标图型
         for (var i = 0; i < currentLength; ++i) 
         {
-            this.DeleteIndexPaint(i);
+            this.DeleteIndexPaint(i, true);
             var frame = this.Frame.SubFrame[i];
             frame.YSpecificMaxMin = null;
             frame.IsLocked = false;
@@ -8692,7 +8676,7 @@ function KLineChartContainer(uielement)
         if (id>=this.Frame.SubFrame.length) return;
 
         var delFrame=this.Frame.SubFrame[id].Frame;
-        this.DeleteIndexPaint(id);
+        this.DeleteIndexPaint(id, true);
         this.Frame.SubFrame.splice(id,1);
         this.WindowIndex.splice(id,1);
         this.TitlePaint.splice(id+1,1); //删除对应的动态标题
@@ -8910,11 +8894,7 @@ function KLineChartContainer(uielement)
         this.Symbol = symbol;
         if (IsIndexSymbol(symbol)) this.Right = 0;    //指数没有复权
 
-        if (this.Frame && this.Frame.SubFrame) //清空指标
-        {
-            for (var i = 0; i < this.Frame.SubFrame.length; ++i) 
-                this.DeleteIndexPaint(i);
-        }
+        this.ClearIndexPaint();
 
         if (ChartData.IsDayPeriod(this.Period, true)) 
         {
@@ -8959,7 +8939,7 @@ function KLineChartContainer(uielement)
             var infoItem = JSKLineInfoMap.Get(aryInfo[i]);
             if (!infoItem) continue;
             var item = infoItem.Create();
-            item.MaxReqeustDataCount = this.MaxReqeustDataCount;
+            item.MaxRequestDataCount = this.MaxRequestDataCount;
             this.ChartInfo.push(item);
         }
 
@@ -8973,7 +8953,7 @@ function KLineChartContainer(uielement)
         if (!infoItem) return;
         var policyInfo = infoItem.Create();
         policyInfo.SetPolicyList(aryPolicy);
-        policyInfo.MaxReqeustDataCount = this.MaxReqeustDataCount;
+        policyInfo.MaxRequestDataCount = this.MaxRequestDataCount;
         this.ChartInfo.push(policyInfo);
 
         if (bUpdate == true) this.ReqeustKLineInfoData();
@@ -8997,7 +8977,7 @@ function KLineChartContainer(uielement)
 
     this.GetRequestDataCount = function () //K线请求数据个数　(由于可以拖拽下载历史数据,所有原来固定个数的就不能用了)
     {
-        var result = { MaxRequestDataCount: this.MaxReqeustDataCount, MaxRequestMinuteDayCount: this.MaxRequestMinuteDayCount };
+        var result = { MaxRequestDataCount: this.MaxRequestDataCount, MaxRequestMinuteDayCount: this.MaxRequestMinuteDayCount };
 
         if (!this.SourceData || !this.SourceData.Data || this.SourceData.Data.length <= 0) return result;
 
@@ -9051,14 +9031,14 @@ function KLineChartContainer(uielement)
         }
 
         //请求数据
-        wx.request({
+        JSNetwork.HttpRequest({
             url: this.KLineApiUrl,
             data:
             {
                 "field":["name","symbol","yclose","open","price","high"],
                 "symbol": symbol,
                 "start": -1,
-                "count": this.MaxReqeustDataCount
+                "count": this.MaxRequestDataCount
             },
             method: 'POST',
             dataType: "json",
@@ -9353,10 +9333,10 @@ function KLineChartContainer(uielement)
 
     this.CancelAutoUpdate=function()    //关闭停止更新
     {
-        if (typeof (this.AutoUpdateTimer) == 'number') 
+        if (this.AutoUpdateTimer) 
         {
             clearTimeout(this.AutoUpdateTimer);
-            this.AutoUpdateTimer = undefined;
+            this.AutoUpdateTimer = null;
         }
     }
 
@@ -9468,7 +9448,7 @@ function KLineChartContainer(uielement)
             if (obj.PreventDefault == true) return;   //已被上层替换,不调用默认的网络请求
         }
 
-        wx.request({
+        JSNetwork.HttpRequest({
             url: this.DragMinuteKLineApiUrl,
             data: postData,
             method: 'POST',
@@ -9541,7 +9521,7 @@ function KLineChartContainer(uielement)
             "field": ["name", "symbol", "yclose", "open", "price", "high", "low", "vol"],
             "symbol": self.Symbol,
             "enddate": firstItem.Date,
-            "count": self.MaxReqeustDataCount,
+            "count": self.MaxRequestDataCount,
             "first": { date: firstItem.Date }
         };
 
@@ -9575,7 +9555,7 @@ function KLineChartContainer(uielement)
             if (obj.PreventDefault == true) return;   //已被上层替换,不调用默认的网络请求
         }
 
-        wx.request({
+        JSNetwork.HttpRequest({
             url: this.DragKLineApiUrl,
             data: postData,
             method: 'POST',
@@ -9934,7 +9914,7 @@ function MinuteChartContainer(uielement)
     this.OverlaySourceData;                   //叠加的原始数据
     this.IsAutoUpdate = false;                    //是否自动更新行情数据
     this.AutoUpdateFrequency = 30000;             //30秒更新一次数据
-    this.AutoUpdateTimer;                         //更新定时器
+    this.AutoUpdateTimer=null;                         //更新定时器
     this.TradeDate = 0;                           //行情交易日期
     this.LoadDataSplashTitle = '下载分钟数据';
     this.UpdateUICallback;                    //数据到达回调
@@ -10007,8 +9987,11 @@ function MinuteChartContainer(uielement)
             }
 
             this.MouseDrag=drag;
+            this.PhoneTouchInfo={ Start:{X:touches[0].clientX, Y:touches[0].clientY }, End:{ X:touches[0].clientX, Y:touches[0].clientY } };
             if (this.EnableScrollUpDown==false)
                 T_ShowCorssCursor();
+
+            this.TouchEvent({ EventID:JSCHART_EVENT_ID.ON_PHONE_TOUCH, FunctionName:"OnTouchStart"}, e);
         }
     }
 
@@ -10046,6 +10029,12 @@ function MinuteChartContainer(uielement)
             var x = touches[0].clientX;
             var y = touches[0].clientY;
             this.OnMouseMove(x,y,e);
+        }
+
+        if (this.PhoneTouchInfo)
+        {
+            this.PhoneTouchInfo.End.X=touches[0].clientX;
+            this.PhoneTouchInfo.End.Y=touches[0].clientY;
         }
     }
 
@@ -10230,20 +10219,31 @@ function MinuteChartContainer(uielement)
         }
     }
 
-    //删除某一个窗口的指标
-    this.DeleteIndexPaint = function (windowIndex) 
+    //删除某一个窗口的指标 bCallDestory=是否调用图形销毁函数
+    this.DeleteIndexPaint = function (windowIndex, bCallDestroy) 
     {
         let paint = new Array();
-        for (let i in this.ChartPaint)  //踢出当前窗口的指标画法
+        for (var i=0;i<this.ChartPaint.length;++i)  //踢出当前窗口的指标画法
         {
             let item = this.ChartPaint[i];
             if (i == 0 || item.ChartFrame != this.Frame.SubFrame[windowIndex].Frame)
+            {
                 paint.push(item);
+            }
+            else
+            {
+                if (bCallDestroy===true) 
+                {
+                    if (item && item.OnDestroy) item.OnDestroy();   //图形销毁
+                }
+            }
         }
 
         //清空指定最大最小值
-        this.Frame.SubFrame[windowIndex].Frame.YSpecificMaxMin = null;
-        this.Frame.SubFrame[windowIndex].Frame.IsLocked = false;          //解除上锁
+        var subFrame=this.Frame.SubFrame[windowIndex].Frame;
+        subFrame.YSpecificMaxMin = null;
+        subFrame.IsLocked = false;          //解除上锁
+        subFrame.YSplitOperator.SplitType=subFrame.YSplitOperator.DefaultSplitType;  //还原Y坐标分割模式
 
         this.ChartPaint = paint;
 
@@ -10320,7 +10320,7 @@ function MinuteChartContainer(uielement)
     //切换成 脚本指标
     this.ChangeScriptIndex = function (windowIndex, indexData) 
     {
-        this.DeleteIndexPaint(windowIndex);
+        this.DeleteIndexPaint(windowIndex, true);
         this.WindowIndex[windowIndex] = new ScriptIndex(indexData.Name, indexData.Script, indexData.Args, indexData);    //脚本执行
 
         var bindData = this.SourceData;
@@ -10331,9 +10331,28 @@ function MinuteChartContainer(uielement)
         this.Draw();
     }
 
+    //切换api指标
+    this.ChangeAPIIndex=function(windowIndex,indexData)
+    {
+        this.DeleteIndexPaint(windowIndex, true);
+        //使用API挂接指标数据 API:{ Name:指标名字, Script:指标脚本可以为空, Args:参数可以为空, Url:指标执行地址 }
+        var apiItem=indexData.API;
+        this.WindowIndex[windowIndex]=new APIScriptIndex(apiItem.Name,apiItem.Script,apiItem.Args,indexData);
+
+        var bindData=this.ChartPaint[0].Data;
+        this.BindIndexData(windowIndex,bindData);   //执行脚本
+
+        this.UpdataDataoffset();           //更新数据偏移
+        this.UpdateFrameMaxMin();          //调整坐标最大 最小值
+        this.Draw();
+    }
+
     this.ChangeIndex = function (windowIndex, indexName, option) 
     {
         if (this.Frame.SubFrame.length < 3) return;
+
+        if (option && option.API)
+            return this.ChangeAPIIndex(windowIndex,option);
 
         //查找系统指标
         let scriptData = new JSCommonIndexScript.JSIndexScript();
@@ -10355,6 +10374,7 @@ function MinuteChartContainer(uielement)
             if (option.FloatPrecision >= 0) indexData.FloatPrecision = option.FloatPrecision;
             if (option.StringFormat > 0) indexData.StringFormat = option.StringFormat;
             if (option.Args) indexData.Args = option.Args;
+            if (IFrameSplitOperator.IsNumber(option.YSplitType)) indexData.YSplitType=option.YSplitType;
         }
 
         return this.ChangeScriptIndex(windowIndex, indexData);
@@ -10369,7 +10389,7 @@ function MinuteChartContainer(uielement)
         if (id>=this.Frame.SubFrame.length) return;
 
         var delFrame=this.Frame.SubFrame[id].Frame;
-        this.DeleteIndexPaint(id);
+        this.DeleteIndexPaint(id, true);
         this.Frame.SubFrame.splice(id,1);
         this.WindowIndex.splice(id,1);
         this.TitlePaint.splice(id+1,1); //删除对应的动态标题
@@ -10389,6 +10409,17 @@ function MinuteChartContainer(uielement)
         this.Draw();
     }
 
+    this.ClearIndexPaint=function()
+    {
+        if (this.Frame && this.Frame.SubFrame)
+        {
+            for(var i=2;i<this.Frame.SubFrame.length;++i)
+            {
+                if (i>=2) this.DeleteIndexPaint(i, true);
+            }
+        }
+    }
+
     //切换股票代码
     this.ChangeSymbol = function (symbol) 
     {
@@ -10396,6 +10427,7 @@ function MinuteChartContainer(uielement)
         this.CancelAutoUpdate();    //先停止定时器
         this.ChartSplashPaint.SetTitle(this.LoadDataSplashTitle);
         this.ChartSplashPaint.EnableSplash(true);
+        this.ClearIndexPaint();
         this.RequestData();
     }
 
@@ -10404,6 +10436,7 @@ function MinuteChartContainer(uielement)
         if (count < 0 || count > 10) return;
         this.DayCount = count;
         this.CancelAutoUpdate();    //先停止定时器
+        this.ClearIndexPaint();
         this.RequestData();
     }
 
@@ -10482,7 +10515,7 @@ function MinuteChartContainer(uielement)
             if (obj.PreventDefault == true) return;   //已被上层替换,不调用默认的网络请求
         }
 
-        wx.request({
+        JSNetwork.HttpRequest({
         url: self.HistoryMinuteApiUrl,
         data:
         {
@@ -10658,7 +10691,7 @@ function MinuteChartContainer(uielement)
             if (obj.PreventDefault == true) return;   //已被上层替换,不调用默认的网络请求
         }
 
-        wx.request({
+        JSNetwork.HttpRequest({
             url: this.MinuteApiUrl,
             data:
             {
@@ -10776,7 +10809,7 @@ function MinuteChartContainer(uielement)
 
 
         //请求数据
-        wx.request({
+        JSNetwork.HttpRequest({
             url: self.HistoryMinuteApiUrl,
             data:
             {
@@ -10867,7 +10900,7 @@ function MinuteChartContainer(uielement)
             if (obj.PreventDefault == true) return;   //已被上层替换,不调用默认的网络请求
         }
 
-        wx.request({
+        JSNetwork.HttpRequest({
             url: self.HistoryMinuteApiUrl,
             data:
             {
@@ -10927,10 +10960,10 @@ function MinuteChartContainer(uielement)
 
     this.CancelAutoUpdate = function ()    //关闭停止更新
     {
-        if (typeof (this.AutoUpdateTimer) == 'number') 
+        if (this.AutoUpdateTimer) 
         {
             clearTimeout(this.AutoUpdateTimer);
-            this.AutoUpdateTimer = undefined;
+            this.AutoUpdateTimer = null;
         }
     }
 
@@ -11418,7 +11451,7 @@ function HistoryMinuteChartContainer(uielement) {
     var self = this;
     var url = this.HistoryMinuteApiUrl + this.TradeDate.toString() + "/" + this.Symbol + ".json";
 
-    wx.request({
+    JSNetwork.HttpRequest({
       url: url,
       method: "get",
       dataType: "json",
@@ -11573,7 +11606,7 @@ function CustomKLineChartContainer(uielement) {
     this.ChartSplashPaint.SetTitle(this.LoadDataSplashTitle);
     this.ChartSplashPaint.EnableSplash(true);
     this.Draw();
-    wx.request({
+    JSNetwork.HttpRequest({
       url: this.CustomKLineApiUrl,
       data:
       {
@@ -12640,7 +12673,7 @@ function DepthChartContainer(uielement)
 
     this.IsAutoUpdate=false;                    //是否自动更新行情数据
     this.AutoUpdateFrequency=30000;             //30秒更新一次数据
-    this.AutoUpdateTimer;
+    this.AutoUpdateTimer=null;
 
     this.DefaultZoom=0.8;       //默认显示80%的盘口 (0 - 1)
     this.MaxVolRate=1.1;
@@ -12995,10 +13028,10 @@ function DepthChartContainer(uielement)
 
     this.CancelAutoUpdate=function()    //关闭停止更新
     {
-        if (typeof (this.AutoUpdateTimer) == 'number') 
+        if (this.AutoUpdateTimer) 
         {
             clearTimeout(this.AutoUpdateTimer);
-            this.AutoUpdateTimer = undefined;
+            this.AutoUpdateTimer = null;
         }
     }
 
@@ -13094,7 +13127,7 @@ function MarketLongShortIndex() {
     }
 
     //请求数据
-    wx.request({
+    JSNetwork.HttpRequest({
       url: g_JSChartResource.Index.MarketLongShortApiUrl,
       data:
       {
@@ -13214,7 +13247,7 @@ function MarketTimingIndex() {
     }
 
     //请求数据
-    wx.request({
+    JSNetwork.HttpRequest({
       url: g_JSChartResource.Index.MarketLongShortApiUrl,
       data:
       {
@@ -13335,7 +13368,7 @@ function MarketAttentionIndex() {
     }
 
     //请求数据
-    wx.request({
+    JSNetwork.HttpRequest({
       url: this.ApiUrl,
       data:
       {
@@ -13467,7 +13500,7 @@ function MarketHeatIndex() {
     }
 
     //请求数据
-    wx.request({
+    JSNetwork.HttpRequest({
       url: this.ApiUrl,
       data:
       {
@@ -13607,7 +13640,7 @@ function CustonIndexHeatIndex() {
     }
 
     //请求数据
-    wx.request({
+    JSNetwork.HttpRequest({
       url: this.ApiUrl,
       data:
       {
@@ -13772,7 +13805,7 @@ function BenfordIndex() {
         }
       ];
     //请求数据
-    wx.request({
+    JSNetwork.HttpRequest({
       url: this.ApiUrl,
       data:
       {
@@ -13910,6 +13943,29 @@ function IsIndexSymbol(symbol) {
 }
 
 //导出统一使用JSCommon命名空间名
+var JSCommon=
+{
+    JSCanvasElement: JSCanvasElement,
+    JSNetwork:JSNetwork,
+    JSChart: JSChart,
+    Guid: Guid,
+    IFrameSplitOperator: IFrameSplitOperator,
+    ChartData: ChartData,
+    DataPlus: DataPlus,
+    KLineTooltipPaint: KLineTooltipPaint,
+    MARKET_SUFFIX_NAME: MARKET_SUFFIX_NAME,
+    JSCommonCoordinateData:JSCommonCoordinateData,
+    FrameSplitKLineX:FrameSplitKLineX,
+    FrameSplitKLinePriceY:FrameSplitKLinePriceY,
+    JSCHART_EVENT_ID:JSCHART_EVENT_ID
+};
+
+export
+{
+    JSCommon
+};
+
+/*
 module.exports =
 {
     JSCommon:
@@ -13928,6 +13984,7 @@ module.exports =
         JSCHART_EVENT_ID:JSCHART_EVENT_ID
     },
 };
+*/
 
 
 
