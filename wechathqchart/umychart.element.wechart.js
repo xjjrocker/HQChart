@@ -21,15 +21,16 @@ function JSCanvasElement()
     this.Width;
     this.ID;
     this.WebGLCanvas;
-    this.IsUniApp=false;
-    this.IsDingTalk=false;
+    this.IsUniApp=false;    //uniapp app程序
+    this.IsDingTalk=false;  //钉钉小程序
+    this.IsDouYin=false;    //抖音小程序
     this.CanvasNode=null;
     this.ComponentObject=null;  //在自定义组件下，当前组件实例的this，表示在这个自定义组件下查找拥有 canvas-id 的 canvas ，如果省略则不在任何自定义组件内查找
     this.PixelRatio=null;
 
     //获取画布
     this.GetContext = function () 
-	  {
+	{
         var canvas;
         if (this.IsDingTalk)
         {
@@ -62,6 +63,7 @@ function JSCanvasElement()
             JSConsole.Chart.Log("[JSCanvasElement::GetContext] create by getContext('2d')");
             canvas = node.getContext('2d');
             const dpr = wx.getSystemInfoSync().pixelRatio;
+            this.PixelRatio=dpr;
             node.width = width * dpr;
             node.height = height * dpr;
             canvas.restore();

@@ -40,6 +40,23 @@ function GetBlackStyle()
         DownBarColor: "rgb(25,158,0)",  //下跌
         UnchagneBarColor: "rgb(228,228,228)", //平盘
         EmptyBarBGColor:'rgb(0,0,0)',   //空心柱子背景色
+
+        SplashScreen:
+        {
+            BGColor:"rgba(112,128,144,0.5)",
+            TextColor:"rgb(230,230,230)",
+        },
+
+        HLCArea:
+        {
+            HighLineColor:'rgb(238,21,21)',
+            LowLineColor:"rgb(25,158,0)",
+            CloseLineColor:"rgb(156,156,156)",
+            LineWidth:2*GetDevicePixelRatio(),
+
+            UpAreaColor:"rgba(238,21,21, 0.3)",
+            DownAreaColor:"rgba(25,158,0, 0.3)",
+        },
     
         Minute: 
         {
@@ -71,38 +88,51 @@ function GetBlackStyle()
         DefaultTextColor: "rgb(101,104,112)",
         DefaultTextFont: 14*GetDevicePixelRatio() +'px 微软雅黑',
         TitleFont: 13*GetDevicePixelRatio() +'px 微软雅黑',    //标题字体(动态标题 K线及指标的动态信息字体)
-        IndexTitleColor:"rgb(101,104,112)",                           //指标名字颜色
+        IndexTitleColor:"rgb(190, 190 ,190)",                       //指标名字颜色
+        IndexTitleBGColor:'rgb(0,0,0)',                     //指标名字背景色
+        IndexTitleBorderColor:'rgb(211, 211, 211)',                 //指标名字边框颜色
+        IndexTitleBorderMoveOnColor:'rgb(30,144,255)',         //指标名字边框颜色(鼠标在上面)
     
         UpTextColor: "rgb(238,21,21)",
         DownTextColor: "rgb(25,158,0)",
-        UnchagneTextColor: "rgb(101,104,112)",
-        CloseLineColor: 'rgb(178,34,34)',
+        UnchagneTextColor: "rgb(190, 190 ,190)",
+        CloseLineColor: 'rgb(250,250,250)',
+
+        IndexTitle:
+        {
+            UpDownArrow:    //数值涨跌箭头
+            {
+                UpColor:"rgb(238,21,21)",   //上涨
+                DownColor:"rgb(25,158,0)",  //下跌
+                UnchangeColor:"rgb(190, 190 ,190)"  //不变
+            }
+        },
     
         Title:
         {
             TradeIndexColor:'rgb(105,105,105)', //交易指标颜色
             ColorIndexColor:'rgb(112,128,144)',  //五彩K线颜色
     
-            VolColor:"rgb(101,104,112)",       //标题成交量
-            AmountColor:"rgb(101,104,112)",    //成交金额 
-            DateTimeColor:"rgb(101,104,112)",  //时间,日期  
-            SettingColor:"rgb(101,104,112)",   //周期,复权
-            NameColor:"rgb(101,104,112)" ,     //股票名称
+            VolColor:"rgb(190, 190 ,190)",       //标题成交量
+            AmountColor:"rgb(190, 190 ,190)",    //成交金额 
+            DateTimeColor:"rgb(190, 190 ,190)",  //时间,日期  
+            SettingColor:"rgb(190, 190 ,190)",   //周期,复权
+            NameColor:"rgb(190, 190 ,190)" ,     //股票名称
             TurnoverRateColor:'rgb(101,104,112)',       //换手率
             PositionColor:"rgb(101,104,112)"       //持仓
         },
     
-        FrameBorderPen: "rgba(236,236,236,0.13)",     //边框
+        FrameBorderPen: "rgb(47,51,62)",     //边框
         MultiDayBorderPen:"rgba(236,236,236,0.5)",
         FrameSplitPen: "rgba(236,236,236,0.13)",          //分割线
-        FrameSplitTextColor: "rgb(101,104,112)",     //刻度文字颜色
+        FrameSplitTextColor: "rgb(220,220,220)",     //刻度文字颜色
         FrameSplitTextFont: 12*GetDevicePixelRatio() +"px 微软雅黑",        //坐标刻度文字字体
         FrameTitleBGColor: "rgb(0,0,0)",      //标题栏背景色
         OverlayIndexTitleBGColor:'rgba(0,0,0,0.7)', //叠加指标背景色
     
         Frame:
         { 
-            XBottomOffset:1*GetDevicePixelRatio(), //X轴文字向下偏移
+            XBottomOffset:2*GetDevicePixelRatio(), //X轴文字向下偏移
            
             PercentageText:      //百分比坐标文字颜色
             { 
@@ -111,15 +141,23 @@ function GetBlackStyle()
                 SplitColor:"rgb(101,104,112)",
                 Font:14*GetDevicePixelRatio() +"px 微软雅黑"
             }
-        },   
-    
+        }, 
+        
+        //叠加指标框架
+        OverlayFrame:
+        {
+            BolderPen:'rgb(130,130,130)',                       //指标边框线
+            TitleColor:'rgb(181,181,181)',                      //指标名字颜色
+            TitleFont:11*GetDevicePixelRatio() +'px arial',     //指标名字字体
+        },
     
         FrameLatestPrice : {
             TextColor:'rgb(255,255,255)',   //最新价格文字颜色
             UpBarColor:"rgb(238,21,21)",    //上涨
             DownBarColor:"rgb(25,158,0)",   //下跌
             UnchagneBarColor:"rgb(190,190,190)",   //平盘
-            BGAlpha:0.6
+            BGAlpha:0.6,
+            EmptyBGColor:"rgb(0,0,0)"
         },
     
         CorssCursorBGColor: "rgb(43,54,69)",            //十字光标背景
@@ -201,6 +239,18 @@ function GetBlackStyle()
                 Sell: { Color:'rgb(64,122,22)', Text:'\ue681',HScreenText:'\ue680'},
             }
         },
+
+        VirtualKLine:
+        {
+            Color:'rgb(119,136,153)', 
+            LineDash:[2,2]
+        },
+
+        PriceGapStyple:
+        { 
+            Line:{ Color:"rgb(128,128,128)" }, 
+            Text:{ Color:"rgb(219,220,220)", Font:`${12*GetDevicePixelRatio()}px 微软雅黑` } 
+        },
     
         Index: 
         {      
@@ -217,7 +267,7 @@ function GetBlackStyle()
                 "rgb(42,230,215)",
                 "rgb(24,71,178)",
             ],
-            NotSupport: { Font: "14px 微软雅黑", TextColor: "rgb(52,52,52)" }
+            NotSupport: { Font: `${14*GetDevicePixelRatio()}px 微软雅黑`, TextColor: "rgb(250,250,250)" }
         },
           
         ColorArray:       //自定义指标默认颜色
@@ -261,6 +311,32 @@ function GetBlackStyle()
             {
                 MoveOnColor:"rgb(255,255,255)",
                 Color:"rgb(156,156,156)"
+            },
+            //最大化, 最小化
+            MaxMinWindow:
+            {
+                MoveOnColor:"rgb(255,255,255)",
+                Color:"rgb(156,156,156)"
+            },
+            TitleWindow:
+            {
+                MoveOnColor:"rgb(255,255,255)",
+                Color:"rgb(156,156,156)"
+            },
+            ExportData:
+            {
+                MoveOnColor:"rgb(255,255,255)",
+                Color:"rgb(156,156,156)"
+            },
+
+            Tooltip:
+            {
+                //Font:12*GetDevicePixelRatio() +"px 微软雅黑",
+                Color:'rgb(204,204,204)',
+                ColorBG:'rgb(32,32,32)',
+                ColorBorder:'rgb(69,69,69)',
+                //BorderRadius:4,
+                //Mergin:{ Left:4, Right:4, Top:2, Bottom:4 },
             }
         },
         
@@ -268,14 +344,16 @@ function GetBlackStyle()
         {
             LineColor: 
             [
-                "rgb(255,255,0)"
+                "rgb(41,98,255)" 
             ],
     
             PointColor: 
             [
-                "rgb(228,228,228)",
-                "rgb(192,192,192)"
+                "rgb(41,98,255)",           //选中颜色
+                "rgb(89,135,255)",          //moveon颜色
+                "rgb(0,0,0)"                //空心点背景色
             ],
+
         },
     
         TooltipPaint : 
@@ -285,8 +363,19 @@ function GetBlackStyle()
             TitleColor:'rgb(210,210,210)',       //标题颜色
             TitleFont:13*GetDevicePixelRatio() +'px 微软雅黑',   //字体
             DateTimeColor:'rgb(210,210,210)',
-            VolColor:"rgb(210,210,210)",       //标题成交量
+            VolColor:"rgb(255, 185, 15)",       //标题成交量
             AmountColor:"rgb(210,210,210)",    //成交金额
+        },
+
+        PCTooltipPaint:
+        {
+            BGColor:'rgba(20,20,20,0.8)',    //背景色
+            BorderColor:'rgb(210,210,210)',     //边框颜色
+            TitleColor:'rgb(210,210,210)',       //标题颜色
+            TitleFont:12*GetDevicePixelRatio() +'px 微软雅黑',   //字体
+            DateTimeColor:'rgb(210,210,210)',
+            VolColor:"rgb(161,154,3)",       //标题成交量
+            AmountColor:"rgb(161,154,3)",    //成交金额
         },
     
         //走势图 信息地雷
@@ -305,6 +394,13 @@ function GetBlackStyle()
             AreaColor:"rgba(255,185,15,0.8)",
             TextColor:"rgba(255,255,255)",
             TextBGColor:'rgb(43,54,69)'
+        },
+
+        KLineYAxisBGPaint:
+        {
+            Font:12*GetDevicePixelRatio() +'px 微软雅黑',
+            TextColor:"rgb(255,255,255)",
+            LineColor:"rgb(255,255,255)"
         },
     
         //筹码分布图
@@ -336,6 +432,20 @@ function GetBlackStyle()
                 LineHeight:16   //单行高度
             }
         },
+
+        ChartDrawVolProfile:
+        {
+            BGColor:"rgba(244,250,254,0.3)",
+            BorderColor:"rgba(255,255,255)",
+            VolLineColor:"rgb(232,5,9)",
+    
+            UpVolColor:"rgba(103,179,238, 0.24)",
+            DownVolColor:"rgba(237,208,105,0.24)",
+            AreaUpColor:"rgb(103,179,238,0.7)",
+            AreaDonwColor:"rgba(237,208,105,0.7)",
+    
+            Text:{ Color: "rgb(0,0,0)" , Family:'Arial', FontMaxSize:18, FontMinSize:6 },  //文字
+        },
     
         //区间选择
         RectSelect:
@@ -359,6 +469,12 @@ function GetBlackStyle()
         {
             TextColor:"rgb(255,255,255)",
             //Font:14*GetDevicePixelRatio() +"px 微软雅黑"
+        },
+
+        SessionBreaksPaint:
+        {
+            BGColor:[null, "rgb(42,46,57)"],
+            SplitLine:{ Color:'rgb(73,133,231)', Width:1*GetDevicePixelRatio(), Dash:[5*GetDevicePixelRatio(),5*GetDevicePixelRatio()] }
         },
     
         //成交明细
@@ -438,6 +554,22 @@ function GetBlackStyle()
                 BarTitle:'rgb(245,245,245)',   //柱子文字
                 Text:"rgb(245,245,245)",    //默认文本
             },
+
+            CloseLine:
+            {
+                CloseColor:"rgb(30,144,255)",
+                YCloseColor:"rgba(220,220,220,0.5)",  //昨收线
+                AreaColor:'rgba(220,220,220,0.2)',
+            },
+
+            KLine:
+            {
+                UpColor:"rgb(255,0,0)",
+                DownColor:"rgb(0,128,0)",
+                UnchagneColor:'rgb(240,240,240)',
+                DataWidth:16,
+                DistanceWidth:3
+            },
     
             UpTextColor:"rgb(238,21,21)",           //上涨文字颜色
             DownTextColor:"rgb(25,158,0)",          //下跌文字颜色
@@ -473,6 +605,104 @@ function GetBlackStyle()
 
                 MoveRowColor:'rgb(135,206,250)',
                 SrcRowColor:'rgb(49,48,56)',
+            },
+
+            VScrollbar:
+            {
+                BarWidth:40,
+                ScrollBarHeight:60,
+                ButtonColor:"rgba(13,12,15,0.8)",
+                BarColor:"rgba(48,48,48,0.9)",
+                BorderColor:'rgba(48,48,48,0.9)',
+                BGColor:"rgba(211,211,211,0.5)",
+            }
+        },
+
+        //T型报价
+        TReport:
+        {
+            BorderColor:'rgb(38,38,41)',    //边框线
+            SelectedColor:"rgb(180,180,180)",     //选中行
+            Header:
+            {
+                Color:"rgb(187,187,187)",      //表头文字颜色
+                SortColor:"rgb(255,0,0)",      //排序箭头颜色
+                Mergin:{ Left:5, Right:5, Top:4, Bottom:2},    //表头四周间距
+                Font:{ Size:14, Name:"微软雅黑" }   //表头字体
+            },
+
+            Item:
+            {
+                Mergin:{ Top:2, Bottom:0,Left:5, Right:5 }, //单元格四周间距
+                Font:{ Size:15, Name:"微软雅黑"},
+                BarMergin:{ Top:2, Left:3, Right:3, Bottom:2 },//单元格字体
+                NameFont:{ Size:14, Name:"微软雅黑" },
+                SymbolFont:{ Size:12, Name:"微软雅黑" }
+            },
+
+            CenterItem:
+            {
+                TextColor:"rgb(16,226,217)",
+                BaseTextColor:"rgb(60,60,83)",
+                BGColor:"rgb(65,65,65)"
+            },
+
+            FieldColor:
+            {
+                Index:"rgb(250,250,250)",  //序号
+                Symbol:"rgb(60,60,60)",
+                Name:"rgb(250,250,250)",
+                Vol:"rgb(192,165,3)",        //成交量
+                Position:"rgb(250,250,250)",   //持仓量
+                Amount:"rgb(16,226,217)", //成交金额
+                Text:"rgb(250,250,250)",   //默认文本
+            },
+
+            UpTextColor:"rgb(238,21,21)",      //上涨文字颜色
+            DownTextColor:"rgb(25,158,0)",     //下跌文字颜色
+            UnchangeTextColor:"rgb(187,187,187)",     //平盘文字颜色 
+
+            UpBGColor:"rgb(35,5,5)",
+            DownBGColor:"rgb(5,35,5)",
+
+            MarkBorder:
+            {
+                MaxPositionColor:"rgb(192,192,0)"
+            },
+        },
+
+        ScrollBar:
+        {
+            BorderColor:'rgb(38,38,41)',    //边框线
+            XSplitTextColor:"rgb(240,240,240)",
+            XSplitLineColor:'rgb(38,38,41)',
+
+            Slider:
+            {
+                DateFont:`${14*GetDevicePixelRatio()}px 微软雅黑`,
+                DateColor:'rgb(240,240,240)',
+                BarColor:"rgb(105,105,105)",
+                BarAreaColor:"rgba(128,128,128,0.65)"
+            },
+
+            BGChart:
+            {
+                Color:"rgb(105,113,125)",
+                LineWidth:1,
+                AreaColor:"rgba(24,28,42,0.5)",
+            },
+        },
+
+        FrameButtomToolbar:
+        {
+            BGColor:"rgb(25,25,25)",
+            BorderColor:"rgb(60,60,60)",
+            Button:
+            {
+                Font:{ Family:"微软雅黑" },
+                TitleColor: { Selected:"rgb(255,255,255)", Default:"rgb(140,140,140)", MoveOn:"rgb(255,255,255)" },
+                BGColor: {  Selected:"rgb(234,85,4)", Default:"rgb(25,25,25)", MoveOn:"rgb(59,59,59)" },
+                BorderColor:"rgb(60,60,60)",
             }
         }
         

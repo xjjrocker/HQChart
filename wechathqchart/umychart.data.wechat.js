@@ -10,10 +10,7 @@
     行情数据结构 及计算方法
 */
 
-import 
-{
-   MARKET_SUFFIX_NAME
-} from "./umychart.coordinatedata.wechat.js";
+import { MARKET_SUFFIX_NAME } from "./umychart.coordinatedata.wechat.js";
 
 function Guid() 
 {
@@ -30,6 +27,14 @@ function IsPlusNumber(value)
     if (value==null) return false;
     if (isNaN(value)) return false;
     return value>0;
+}
+
+function IsNumber(value)
+{
+    if (value==null) return false;
+    if (isNaN(value)) return false;
+
+    return true;
 }
 
 //历史K线数据
@@ -57,6 +62,8 @@ function HistoryData()
 
     this.BFactor;   //前复权
     this.AFactor;   //后复权
+
+    this.ColorData; //自定义颜色 {Type:0=空心 1=实心, Line:{ Color:'上下线颜色'}, Border:{Color:柱子边框颜色}, BarColor:柱子颜色};
 }
 
 //数据复制
@@ -64,7 +71,7 @@ HistoryData.Copy=function(data)
 {
     var newData=new HistoryData();
     newData.Date=data.Date;
-    if (IsPlusNumber(data.Time)) newData.Time=data.Time;
+    if (IsNumber(data.Time)) newData.Time=data.Time;
     newData.YClose=data.YClose;
     newData.Open=data.Open;
     newData.Close=data.Close;
@@ -86,6 +93,9 @@ HistoryData.Copy=function(data)
     if (IsPlusNumber(data.BFactor)) newData.BFactor = data.BFactor;
     if (IsPlusNumber(data.AFactor)) newData.AFactor = data.AFactor;
 
+    if (data.ColorData) newData.ColorData=data.ColorData;
+    if (data.ExtendData) newData.ExtendData=data.ExtendData;
+
     return newData;
 }
 
@@ -103,15 +113,18 @@ HistoryData.CopyTo = function (dest, src)
     if (IsPlusNumber(src.Time))  dest.Time = src.Time;
     if (IsPlusNumber(src.FlowCapital)) dest.FlowCapital = src.FlowCapital;
 
-     //指数才有的数据
+    //指数才有的数据
     if (IsPlusNumber(src.Stop)) dest.Stop = src.Stop;
     if (IsPlusNumber(src.Up)) dest.Up = src.Up;
     if (IsPlusNumber(src.Down)) dest.Down = src.Down;
     if (IsPlusNumber(src.Unchanged)) dest.Unchanged = src.Unchanged;
 
-     //复权因子
-     if (IsPlusNumber(src.BFactor)) dest.BFactor = src.BFactor;
-     if (IsPlusNumber(src.AFactor)) dest.AFactor = src.AFactor;
+    //复权因子
+    if (IsPlusNumber(src.BFactor)) dest.BFactor = src.BFactor;
+    if (IsPlusNumber(src.AFactor)) dest.AFactor = src.AFactor;
+
+    if (src.ColorData) dest.ColorData=src.ColorData;
+    if (src.ExtendData) dest.ExtendData=src.ExtendData;
 }
 
 //数据复权拷贝
@@ -119,6 +132,8 @@ HistoryData.CopyRight=function(data,seed)
 {
     var newData=new HistoryData();
     newData.Date=data.Date;
+    if (IsNumber(data.Time)) newData.Time=data.Time;
+
     newData.YClose=data.YClose*seed;
     newData.Open=data.Open*seed;
     newData.Close=data.Close*seed;
@@ -130,6 +145,9 @@ HistoryData.CopyRight=function(data,seed)
 
     newData.FlowCapital = data.FlowCapital;
     newData.Position = data.Position;
+    
+    if (data.ColorData) newData.ColorData=data.ColorData;       //K线颜色
+    if (data.ExtendData) newData.ExtendData=data.ExtendData;    //扩张数据
 
     return newData;
 }
@@ -150,6 +168,10 @@ function MinuteData()
     this.Date;
     this.Time;
     this.Position = null;  //持仓量
+    this.YClearing;         //昨结算价
+    this.YClose;            //昨收
+
+    this.ExtendData;    //扩展数据
 }
 
 //单指标数据
@@ -159,15 +181,34 @@ function SingleData()
     this.Value; //数据
 }
 
+ //外部数据计算方法接口
+function DataPlus() 
+{ 
+    this.PeriodCallback=new Map();  //key=周期id value={ Period, Callback(period,data,self): }
 
-function DataPlus() { };            //外部数据计算方法接口
-DataPlus.GetMinutePeriodData = null;
-/*
-DataPlus.GetMinutePeriodData=function(period,data,self)
-{
+    this.GetPeriodCallback=function(period)
+    {
+        if (!this.PeriodCallback.has(period)) return null;
+        
+        return this.PeriodCallback.get(period);
+    }
 
-}
-*/
+    this.AddPeriodCallback=function(obj)
+    {
+        if (!IFrameSplitOperator.IsNumber(obj.Period) || !obj.Callback) return;
+
+        var item={ Period:obj.Period, Callback:obj.Callback };
+        this.PeriodCallback.set(obj.Period, item);
+    }
+
+    this.RemovePeriodCallback=function(obj)
+    {
+        if (!this.PeriodCallback.has(obj.ID)) return;
+        this.PeriodCallback.delete(obj.ID);
+    }
+};           
+
+var g_DataPlus=new DataPlus();
 
 //////////////////////////////////////////////////////////////////////
 // 数据集合
@@ -415,6 +456,53 @@ function ChartData()
         return result;
     }
 
+    this.GetSettlementPrice=function()  //结算价
+    {
+        var result=[]
+        for(var i=0; i<this.Data.length; ++i)
+        {
+            result[i]=this.Data[i].FClose;
+        }
+
+        return result;
+    }
+
+    this.GetIsEqual=function()
+    {
+        var result=[];
+        for(var i=0; i<this.Data.length; ++i)
+        {
+            var item=this.Data[i];
+            result[i]=(item.Close==item.Open? 1:0);
+        }
+
+        return result;
+    }
+
+    this.GetIsUp=function()
+    {
+        var result=[];
+        for(var i=0; i<this.Data.length; ++i)
+        {
+            var item=this.Data[i];
+            result[i]=(item.Close>item.Open? 1:0);
+        }
+
+        return result;
+    }
+
+    this.GetIsDown=function()
+    {
+        var result=[];
+        for(var i=0; i<this.Data.length; ++i)
+        {
+            var item=this.Data[i];
+            result[i]=(item.Close<item.Open? 1:0);
+        }
+
+        return result;
+    }
+
     //获取数据日期和时间范围
     this.GetDateRange=function()
     {
@@ -486,8 +574,6 @@ function ChartData()
 
     this.GetMinutePeriodData=function(period)
     {
-        if (DataPlus.GetMinutePeriodData) return DataPlus.GetMinutePeriodData(period, this.Data, this);
-
         if (period > CUSTOM_MINUTE_PERIOD_START && period <= CUSTOM_MINUTE_PERIOD_END) 
             return this.GetMinuteCustomPeriodData(period - CUSTOM_MINUTE_PERIOD_START);
 
@@ -808,8 +894,17 @@ function ChartData()
     //周期数据 1=周 2=月 3=年 9=季 
     this.GetPeriodData=function(period)
     {
-        if (period == 1 || period == 2 || period == 3 || period == 9 || period == 21 || (period > CUSTOM_DAY_PERIOD_START && period <= CUSTOM_DAY_PERIOD_END)) return this.GetDayPeriodData(period);
-        if (period == 5 || period == 6 || period == 7 || period == 8 || period == 11 || period == 12 ||(period > CUSTOM_MINUTE_PERIOD_START && period <= CUSTOM_MINUTE_PERIOD_END)) return this.GetMinutePeriodData(period);
+        //外部自定义周期计算函数
+        var itemCallback=g_DataPlus.GetPeriodCallback(period);
+        if (itemCallback) return itemCallback.Callback(period,this.Data,this);
+
+        //if (period == 1 || period == 2 || period == 3 || period == 9 || period == 21 || (period > CUSTOM_DAY_PERIOD_START && period <= CUSTOM_DAY_PERIOD_END)) 
+        if (ChartData.IsDayPeriod(period,false))
+            return this.GetDayPeriodData(period);
+
+        //if (period == 5 || period == 6 || period == 7 || period == 8 || period == 11 || period == 12 ||(period > CUSTOM_MINUTE_PERIOD_START && period <= CUSTOM_MINUTE_PERIOD_END)) 
+        if (ChartData.IsMinutePeriod(period,false))    
+            return this.GetMinutePeriodData(period);
     }
 
     //复权  0 不复权 1 前复权 2 后复权 option={ AlgorithmType:1 复权系数模式 }
@@ -1757,6 +1852,128 @@ function ChartData()
         return result;
     }
 
+     //K线数据拟合
+    this.FixKData=function(aryKData, period)
+    {
+        if (ChartData.IsDayPeriod(period,true))
+        {
+            return this.FixKData_Day(aryKData);
+        }
+        else if (ChartData.IsMinutePeriod(period,true))
+        {
+            return this.FixKData_Minute(aryKData);
+        }
+        
+        return null;
+    }
+
+     this.FixKData_Day=function(aryKData)
+    {
+        var result=[];
+        var nOverlayDataCount=aryKData.length;
+        for(var i=0,j=0; i<this.Data.length;)
+        {
+            var kItem=this.Data[i];
+            if (j<nOverlayDataCount)
+            {
+                var fItem=aryKData[j];
+                if (fItem.Date>kItem.Date)
+                {
+                    ++i;
+                    continue;
+                }
+            }
+
+            if (j+1<nOverlayDataCount)
+            {
+                var fItem = aryKData[j];
+                var fItem2 = aryKData[j + 1];
+
+                if (fItem.Date < kItem.Date && fItem2.Date <= kItem.Date)
+                {
+                    ++j;
+                    continue;
+                }
+            }
+
+            var item=new HistoryData();
+            item.Date=kItem.Date;
+            var index=j<nOverlayDataCount ? j : nOverlayDataCount-1;
+            var fItem=aryKData[index];
+
+            item.Close = fItem.Close;
+			item.High = fItem.High;
+			item.Low = fItem.Low;
+			item.Open = fItem.Open;
+			item.YClose = fItem.YClose;
+			item.Amount = fItem.Amount;
+            item.Vol = fItem.Vol;
+            item.ExDate = fItem.Date;   //对应叠加数据的日期 调试用
+
+            result[i]=item;
+            ++i;
+        }
+
+        return result;
+    }
+
+    this.FixKData_Minute=function(aryKData)
+    {
+        var result=[];
+        var nOverlayDataCount=aryKData.length;
+        for(var i=0,j=0; i<this.Data.length;)
+        {
+            var kItem=this.Data[i];
+            var kDateTime=ChartData.DateTimeToNumber(kItem);
+
+            if (j<nOverlayDataCount)
+            {
+                var fItem=aryKData[j];
+                var fDateTime=ChartData.DateTimeToNumber(fItem);
+                if (fDateTime>kDateTime)
+                {
+                    ++i;
+                    continue;
+                }
+            }
+
+            if (j+1<nOverlayDataCount)
+            {
+                var fItem = aryKData[j];
+                var fItem2 = aryKData[j + 1];
+                var fDateTime=ChartData.DateTimeToNumber(fItem);
+                var fDateTime2=ChartData.DateTimeToNumber(fItem2);
+
+                if (fDateTime < kDateTime && fDateTime2 <= kDateTime)
+                {
+                    ++j;
+                    continue;
+                }
+            }
+
+            var item=new HistoryData();
+            item.Date=kItem.Date;
+            item.Time=kItem.Time;
+            var index=j<nOverlayDataCount ? j : nOverlayDataCount-1;
+            var fItem=aryKData[index];
+
+            item.Close = fItem.Close;
+			item.High = fItem.High;
+			item.Low = fItem.Low;
+			item.Open = fItem.Open;
+			item.YClose = fItem.YClose;
+			item.Amount = fItem.Amount;
+            item.Vol = fItem.Vol;
+            item.ExDate = fItem.Date;   //对应叠加数据的日期 调试用
+            item.ExTime=fItem.Time;     //对应叠加数据的日期 调试用
+
+            result[i]=item;
+            ++i;
+        }
+
+        return result;
+    }
+
 }
 
 ChartData.IsNumber=function(value)
@@ -1919,6 +2136,7 @@ var JSCHART_EVENT_ID =
     RECV_TRAIN_MOVE_STEP: 4,    //接收K线训练,移动一次K线
     CHART_STATUS: 5,            //每次Draw() 以后会调用
     BARRAGE_PLAY_END: 6,        //单个弹幕播放完成
+    RECV_OVERLAY_INDEX_DATA:7,  //接收叠加指标数据
     RECV_START_AUTOUPDATE: 9,    //开始自动更新
     RECV_STOP_AUTOUPDATE: 10,    //停止自动更新
     ON_TITLE_DRAW: 12,           //标题信息绘制事件
@@ -1933,6 +2151,7 @@ var JSCHART_EVENT_ID =
     ON_PHONE_TOUCH:27,                   //手势点击事件 包含 TouchStart 和 TouchEnd
 
     ON_SPLIT_YCOORDINATE:29,             //分割Y轴及格式化刻度文字
+    ON_SPLIT_XCOORDINATE:31,             //分割X轴及格式化刻度文字
     
     ON_DRAW_KLINE_LAST_POINT:35,          //K线图绘制回调事件,返回最后一个点的坐标
 
@@ -1958,6 +2177,37 @@ var JSCHART_EVENT_ID =
     ON_DRAW_REPORT_FIXEDROW_TEXT:58,        //报价列表固定行绘制
     ON_CLICK_REPORT_FIXEDROW:59,            //点击报价列表点击固定行
     ON_RCLICK_REPORT_FIXEDROW:60,           //点击报价列表右键点击固定行
+
+    ON_FORMAT_CORSSCURSOR_Y_TEXT:75,    //格式化十字光标Y轴文字
+    ON_FORMAT_INDEX_OUT_TEXT:76,           //格式化指标标题文字
+    ON_FORMAT_CORSSCURSOR_X_TEXT:77,    //格式化十字光标X轴文字
+
+
+    ON_CUSTOM_UNCHANGE_KLINE_COLOR:95,  //定制平盘K线颜色
+
+    ON_CHANGE_KLINE_PERIOD:101,                 //切换周期
+    ON_MINUTE_TOUCH_ZOOM:102,                   //分时图手势缩放 
+
+    ON_RELOAD_INDEX_CHART_RESOURCE:103,         //加载指标图形额外资源
+    ON_RELOAD_OVERLAY_INDEX_CHART_RESOURCE:104, //加载叠加指标图形额外资源
+    
+    ON_CREATE_FRAME:105,
+    ON_DELETE_FRAME:106,
+    ON_SIZE_FRAME:107,
+    
+    ON_TOUCH_SCROLL_UP_DOWN:108,
+}
+
+var JSCHART_DATA_FIELD_ID=
+{
+    MINUTE_MULTI_DAY_EXTENDDATA:21, //多日分时图扩展数据序号
+    MINUTE_DAY_EXTENDDATA:21,
+    MINUTE_BEFOREOPEN_EXTENDDATA:21,
+    MINUTE_AFTERCLOSE_EXTENDDATA:21,
+
+    KLINE_COLOR_DATA:66,            //K线自定义颜色数据
+    KLINE_DAY_EXTENDDATA:25,
+    KLINE_MINUTE_EXTENDDATA:25,
 }
 
 var HQ_DATA_TYPE=
@@ -2040,6 +2290,7 @@ var JSCommonData=
     MinuteData: MinuteData,
     Rect: Rect,
     DataPlus: DataPlus,
+    g_DataPlus:g_DataPlus,
     JSCHART_EVENT_ID:JSCHART_EVENT_ID,
     PhoneDBClick:PhoneDBClick,
     HQ_DATA_TYPE:HQ_DATA_TYPE,
@@ -2062,10 +2313,12 @@ export
     CUSTOM_SECOND_PERIOD_END,
     Rect,
     DataPlus,
+    g_DataPlus,
     Guid,
     ToFixedPoint,
     ToFixedRect,
     JSCHART_EVENT_ID,
+    JSCHART_DATA_FIELD_ID,
     PhoneDBClick,
     HQ_DATA_TYPE,
     OVERLAY_STATUS_ID

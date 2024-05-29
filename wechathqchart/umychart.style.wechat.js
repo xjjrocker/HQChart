@@ -35,7 +35,7 @@ function GetBlackStyle()
         DefaultTextFont: '14px 微软雅黑',
         IndexTitleBGColor:'rgb(211,211,211)',
         IndexTitleColor:"rgb(101,104,112)",
-
+        OverlayIndexTitleBGColor:'rgba(0,0,0,0.7)', //叠加指标背景色
         DynamicTitleFont: '12px 微软雅黑', //指标动态标题字体
 
 
@@ -118,6 +118,12 @@ function GetBlackStyle()
             }
         },
 
+        PriceGapStyple:
+        { 
+            Line:{ Color:"rgb(128,128,128)" }, 
+            Text:{ Color:"rgb(219,220,220)", Font:`12px 微软雅黑` } 
+        },
+
         Index: {      //指标线段颜色
         LineColor: [
             "rgb(255,189,09)",
@@ -151,8 +157,17 @@ function GetBlackStyle()
         //画图工具
         DrawPicture: 
         {
-        LineColor: "rgb(30,144,255)",
-        PointColor: "rgb(105,105,105)",
+            LineColor: 
+            [
+                "rgb(41,98,255)" 
+            ],
+    
+            PointColor: 
+            [
+                "rgb(41,98,255)",           //选中颜色
+                "rgb(89,135,255)",          //moveon颜色
+                "rgb(0,0,0)"                //空心点背景色
+            ],
         },
 
         TooltipPaint:   //Tooltip

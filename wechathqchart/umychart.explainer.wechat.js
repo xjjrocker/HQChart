@@ -38,6 +38,7 @@ function JSExplainer(ast,option)
     this.JobList=[];                //执行的任务队列
     this.VarTable=new Map();        //变量表
     this.OutVarTable=[];            //输出变量
+    this.MaxValueLength=100;        //最长的字符
 
     //脚本自动变量表, 只读
     this.ConstVarTable=new Map(
@@ -137,7 +138,7 @@ function JSExplainer(ast,option)
         if (!this.AST) this.ThrowError();
         if (!this.AST.Body) this.ThrowError();
 
-        for(let i in this.AST.Body)
+        for(let i=0; i<this.AST.Body.length; ++i)
         {
             let item =this.AST.Body[i];
             this.VisitNode(item);
@@ -234,7 +235,7 @@ function JSExplainer(ast,option)
                         {
                             varName=itemExpression.Left.Name;
                             let varValue=this.VarTable.get(varName);
-                            this.VarTable.set(varName,varValue);            //把常量放到变量表里
+                            this.VarTable.set(varName,this.ConvertToShortValue(varValue));            //把常量放到变量表里
                         }
                         else if (itemExpression.Type==Syntax.Identifier)
                         {
@@ -258,7 +259,7 @@ function JSExplainer(ast,option)
                                 let varValue=this.ReadVariable(varName,itemExpression);
                                 varName="__temp_si_"+i+"__";
                                 isNoneName=true;
-                                this.VarTable.set(varName,varValue);            //放到变量表里
+                                this.VarTable.set(varName,this.ConvertToShortValue(varValue));            //放到变量表里
                             }
                         }
                         else if(itemExpression.Type==Syntax.Literal)    //常量
@@ -450,12 +451,16 @@ function JSExplainer(ast,option)
             ["BARSSINCE",   { Name:"BARSSINCE", Param:{ Count:1 }, ToString:function(args) { return `首次${args[0]}距今天数`; } } ],
             ["HHV", { Name:"HHV", Param:{ Count:2 }, ToString:function(args) { return `${args[1]}日内${args[0]}的最高值`; } } ],
             ["LLV", { Name:"LLV", Param:{ Count:2 }, ToString:function(args) { return `${args[1]}日内${args[0]}的最低值`; } } ],
+            ["ZTPRICE", { Name:"ZTPRICE", Param:{ Count:2 }, ToString:function(args) { return '计算涨停价'; } } ],
+            ["DTPRICE", { Name:"DTPRICE", Param:{ Count:2 }, ToString:function(args) { return '计算跌停价'; } } ],
+            ["BACKSET", { Name:"BACKSET", Param:{ Count:2 }, ToString:function(args) { return `若${args[0]}则将最近${args[1]}周期置为1`; } } ],
 
             ["HOD", { Name:"HOD", Param:{ Count:2 }, ToString:function(args) { return `${args[1]}日内${args[0]}的高值名次`; } } ],
             ["LOD", { Name:"LOD", Param:{ Count:2 }, ToString:function(args) { return `${args[1]}日内${args[0]}的低值名次`; } } ],
             ["REVERSE", { Name:"REVERSE", Param:{ Count:1 }, ToString:function(args) { return `${args[0]}的相反数`; } } ],
             ["FILTER", { Name:"FILTER", Param:{ Count:2 }, ToString:function(args) { return `${args[0]}的${args[1]}日过滤`; } } ],
             ["FILTERX", { Name:"FILTERX", Param:{ Count:2 }, ToString:function(args) { return `${args[0]}的${args[1]}日反向过滤`; } } ],
+            ["TFILTER", { Name:"TFILTER", Param:{Count:3}, ToString:function(args) { return `信号过滤(多头)`; } }],
             ["SUMBARS", { Name:"SUMBARS", Param:{ Count:2 }, ToString:function(args) { return `${args[0]}累加至${args[1]}的天数`; } } ],
             ["MA", { Name:"MA", Param:{ Count:2 }, ToString:function(args) { return `${args[0]}的${args[1]}日简单移动平均`; } } ],
             ["SMA", { Name:"SMA", Param:{ Count:3 }, ToString:function(args) { return `${args[0]}的${args[1]}日[${args[2]}日权重]移动平均`; } } ],
@@ -491,6 +496,9 @@ function JSExplainer(ast,option)
             ["IF", { Name:"IF", Param:{ Count:3 }, ToString:function(args) { return `如果${args[0]},返回${args[1]},否则返回${args[2]}`; } } ],
             ["IFF", { Name:"IFF", Param:{ Count:3 }, ToString:function(args) { return `如果${args[0]},返回${args[1]},否则返回${args[2]}`; } } ],
             ["IFN", { Name:"IFN", Param:{ Count:3 }, ToString:function(args) { return `如果${args[0]},返回${args[1]},否则返回${args[2]}`; } } ],
+            ["IFC", { Name:"IFC", Param:{ Count:3 }, ToString:function(args) { return `如果${args[0]},返回${args[1]},否则返回${args[2]}`; } } ],
+            ["TESTSKIP", { Name:"TESTSKIP", Param:{ Count:1 }, ToString:function(args) { return `如果满足条件${args[0]},公式返回`; } } ],
+            ["VALUEWHEN", { Name:"VALUEWHEN", Param:{ Count:2 }, ToString:function(args) { return `如果${args[0]},返回${args[1]},否则返回上个输出值 `; } } ],
 
             ["MAX", { Name:"MAX", Param:{ Count:2 }, ToString:function(args) { return `${args[0]}和${args[1]}的较大值`; } } ],
             ["MIN", { Name:"MIN", Param:{ Count:2 }, ToString:function(args) { return `${args[0]}和${args[1]}的较小值`; } } ],
@@ -556,6 +564,8 @@ function JSExplainer(ast,option)
             ["NAMEINCLUD", { Name:"NAMEINCLUD", Param:{ Count:1 }, ToString:function(args) { return `查找品种名称中包含${args[0]}`; } } ],
             ["CODELIKE", { Name:"CODELIKE", Param:{ Count:1 }, ToString:function(args) { return `查找品种名称中包含${args[0]}`; } } ],
             ["INBLOCK", { Name:"AVEDEV", Param:{ Count:1 }, ToString:function(args) { return `属于${args[0]}板块`; } } ],
+
+            ["STKINDI",{ Name:"STKINDI", Param:{ Dynamic:true }, ToString:function(args) { return "指标引用"; } }],
             
 
             [
@@ -589,8 +599,15 @@ function JSExplainer(ast,option)
         if (this.FUNCTION_INFO_LIST.has(funcName))
         {
             var item=this.FUNCTION_INFO_LIST.get(funcName);
-            if (item.Param.Count!=args.length)
+            if (item.Param.Dynamic===true)  //动态参数
+            {
+
+            }
+            else
+            {
+                if (item.Param.Count!=args.length)
                 this.ThrowUnexpectedNode(node,`函数${funcName}参数个数不正确. 需要${item.Param.Count}个参数`);
+            }
             return item.ToString(args);
         }
 
@@ -847,7 +864,51 @@ function JSExplainer(ast,option)
         }
 
         JSConsole.Complier.Log('[JSExplainer::VisitAssignmentExpression]' , varName, ' = ',value);
-        this.VarTable.set(varName,value);
+        this.VarTable.set(varName,this.ConvertToShortValue(value));
+    }
+
+    this.ConvertToShortValue=function(value)
+    {
+        var maxLength=this.MaxValueLength;
+        if (value && value.length>=maxLength)
+        {
+            var shortValue=value.slice(0, maxLength-10);
+            shortValue+="......";
+            return shortValue;
+        }
+       
+        return value;
+    }
+
+    this.ReadMemberVariable=function(node)
+    {
+        var obj=node.Object;
+        var member=node.Property;
+
+        let maiObj;
+        if (obj.Type==Syntax.BinaryExpression || obj.Type==Syntax.LogicalExpression ) 
+            maiObj=this.VisitBinaryExpression(obj);
+        else if (obj.Type==Syntax.CallExpression)
+            maiObj=this.VisitCallExpression(obj);
+        else
+        {
+            if (member.Name.indexOf('#')>0)
+            {
+                var aryValue=member.Name.split("#");
+                var value=`${obj.Name}的${aryValue[0]}[周期${aryValue[1]}]`;
+            }
+            else
+            {
+                var value=`${obj.Name}的${member.Name}`;
+            }
+            return value;
+        }
+
+        if (!maiObj) return null;
+        var value=maiObj[member.Name];
+        if (value) return value;
+
+        return null;
     }
 
     //逻辑运算

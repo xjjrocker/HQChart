@@ -10,6 +10,8 @@
     全局配置颜色
 */
 
+import { IFrameSplitOperator } from "./umychart.framesplit.wechat";
+
 
 function JSChartResource() 
 {
@@ -24,18 +26,22 @@ function JSChartResource()
     this.DownBarColor = "rgb(25,158,0)";
     this.UnchagneBarColor = "rgb(0,0,0)";
     this.MinKLineBarWidth=4;                        //最小的柱子宽度 比这个还小就画直线 
+    this.MinColorKBarWidth=4;
 
     this.Minute = {};
     this.Minute.VolBarColor = null;
     this.Minute.PriceColor = "rgb(50,171,205)";
+    this.Minute.PriceLineWidth=1; //价格线宽度
     this.Minute.AreaPriceColor = 'rgba(50,171,205,0.1)';
     this.Minute.AvPriceColor = "rgb(238,127,9)";
 
     this.DefaultTextColor = "rgb(43,54,69)";
     this.DefaultTextFont = '14px 微软雅黑';
     this.IndexTitleBGColor='rgb(217,219,220)';     //指标名字背景色
+    this.IndexTitleBorderColor='rgb(180,180,180)';
     this.IndexTitleColor="rgb(43,54,69)";
     this.DynamicTitleFont = '12px 微软雅黑';        //指标动态标题字体
+    this.OverlayIndexTitleBGColor='rgba(255,255,255,0.7)';
 
     this.UpTextColor = "rgb(238,21,21)";
     this.DownTextColor = "rgb(25,158,0)";
@@ -67,7 +73,9 @@ function JSChartResource()
     this.Frame = { 
         XBottomOffset: 0 ,  //X轴文字向下偏移
         YTopOffset:2,    //Y轴顶部文字向下偏移
-        YTextPadding:[2,2]
+        YTextPadding:[2,2],
+        StringFormat:0,
+        EnableRemoveZero:true,                  //移除小数点后面的0
     };  
     
     this.FrameLogo=
@@ -92,14 +100,22 @@ function JSChartResource()
     this.FrameLeftMargin = 2;
     this.FrameRightMargin=2;
 
+    //叠加指标框架
+    this.OverlayFrame=
+    {
+        BolderPen:'rgb(190,190,190)',                    //指标边框线
+        TitleColor:'rgb(105,105,105)',                   //指标名字颜色
+        TitleFont:'11px arial',                          //指标名字字体
+    };
+
     this.CorssCursorBGColor = "rgb(43,54,69)";            //十字光标背景
     this.CorssCursorTextColor = "rgb(255,255,255)";
     this.CorssCursorTextFont = "12px 微软雅黑";
     this.CorssCursorHPenColor = "rgb(130,130,130)";          //十字光标线段颜色(水平)
     this.CorssCursorVPenColor = "rgb(130,130,130)";          //十字光标线段颜色(垂直)
 
-    this.Domain = "https://opensource.zealink.com";               //API域名
-    this.CacheDomain = "https://opensourcecache.zealink.com";     //缓存域名
+    this.Domain = "http://127.0.0.1:8080";               //API域名
+    this.CacheDomain = "http://127.0.0.1:8087";     //缓存域名
 
     this.KLine =
         {
@@ -140,6 +156,12 @@ function JSChartResource()
                 }
             }
         };
+
+    this.PriceGapStyple=
+    { 
+        Line:{ Color:"rgb(186,186,186)" }, 
+        Text:{ Color:"rgb(105,105,105)", Font:'12px 微软雅黑' } 
+    };
 
     this.Index = {};
     //指标线段颜色
@@ -187,16 +209,19 @@ function JSChartResource()
     this.Index.NotSupport = { Font: "14px 微软雅黑", TextColor: "rgb(52,52,52)" };
 
     //画图工具
-    this.DrawPicture = {};
-    this.DrawPicture.LineColor =
-    [
-        "rgb(30,144,255)",
-    ];
-
-    this.DrawPicture.PointColor =
-    [
-        "rgb(105,105,105)",
-    ];
+    this.DrawPicture =
+    {
+        LineColor:
+        [ 
+            "rgb(41,98,255)" 
+        ],
+        PointColor:
+        [
+            "rgb(41,98,255)",          //选中颜色
+            "rgb(89,135,255)",          //moveon颜色
+            "rgb(255,255,255)"          //空心点背景色
+        ],
+    }
 
     this.KLineTrain =
     {
@@ -229,7 +254,8 @@ function JSChartResource()
         Font: '14px 微软雅黑',
         PointColor: 'rgb(38,113,254)',
         LineColor: 'rgb(120,167,255)',
-        TextBGColor: 'rgba(255,255,255,0.8)'
+        TextBGColor: 'rgba(255,255,255,0.8)',
+        PointRadius:4,  //圆点半径
     };
 
     //单图标指标ChartSingleText -> DRAWICON
@@ -310,9 +336,8 @@ function JSChartResource()
         Tooltip:
         { 
             BGColor:'rgba(236,240,245, 0.8)', TextColor:"rgb(130,140,151)",
-            Border:{ Top:5, Left:20, Bottom:5, Center: 5},
+            Border:{ Top:5, Left:20, Right:20, Bottom:5, ItemSpace: 5},
             Font:"14px 微软雅黑",
-            LineHeight:16   //单行高度
         }
     }
 
@@ -363,7 +388,7 @@ function JSChartResource()
         UpTextColor:"rgb(238,21,21)",      //上涨文字颜色
         DownTextColor:"rgb(25,158,0)",     //下跌文字颜色
         UnchagneTextColor:"rgb(90,90,90)",     //平盘文字颜色 
-
+        CloseLineColor:"rgb(30,144,255)",
         PageInfo:
         {
             Font:{ Size:15, Name:"微软雅黑"},
@@ -389,11 +414,15 @@ function JSChartResource()
             if (style.Minute.PriceColor) this.Minute.PriceColor = style.Minute.PriceColor;
             if (style.Minute.AvPriceColor) this.Minute.AvPriceColor = style.Minute.AvPriceColor;
             if (style.Minute.AreaPriceColor) this.Minute.AreaPriceColor = style.Minute.AreaPriceColor;
+            if (IFrameSplitOperator.IsNumber(style.Minute.PriceLineWidth)) this.Minute.PriceLineWidth = style.Minute.PriceLineWidth;
+            
         }
         if (style.DefaultTextColor) this.DefaultTextColor = style.DefaultTextColor;
         if (style.DefaultTextFont) this.DefaultTextFont = style.DefaultTextFont;
         if (style.DynamicTitleFont) this.DynamicTitleFont = style.DynamicTitleFont;
         if (style.IndexTitleBGColor) this.IndexTitleBGColor=style.IndexTitleBGColor;
+        if (style.OverlayIndexTitleBGColor) this.OverlayIndexTitleBGColor=style.OverlayIndexTitleBGColor;
+        if (style.IndexTitleBorderColor) this.IndexTitleBorderColor=style.IndexTitleBorderColor;
         if (style.IndexTitleColor) this.IndexTitleColor=style.IndexTitleColor;
         if (style.UpTextColor) this.UpTextColor = style.UpTextColor;
         if (style.DownTextColor) this.DownTextColor = style.DownTextColor;
@@ -433,6 +462,17 @@ function JSChartResource()
             if (style.Index.LineColor) this.Index.LineColor = style.Index.LineColor;
             if (style.Index.NotSupport) this.Index.NotSupport = style.Index.NotSupport;
         }
+
+        if (style.PriceGapStyple)
+        {
+            var item=style.PriceGapStyple;
+            if (item.Line && item.Line.Color) this.PriceGapStyple.Line.Color=item.Line.Color;
+            if (item.Text)
+            {
+                if (item.Text.Color) this.PriceGapStyple.Text.Color=item.Text.Color;
+                if (item.Text.Font) this.PriceGapStyple.Text.Font=item.Text.Font;
+            }
+        }
         
         if (style.ColorArray) this.ColorArray = style.ColorArray;
 
@@ -448,6 +488,17 @@ function JSChartResource()
             if (style.TooltipPaint.BorderColor) this.TooltipPaint.BorderColor = style.TooltipPaint.BorderColor;
             if (style.TooltipPaint.TitleColor) this.TooltipPaint.TitleColor = style.TooltipPaint.TitleColor;
             if (style.TooltipPaint.TitleFont) this.TooltipPaint.TitleFont = style.TooltipPaint.TitleFont;
+        }
+
+        if (style.MinuteInfo)
+        {
+            var item=style.MinuteInfo;
+            if (style.MinuteInfo.TextColor) this.MinuteInfo.TextColor=style.MinuteInfo.TextColor;
+            if (style.MinuteInfo.Font) this.MinuteInfo.Font=style.MinuteInfo.Font;
+            if (style.MinuteInfo.PointColor) this.MinuteInfo.PointColor=style.MinuteInfo.PointColor;
+            if (style.MinuteInfo.LineColor) this.MinuteInfo.LineColor=style.MinuteInfo.LineColor;
+            if (style.MinuteInfo.TextBGColor) this.MinuteInfo.TextBGColor=style.MinuteInfo.TextBGColor;
+            if (IFrameSplitOperator.IsNumber(item.PointRadius)) this.MinuteInfo.PointRadius=item.PointRadius;
         }
 
         if (style.Title)
@@ -469,8 +520,8 @@ function JSChartResource()
             if (style.DRAWICON.Text)
             {
                 var item=style.DRAWICON.Text;
-                if (IFrameSplitOperator.IsPlusNumber(item.MaxSize)) this.DRAWICON.Text.MaxSize=item.MaxSize;
-                if (IFrameSplitOperator.IsPlusNumber(item.MinSize)) this.DRAWICON.Text.MinSize=item.MinSize;
+                if (this.IsPlusNumber(item.MaxSize)) this.DRAWICON.Text.MaxSize=item.MaxSize;
+                if (this.IsPlusNumber(item.MinSize)) this.DRAWICON.Text.MinSize=item.MinSize;
                 if (item.Zoom) this.DRAWICON.Text.Zoom=item.Zoom;
                 if (item.FontName) this.DRAWICON.Text.FontName=item.FontName;
             }
@@ -479,8 +530,8 @@ function JSChartResource()
         if (style.DRAWTEXT)
         {
             var item=style.DRAWTEXT;
-            if (IFrameSplitOperator.IsPlusNumber(item.MaxSize)) this.DRAWICON.MaxSize=item.MaxSize;
-            if (IFrameSplitOperator.IsPlusNumber(item.MinSize)) this.DRAWICON.MinSize=item.MinSize;
+            if (this.IsPlusNumber(item.MaxSize)) this.DRAWICON.MaxSize=item.MaxSize;
+            if (this.IsPlusNumber(item.MinSize)) this.DRAWICON.MinSize=item.MinSize;
             if (item.Zoom) this.DRAWICON.Zoom=item.Zoom;
             if (item.FontName) this.DRAWICON.FontName=item.FontName;
         }
@@ -488,10 +539,10 @@ function JSChartResource()
         if (style.DRAWNUMBER)
         {
             var item=style.DRAWNUMBER;
-            if (this.IsPlusNumber(item.MaxSize)) this.DRAWNUMBER.Text.MaxSize=item.MaxSize;
-            if (this.IsPlusNumber(item.MinSize)) this.DRAWNUMBER.Text.MinSize=item.MinSize;
-            if (item.Zoom) this.DRAWNUMBER.Text.Zoom=item.Zoom;
-            if (item.FontName) this.DRAWNUMBER.Text.FontName=item.FontName;
+            if (this.IsPlusNumber(item.MaxSize)) this.DRAWNUMBER.MaxSize=item.MaxSize;
+            if (this.IsPlusNumber(item.MinSize)) this.DRAWNUMBER.MinSize=item.MinSize;
+            if (item.Zoom) this.DRAWNUMBER.Zoom=item.Zoom;
+            if (item.FontName) this.DRAWNUMBER.FontName=item.FontName;
         }
 
         if (style.DRAWABOVE)
@@ -544,8 +595,9 @@ function JSChartResource()
                 var border=tooltip.Border;
                 if (this.IsNumber(border.Top)) this.DepthCorss.Tooltip.Border.Top=border.Top;
                 if (this.IsNumber(border.Left)) this.DepthCorss.Tooltip.Border.Left=border.Left;
+                if (this.IsNumber(border.Right)) this.DepthCorss.Tooltip.Border.Right=border.Right;
                 if (this.IsNumber(border.Bottom)) this.DepthCorss.Tooltip.Border.Bottom=border.Bottom;
-                if (this.IsNumber(border.Center)) this.DepthCorss.Tooltip.Border.Center=border.Center;
+                if (this.IsNumber(border.ItemSpace)) this.DepthCorss.Tooltip.Border.ItemSpace=border.ItemSpace;
             }
         }
 
@@ -569,7 +621,8 @@ function JSChartResource()
             if (item.DownTextColor) this.Report.DownTextColor=item.DownTextColor;
             if (item.UnchagneTextColor) this.Report.UnchagneTextColor=item.UnchagneTextColor;
             if (item.BorderColor) this.Report.SelectedColor=item.SelectedColor;
-
+            if (item.CloseLineColor) this.Report.CloseLineColor=item.CloseLineColor;
+            
             if (item.Header)
             {
                 var header=item.Header;
