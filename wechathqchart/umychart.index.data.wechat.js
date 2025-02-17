@@ -73,11 +73,11 @@ function JSIndexScript()
 {
     this.DataMap = new Map(
         [
-            ['MA', this.MA], ['均线', this.MA], ['BOLL', this.BOLL], ['BBI', this.BBI],
+            ['MA', this.MA], ['均线', this.MA], ['BOLL', this.BOLL], ['BBI', this.BBI],['BOLL副图', this.BOLL2],
             ["MA4", this.MA4], ["MA5", this.MA5], ["MA6", this.MA6], ["MA7", this.MA7], ["MA8", this.MA8],
             ['DKX', this.DKX], ['MIKE', this.MIKE], ['PBX', this.PBX],
             ['ENE', this.ENE], ['MACD', this.MACD], ['KDJ', this.KDJ],["MACD2", this.MACD2],
-            ['VOL', this.VOL], ['成交量', this.VOL], ['RSI', this.RSI], ['BRAR', this.BRAR],
+            ['VOL', this.VOL],  ['VOL2', this.VOL2],['成交量', this.VOL], ['RSI', this.RSI], ['BRAR', this.BRAR],
             ['WR', this.WR], ['BIAS', this.BIAS], ['OBV', this.OBV],
             ['DMI', this.DMI], ['CR', this.CR], ['PSY', this.PSY],
             ['CCI', this.CCI], ['DMA', this.DMA], ['TRIX', this.TRIX],
@@ -109,6 +109,7 @@ function JSIndexScript()
             ['EMA', this.EMA3], ['EMA4', this.EMA4], ['EMA5', this.EMA5],['EMA6', this.EMA6],
 
             ['CJL2', this.CJL],  //期货持仓量
+            ["持仓量", this.VOL_POSITION],  //成交量+持仓量
 
             //指南针
             ["ZNZ_CBAND", this.ZNZ_CBAND],["ZNZ_RPY2",this.ZNZ_RPY2],["ZNZ_RPY1", this.ZNZ_RPY1],
@@ -432,7 +433,23 @@ JSIndexScript.prototype.BOLL=function()
 {
     let data=
     {
-        Name: 'BOLL', Description: '布林线', IsMainIndex: true, KLineType: 2,
+        Name: 'BOLL', Description: '布林线', IsMainIndex: true,
+        Args:[ { Name:'M', Value:20} ],
+        Script: //脚本
+'BOLL:MA(CLOSE,M);\n\
+UB:BOLL+2*STD(CLOSE,M);\n\
+LB:BOLL-2*STD(CLOSE,M);'
+
+    };
+
+    return data;
+}
+
+JSIndexScript.prototype.BOLL2=function()
+{
+    let data=
+    {
+        Name: 'BOLL副图', Description: '布林线', IsMainIndex: false, KLineType: 2,
         Args:[ { Name:'M', Value:20} ],
         Script: //脚本
 'BOLL:MA(CLOSE,M);\n\
@@ -600,6 +617,23 @@ JSIndexScript.prototype.VOL=function()
 VOL:VOL,VOLSTICK;\n\
 MA1:MA(VOLUME,M1);\n\
 MA2:MA(VOLUME,M2);'
+
+    };
+
+    return data;
+}
+
+JSIndexScript.prototype.VOL2=function()
+{
+    let data=
+    {
+        Name:'VOL', Description:'成交量', IsMainIndex:false,FloatPrecision:0,
+        Args:[ { Name:'M1', Value:5}, { Name:'M2', Value:10} ],
+        OutName:[ {Name:'MA1',DynamicName:"MA{M1}" },  {Name:'MA2',DynamicName:"MA{M2}" }],
+        Script: //脚本
+'VOL:VOL,VOLSTICK,STICKTYPE(1);\n\
+MA1:MA(VOL,M1);\n\
+MA2:MA(VOL,M2);'
 
     };
 
@@ -3207,7 +3241,8 @@ JSIndexScript.prototype.TEST = function ()
             
             Script: //脚本
                 //"T2:KDJ.J;"+
-                "DRAWBAND(OPEN,RGB(0,224,224),CLOSE,RGB(255,96,96));"
+                //"收盘价:C;成交量:VOL, SINGLELINE, RGB(100,100,100);"
+                `PARTLINE(CLOSE,CLOSE>OPEN,RGB(255,0,0),CLOSE<OPEN,RGB(0,255,0),1,RGB(0,0,255)),LINETHICK2,DOTLINE,LINEDASH(10,5);`
                 //"T2:IF(KDJ.J>-10,KDJ.J#WEEK,0);"
                 
 
@@ -3241,6 +3276,20 @@ JSIndexScript.prototype.CJL = function ()
         Script: //脚本
             "成交量:VOL,VOLSTICK;\n\
 持仓量:VOLINSTK,LINEOVERLAY;"
+    };
+
+    return data;
+}
+
+JSIndexScript.prototype.VOL_POSITION=function()
+{
+    let data =
+    {
+        Name: '持仓量', Description: '持仓量', IsMainIndex: false,
+        Args: [],
+        Script: //脚本
+            "成交量:VOL,VOLSTICK;\n\
+持仓量:VOLINSTK,SINGLELINE;"
     };
 
     return data;

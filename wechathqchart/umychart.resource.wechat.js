@@ -13,6 +13,9 @@
 import { IFrameSplitOperator } from "./umychart.framesplit.wechat";
 
 
+
+
+
 function JSChartResource() 
 {
     this.TooltipBGColor = "rgb(255, 255, 255)"; //背景色
@@ -25,6 +28,7 @@ function JSChartResource()
     this.UpBarColor = "rgb(238,21,21)";
     this.DownBarColor = "rgb(25,158,0)";
     this.UnchagneBarColor = "rgb(0,0,0)";
+    this.EmptyBarBGColor="rgb(255,255,255)";  //空心柱子背景色
     this.MinKLineBarWidth=4;                        //最小的柱子宽度 比这个还小就画直线 
     this.MinColorKBarWidth=4;
 
@@ -35,6 +39,14 @@ function JSChartResource()
     this.Minute.AreaPriceColor = 'rgba(50,171,205,0.1)';
     this.Minute.AvPriceColor = "rgb(238,127,9)";
 
+    this.Minute.NightDay=
+    { 
+        NightBGColor:"rgba(0,0,0,0.2)",
+        Font:`12px 微软雅黑`,
+        Day: { Color:"rgb(0,0,0)", BGColor:"rgb(179,179,179)", BorderColor:"rgb(179,179,179)", Margin:{ Left:5, Top:2, Bottom:2, Right:5 } },
+        Night: { Color:"rgb(0,0,0)", BGColor:"rgb(179,179,179)", BorderColor:"rgb(179,179,179)", Margin:{ Left:5, Top:2, Bottom:2, Right:5 } },
+    }
+
     this.DefaultTextColor = "rgb(43,54,69)";
     this.DefaultTextFont = '14px 微软雅黑';
     this.IndexTitleBGColor='rgb(217,219,220)';     //指标名字背景色
@@ -42,6 +54,27 @@ function JSChartResource()
     this.IndexTitleColor="rgb(43,54,69)";
     this.DynamicTitleFont = '12px 微软雅黑';        //指标动态标题字体
     this.OverlayIndexTitleBGColor='rgba(255,255,255,0.7)';
+    this.IndexTitleButton=
+    {
+        Mergin:{ Left:5, Top:2, Bottom:1, Right:5 },
+        Font:"11px 微软雅黑" ,
+        RightSpace:5,
+    }
+
+    this.IndexTitle=
+    {
+        UpDownArrow:    //数值涨跌箭头
+        {
+            UpColor:"rgb(238,21,21)",   //上涨
+            DownColor:"rgb(25,158,0)",  //下跌
+            UnchangeColor:"rgb(0,0,0)"  //不变
+        },
+
+        ArrowType:0,
+        EnableIndexArrow:true,  //指标数值是否带上涨下跌箭头
+
+        NameArrow:{ Color:"rgb(43,54,69)", Space:2, Symbol:'▼' },
+    }
 
     this.UpTextColor = "rgb(238,21,21)";
     this.DownTextColor = "rgb(25,158,0)";
@@ -76,6 +109,8 @@ function JSChartResource()
         YTextPadding:[2,2],
         StringFormat:0,
         EnableRemoveZero:true,                  //移除小数点后面的0
+
+        TitleBorderLine:{ Color:null, Dash:null },
     };  
     
     this.FrameLogo=
@@ -113,6 +148,17 @@ function JSChartResource()
     this.CorssCursorTextFont = "12px 微软雅黑";
     this.CorssCursorHPenColor = "rgb(130,130,130)";          //十字光标线段颜色(水平)
     this.CorssCursorVPenColor = "rgb(130,130,130)";          //十字光标线段颜色(垂直)
+    this.CorssCursorLineDash=[3,2];            //十字光标虚线
+
+    this.CorssCursor=
+    {
+        RightMargin: { Left:2, Right:2, Top:2, Bottom:1 },
+        CorssPoint:
+        {
+            Center:{ Radius:5, Color:"rgb(50,171,205)"},
+             Border:{ Color:'rgb(255,255,255)', Width:1} 
+        }
+    }
 
     this.Domain = "http://127.0.0.1:8080";               //API域名
     this.CacheDomain = "http://127.0.0.1:8087";     //缓存域名
@@ -193,6 +239,15 @@ function JSChartResource()
             "rgb(42,230,215)",
             "rgb(24,71,178)",
         ];
+
+    this.OverlaySymbol={ Random:0 };    //Random 颜色的随机数
+    this.OverlaySymbol.Color=   //叠加股票颜色
+    [
+        "rgb(38,198,218)",
+        "rgb(103,58,183)",
+        "rgb(0,191,165)",
+        "rgb(130,177,255)",
+    ];
 
     //历史数据api
     this.Index.StockHistoryDayApiUrl = "https://opensource.zealink.com/API/StockHistoryDay";
@@ -319,6 +374,24 @@ function JSChartResource()
         Radius:2
     }
 
+    this.DOTLINE=
+    {
+        LineDash:[3,5]
+    }
+
+    this.StockChip=
+    {
+        InfoColor:'rgb(0,0,0)', //文字颜色
+        Font:'12px 微软雅黑',
+
+        PhoneCloseButton:
+        {
+            Color:"rgb(255,255,255)",
+            Size:15,
+            Border:{ BGColor:"rgb(169,169,169)" }
+        }
+    }
+
     //深度图
     this.DepthChart=
     {
@@ -395,7 +468,14 @@ function JSChartResource()
             TextColor:"rgb(0,0,0)",
             BGColor:"rgba(180,180,180,0.5)",
             Mergin:{ Left:5, Right:5, Top:4, Bottom:2 },
-        }
+        },
+
+        CloseLine:
+        {
+            CloseColor:"rgb(30,144,255)",
+            YCloseColor:"rgba(105,105,105,0.5)",  //昨收线
+            AreaColor:'rgba(0,191,255,0.2)',
+        },
     }
 
     // //自定义风格
@@ -408,6 +488,7 @@ function JSChartResource()
         if (style.UpBarColor) this.UpBarColor = style.UpBarColor;
         if (style.DownBarColor) this.DownBarColor = style.DownBarColor;
         if (style.UnchagneBarColor) this.UnchagneBarColor = style.UnchagneBarColor;
+        if (style.EmptyBarBGColor) this.EmptyBarBGColor=style.EmptyBarBGColor;
         if (style.Minute) 
         {
             if (style.Minute.VolBarColor) this.Minute.VolBarColor = style.Minute.VolBarColor;
@@ -416,6 +497,28 @@ function JSChartResource()
             if (style.Minute.AreaPriceColor) this.Minute.AreaPriceColor = style.Minute.AreaPriceColor;
             if (IFrameSplitOperator.IsNumber(style.Minute.PriceLineWidth)) this.Minute.PriceLineWidth = style.Minute.PriceLineWidth;
             
+            if (style.Minute.NightDay)
+            {
+                var item=style.Minute.NightDay;
+                if (item.NightBGColor) this.Minute.NightDay.NightBGColor=item.NightBGColor;
+                if (item.Font) this.Minute.NightDay.Font=item.Font;
+                if (item.Day)
+                {
+                    var subItem=item.Day;
+                    if (subItem.Color) this.Minute.NightDay.Day.Color=subItem.Color;
+                    if (subItem.BGColor) this.Minute.NightDay.Day.BGColor=subItem.BGColor;
+                    if (subItem.BorderColor) this.Minute.NightDay.Day.BorderColor=subItem.BorderColor;
+                    JSChartResource.CopyMargin(this.Minute.NightDay.Day.Margin,subItem.Margin);
+                }
+                if (item.Night)
+                {
+                    var subItem=item.Night;
+                    if (subItem.Color) this.Minute.NightDay.Night.Color=subItem.Color;
+                    if (subItem.BGColor) this.Minute.NightDay.Night.BGColor=subItem.BGColor;
+                    if (subItem.BorderColor) this.Minute.NightDay.Night.BorderColor=subItem.BorderColor;
+                    JSChartResource.CopyMargin(this.Minute.NightDay.Night.Margin,subItem.Margin);
+                }
+            }
         }
         if (style.DefaultTextColor) this.DefaultTextColor = style.DefaultTextColor;
         if (style.DefaultTextFont) this.DefaultTextFont = style.DefaultTextFont;
@@ -435,10 +538,41 @@ function JSChartResource()
         if (style.FrameSplitTextFont) this.FrameSplitTextFont = style.FrameSplitTextFont;
         if (style.FrameTitleBGColor) this.FrameTitleBGColor = style.FrameTitleBGColor;
 
+        if (style.IndexTitle)
+        {
+            var item=style.IndexTitle;
+            if (item.UpDownArrow)
+            {
+                var subItem=item.UpDownArrow;
+                if (subItem.UpColor) this.IndexTitle.UpDownArrow.UpColor = subItem.UpColor;
+                if (subItem.DownColor) this.IndexTitle.UpDownArrow.DownColor = subItem.DownColor;
+                if (subItem.UnchangeColor) this.IndexTitle.UpDownArrow.UnchangeColor = subItem.UnchangeColor;
+            }
+
+            if (IFrameSplitOperator.IsNumber(item.ArrowType)) this.IndexTitle.ArrowType=item.ArrowType;
+            if (IFrameSplitOperator.IsBool(item.EnableIndexArrow)) this.IndexTitle.EnableIndexArrow=item.EnableIndexArrow;
+            
+            if (item.NameArrow)
+            {
+                var subItem=item.NameArrow;
+                if (subItem.Color) this.IndexTitle.NameArrow.Color = subItem.Color;
+                if (subItem.Symbol) this.IndexTitle.NameArrow.Symbol = subItem.Symbol;
+                if (IFrameSplitOperator.IsNumber(subItem.Space)) this.IndexTitle.NameArrow.Space = subItem.Space;
+            }
+        }
+
         if (style.Frame) 
         {
+            var item=style.Frame;
             if (style.Frame.XBottomOffset) this.Frame.XBottomOffset = style.Frame.XBottomOffset;
             if (style.Frame.YTopOffset) this.Frame.YTopOffset = style.Frame.YTopOffset;
+            if (item.TitleBorderLine)
+            {
+                var subItem=item.TitleBorderLine;
+                var destItem=this.Frame.TitleBorderLine;
+                if (subItem.Color) destItem.Color=subItem.Color;
+                if (IFrameSplitOperator.IsNonEmptyArray(subItem.Dash)) destItem.Dash=subItem.Dash.slice();
+            }
         }
 
         if (style.FrameLatestPrice) 
@@ -456,6 +590,28 @@ function JSChartResource()
         if (style.CorssCursorTextFont) this.CorssCursorTextFont = style.CorssCursorTextFont;
         if (style.CorssCursorHPenColor) this.CorssCursorHPenColor = style.CorssCursorHPenColor;
         if (style.CorssCursorVPenColor) this.CorssCursorVPenColor = style.CorssCursorVPenColor;
+        if (style.CorssCursorLineDash) this.CorssCursorLineDash = style.CorssCursorLineDash.slice();
+
+        if (style.CorssCursor && style.CorssCursor.CorssPoint)
+        {
+            var item=style.CorssCursor.CorssPoint;
+            if (item.Center)
+            {
+                var subItem=item.Center;
+                var subDest=this.CorssCursor.CorssPoint.Center;
+                if (IFrameSplitOperator.IsNumber(subItem.Radius)) subDest.Radius=subItem.Radius;
+                if (subItem.Color) subDest.Color=subItem.Color;
+            }
+
+            if (item.Border)
+            {
+                var subItem=item.Border;
+                var subDest=this.CorssCursor.CorssPoint.Border;
+                if (IFrameSplitOperator.IsNumber(subItem.Width)) subDest.Width=subItem.Width;
+                if (subItem.Color) subDest.Color=subItem.Color;
+            }
+        }
+        
         if (style.KLine) this.KLine = style.KLine;
         if (style.Index) 
         {
@@ -551,6 +707,23 @@ function JSChartResource()
             if (this.IsNumber(item.YOffset)) this.DRAWABOVE.YOffset=item.YOffset;
         }
 
+        if (style.StockChip)
+        {
+            var item=style.StockChip;
+            if (item.Font) this.StockChip.Font=item.Font;
+            if (item.InfoColor) this.StockChip.InfoColor=item.InfoColor;
+            if (item.PhoneCloseButton)
+            {
+                var subItem=item.PhoneCloseButton;
+                if (subItem.Color) this.StockChip.PhoneCloseButton.Color=subItem.Color;
+                if (IFrameSplitOperator.IsNumber(subItem.Size)) this.StockChip.PhoneCloseButton.Size=subItem.Size;
+                if (subItem.Border)
+                {
+                    if (subItem.Border.BGColor) this.StockChip.PhoneCloseButton.Border.BGColor=subItem.Border.BGColor;
+                }
+            }
+        }
+
         if (style.DepthChart)
         {
             var item=style.DepthChart;
@@ -611,6 +784,12 @@ function JSChartResource()
         {
             var item=style.POINTDOT;
             if (this.IsNumber(item.Radius)) this.POINTDOT.Radius=item.Radius;
+        }
+
+        if (style.DOTLINE)
+        {
+            var item=style.DOTLINE;
+            if (IFrameSplitOperator.IsNonEmptyArray(item.LineDash)) this.DOTLINE.LineDash=item.LineDash.slice();
         }
 
         if (style.Report)
@@ -753,6 +932,34 @@ function JSChartResource()
                 }
             }
         }
+
+        if (style.KLineTrain)  this.SetKLineTrain(style.KLineTrain);
+    }
+
+    this.SetKLineTrain=function(style)
+    {
+        var dest=this.KLineTrain;
+        if (style.Font) dest.Font=style.Font;
+        if (style.LastDataIcon)
+        {
+            var subItem=style.LastDataIcon;
+            if (subItem.Color) dest.LastDataIcon.Color=subItem.Color;
+            if (subItem.Text) dest.LastDataIcon.Text=subItem.Text;
+        }
+
+        if (style.BuyIcon)
+        {
+            var subItem=style.BuyIcon;
+            if (subItem.Color) dest.BuyIcon.Color=subItem.Color;
+            if (subItem.Text) dest.BuyIcon.Text=subItem.Text;
+        }
+
+        if (style.SellIcon)
+        {
+            var subItem=style.SellIcon;
+            if (subItem.Color) dest.SellIcon.Color=subItem.Color;
+            if (subItem.Text) dest.SellIcon.Text=subItem.Text;
+        }
     }
 
     
@@ -782,6 +989,18 @@ function JSChartResource()
         return ary.length>0;
     }
 }
+
+
+JSChartResource.CopyMargin=function(dest,src)
+{
+    if (!src || !dest) return;
+
+    if (IFrameSplitOperator.IsNumber(src.Left)) dest.Left=src.Left;
+    if (IFrameSplitOperator.IsNumber(src.Top)) dest.Top=src.Top;
+    if (IFrameSplitOperator.IsNumber(src.Right)) dest.Right=src.Right;
+    if (IFrameSplitOperator.IsNumber(src.Bottom)) dest.Bottom=src.Bottom;
+}
+
 
 var g_JSChartResource = new JSChartResource();
 
@@ -879,7 +1098,11 @@ function JSChartLocalization()
 
         //深度图
         ["Depth-Price", {CN:"委托价", EN:"Price", TC:'委托價'}],
-        ["Depth-Sum", {CN:"累计", EN:"Sum", TC:'累計'}]
+        ["Depth-Sum", {CN:"累计", EN:"Sum", TC:'累計'}],
+
+        //日盘|夜盘
+        ["日盘",{CN:'日盘', EN:'Day', TC:'日盤'}],
+        ["夜盘",{CN:'夜盘', EN:'Night', TC:'夜盤'} ]
 
     ]);
 
@@ -936,7 +1159,7 @@ export
     JSChartResource,
     g_JSChartResource,
     g_JSChartLocalization,
-    JSCHART_LANGUAGE_ID
+    JSCHART_LANGUAGE_ID,
 };
 /*
 module.exports =

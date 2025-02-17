@@ -89,7 +89,7 @@ function IFrameSplitOperator()
         return true;
     }
 
-    this.Filter = function (aryInfo, keepZero)   //keepZero 保留0轴
+    this.Filter=function (aryInfo, keepZero, filterType)   //keepZero 保留0轴
     {
         if (this.SplitCount <= 0 || aryInfo.length <= 0 || aryInfo.length <= this.SplitCount) return aryInfo;
 
@@ -97,17 +97,27 @@ function IFrameSplitOperator()
         var filter = parseInt(aryInfo.length / this.SplitCount);
         if (filter <= 1) filter = 2;
         var data = [];
-
-        for (var i = 0; i < aryInfo.length; i += filter) 
+        if (filterType==1)
         {
-            if (i + filter >= aryInfo.length && i != aryInfo.length - 1) //最后一个数据放进去
+            for (var i = 0; i < aryInfo.length; i += filter) 
             {
-                data.push(aryInfo[aryInfo.length - 1]);
-            }
-            else {
                 data.push(aryInfo[i]);
             }
         }
+        else
+        {
+            for (var i = 0; i < aryInfo.length; i += filter) 
+            {
+                if (i + filter >= aryInfo.length && i != aryInfo.length - 1) //最后一个数据放进去
+                {
+                    data.push(aryInfo[aryInfo.length - 1]);
+                }
+                else {
+                    data.push(aryInfo[i]);
+                }
+            }
+        }
+        
 
         if (this.SplitCount == 2 && data.length > 2) //之显示第1个和最后一个刻度
         {
@@ -210,6 +220,76 @@ function IFrameSplitOperator()
     this.SetOption=function(option)
     {
 
+    }
+
+    //计算上下预留
+    this.ReservedHeight=function(splitData)
+    {
+        if (!this.Frame) return;
+        if (this.Frame.IsHScreen) return;   //横屏以后再搞
+
+        var yReserved=this.Frame.HorizontalReserved;
+        if (!yReserved) return;
+
+        var reservedHeight=0;
+        if (IFrameSplitOperator.IsPlusNumber(yReserved.Top)) reservedHeight+=yReserved.Top;
+        if (IFrameSplitOperator.IsPlusNumber(yReserved.Bottom)) reservedHeight+=yReserved.Bottom;
+        if (reservedHeight<=0) return;
+
+        var border=this.Frame.GetBorder();
+        var top=border.TopEx;
+        var bottom=border.BottomEx;
+        var srcHeight=bottom-top;
+        if (srcHeight<reservedHeight) return;
+
+        var max=splitData.Max;
+        var min=splitData.Min;
+        if (IFrameSplitOperator.IsPlusNumber(yReserved.Top)) top-=yReserved.Top;
+        if (IFrameSplitOperator.IsPlusNumber(yReserved.Bottom)) bottom+=yReserved.Bottom;
+
+        var value=(max-min)/(bottom-top);   //1个像素点对应的数值
+        if (IFrameSplitOperator.IsPlusNumber(yReserved.Top))
+        {
+            var topValue=value*yReserved.Top;
+            max+=topValue;
+        }
+        
+        if (IFrameSplitOperator.IsPlusNumber(yReserved.Bottom))
+        {
+            var bottomValue=value*yReserved.Bottom;
+            min-=bottomValue;
+        }
+
+        splitData.Max=max;
+        splitData.Min=min;
+
+        this.Frame.HorizontalMax=splitData.Max;
+        this.Frame.HorizontalMin=splitData.Min;
+    }
+
+    this.SendSplitXCoordinateEvent=function()
+    {
+        if (!this.GetEventCallback) return;
+
+        var event=this.GetEventCallback(JSCHART_EVENT_ID.ON_SPLIT_XCOORDINATE);
+        if (!event || !event.Callback) return;
+
+        var data={ ID:this.Frame.Identify, Frame:this.Frame };
+        event.Callback(event,data,this);
+    }
+
+    //回调外部处理自定义Y轴刻度
+    this.InvokeCustomYCoordinateCallback=function()
+    {
+        if (!this.GetEventCallback) return null;
+        var event=this.GetEventCallback(JSCHART_EVENT_ID.ON_CREATE_CUSTOM_Y_COORDINATE);
+        if (!event || !event.Callback) return null;
+
+        var data={ ID:this.Frame.Identify, Frame:this.Frame, PreventDefault:false, Custom:this.Custom };
+        if (this.OverlayIdentify) data.OverlayIdentify=this.OverlayIdentify;
+        event.Callback(event,data,this);
+
+        return data;
     }
 }
 
@@ -542,6 +622,11 @@ IFrameSplitOperator.IsNonEmptyArray=function(ary)
     return ary.length>0;
 }
 
+IFrameSplitOperator.IsUndefined=function(value)
+{
+    return value===undefined;
+}
+
 //K线Y轴分割
 function FrameSplitKLinePriceY() 
 {
@@ -677,6 +762,10 @@ function FrameSplitKLinePriceY()
 
     this.CustomCoordinate = function (floatPrecision) 
     {
+        this.Frame.CustomHorizontalInfo = [];
+        var data=this.InvokeCustomYCoordinateCallback();
+        if (data && data.PreventDefault==true) return;
+
         if (!IFrameSplitOperator.IsNumber(floatPrecision))
         {
             floatPrecision = JSCommonCoordinateData.GetfloatPrecision(this.Symbol);
@@ -684,7 +773,6 @@ function FrameSplitKLinePriceY()
             if (this.FloatPrecision != null) floatPrecision = this.FloatPrecision;
         }
 
-        this.Frame.CustomHorizontalInfo = [];
         for (var i=0;i<this.Custom.length; ++i) 
         {
             var item = this.Custom[i];
@@ -808,6 +896,7 @@ function FrameSplitY()
     this.newMethod();
     delete this.newMethod;
     this.SplitType=0;                         //0=自动分割  1=固定分割 2=百分比(0-100)
+    this.FilterType=0;   //自动分割过滤算法
     this.DefaultSplitType=0;
     this.FloatPrecision = 2;                  //坐标小数位数(默认2)
     this.EnableRemoveZero=g_JSChartResource.Frame.EnableRemoveZero;
@@ -817,6 +906,7 @@ function FrameSplitY()
 
     this.IsShowYZero = true;
     this.IntegerSplitData = null;
+    
 
     this.Reset=function()   //重置
     {
@@ -943,10 +1033,13 @@ function FrameSplitY()
         }
 
         this.FilterIgnoreYValue();
-        this.Frame.HorizontalInfo = this.Filter(this.Frame.HorizontalInfo, (splitData.Max > 0 && splitData.Min < 0 && this.IsShowYZero));
+        this.Frame.HorizontalInfo = this.Filter(this.Frame.HorizontalInfo, (splitData.Max > 0 && splitData.Min < 0 && this.IsShowYZero), this.FilterType);
         this.MainOverlayFrameSplitY();  //主图Y轴绑定叠加Y轴坐标
         if (this.EnableRemoveZero) this.RemoveZero(this.Frame.HorizontalInfo);
         this.DynamicMessageText();
+
+        this.ReservedHeight(splitData);
+
         this.Frame.HorizontalMax = splitData.Max;
         this.Frame.HorizontalMin = splitData.Min;
 
@@ -1294,6 +1387,8 @@ function FrameSplitKLineX()
         else if (ChartData.IsMinutePeriod(this.Period, true)) this.SplitDateTime();
         else if (ChartData.IsSecondPeriod(this.Period)) this.SplitSecond();
         else this.SplitDate();
+
+        this.SendSplitXCoordinateEvent();
     }
 
     this.CreateCoordinateInfo=function()
@@ -1347,6 +1442,8 @@ function FrameSplitMinutePriceY()
 
         this.CustomCoordinate();
 
+        this.ReservedHeight({ Max:this.Frame.HorizontalMax, Min:this.Frame.HorizontalMin });     //预留高度
+
         if (this.GetEventCallback)
         {
             var event=this.GetEventCallback(JSCHART_EVENT_ID.ON_SPLIT_YCOORDINATE);
@@ -1380,11 +1477,12 @@ function FrameSplitMinutePriceY()
             }
         }
 
-        if (this.OverlayChartPaint && this.OverlayChartPaint.length > 0 && this.OverlayChartPaint[0] && this.OverlayChartPaint[0].Symbol) 
+        for(var i=0; i<this.OverlayChartPaint.length; ++i)
         {
-            var range = this.OverlayChartPaint[0].GetMaxMin();
-            if (range.Max && range.Max > max) max = range.Max;
-            if (range.Min && range.Min < min) min = range.Min;
+            var item=this.OverlayChartPaint[i];
+            var range=item.GetMaxMin();
+            if (range.Max && range.Max>max) max=range.Max;
+            if (range.Min && range.Min<min) min=range.Min;
         }
 
         if (this.SplitType==1 && this.LimitPrice)
@@ -1482,7 +1580,7 @@ function FrameSplitMinutePriceY()
             var strPrice=price.toFixed(defaultfloatPrecision);  //价格刻度字符串
             if (this.IsShowLeftText) coordinate.Message[0]=strPrice;
 
-            if (this.YClose)
+            if (IFrameSplitOperator.IsNumber(this.YClose) && this.YClose!=0)
             {
                 var per=(price/this.YClose-1)*100;
                 if (per>0) coordinate.TextColor=g_JSChartResource.UpTextColor;
@@ -1562,7 +1660,7 @@ function FrameSplitMinutePriceY()
             coordinate.Value = price;
             coordinate.Message[0] = price.toFixed(defaultfloatPrecision);
 
-            if (IFrameSplitOperator.IsNumber(this.YClose))
+            if (IFrameSplitOperator.IsNumber(this.YClose) && this.YClose!=0)
             {
                 var per = (price / this.YClose - 1) * 100;
                 if (per > 0) coordinate.TextColor = g_JSChartResource.UpTextColor;
@@ -1584,9 +1682,13 @@ function FrameSplitMinutePriceY()
 
     this.CustomCoordinate = function ()    //自定义刻度
     {
-        if (!this.Custom) return;
+        this.Frame.CustomHorizontalInfo = [];
+        var data=this.InvokeCustomYCoordinateCallback();
+        if (data && data.PreventDefault==true) return;
 
-        for (var i in this.Custom) 
+        if (!IFrameSplitOperator.IsNonEmptyArray(this.Custom)) return;
+
+        for (var i=0; i<this.Custom.length; ++i) 
         {
             var item = this.Custom[i];
             if (item.Type == 1) 
@@ -1718,6 +1820,8 @@ function FrameSplitMinuteX()
                 this.Frame.VerticalInfo.push(info);
             }
         }
+
+        this.SendSplitXCoordinateEvent();
     }
 }
 
@@ -1807,7 +1911,7 @@ function FrameSplitXDepth()
             var event=this.GetEventCallback(JSCHART_EVENT_ID.ON_SPLIT_XCOORDINATE);
             if (event && event.Callback)
             {
-                var data={ID:this.Frame.Identify, Frame:this.Frame };
+                var data={ID:this.Frame.Identify, Frame:this.Frame, IsShowText:this.ShowText };
                 event.Callback(event,data,this);
             }
         }
@@ -2131,6 +2235,7 @@ function HQPriceStringFormat()
     {
         this.RText = null;
         this.RComplexText=null;
+        this.PercentageText=null;
         if (IFrameSplitOperator.IsString(this.RValue)) this.RText = this.RValue;
         if (!this.Value) return false;
 
@@ -2165,8 +2270,9 @@ function HQPriceStringFormat()
             var event=this.GetEventCallback(JSCHART_EVENT_ID.ON_FORMAT_CORSSCURSOR_Y_TEXT);
             if (event)
             {
-                var data={ Value:this.Value, FrameID:this.FrameID };
+                var data={ Value:this.Value, FrameID:this.FrameID, PreventDefault:false };
                 event.Callback(event,data,this);
+                if (data.PreventDefault==true) return false;
             }
         }
 
@@ -2215,8 +2321,9 @@ function HQDateStringFormat()
             var event=this.GetEventCallback(JSCHART_EVENT_ID.ON_FORMAT_CORSSCURSOR_X_TEXT);
             if (event)
             {
-                var data={ Item:currentData, Period:this.Data.Period, Date:currentData.Date, Time:currentData.Time,Index:this.Data.DataOffset+index };
+                var data={ Item:currentData, Period:this.Data.Period, Date:currentData.Date, Time:currentData.Time,Index:this.Data.DataOffset+index, PreventDefault:false };
                 event.Callback(event,data,this);
+                if (data.PreventDefault==true) return false;
             }
         }
         return true;
@@ -2258,8 +2365,9 @@ function HQMinuteTimeStringFormat()
         var event=this.GetEventCallback(JSCHART_EVENT_ID.ON_FORMAT_CORSSCURSOR_X_TEXT);
         if (event)
         {
-            var data={ Time:time, Index:showIndex };
+            var data={ Time:time, Index:showIndex, PreventDefault:false };
             event.Callback(event,data,this);
+            if (data.PreventDefault==true) return false;
         }
     }
         return true;

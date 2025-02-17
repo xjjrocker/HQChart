@@ -6,6 +6,48 @@
   "description": "hqchart画图工具",
   "glyphs": [
     {
+      "icon_id": "6151227",
+      "name": "unlock",
+      "font_class": "unlock",
+      "unicode": "e7fa",
+      "unicode_decimal": 59386
+    },
+    {
+      "icon_id": "6151228",
+      "name": "lock",
+      "font_class": "lock",
+      "unicode": "e7fb",
+      "unicode_decimal": 59387
+    },
+    {
+      "icon_id": "392156",
+      "name": "箭头",
+      "font_class": "big_arrow",
+      "unicode": "e6a5",
+      "unicode_decimal": 59045
+    },
+    {
+      "icon_id": "12779708",
+      "name": "长箭头",
+      "font_class": "bottom-arrow-solid",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "12209969",
+      "name": "边框",
+      "font_class": "biankuang",
+      "unicode": "e707",
+      "unicode_decimal": 59143
+    },
+    {
+      "icon_id": "37944362",
+      "name": "图标_水平射线",
+      "font_class": "tubiao_shuipingshexian",
+      "unicode": "e79b",
+      "unicode_decimal": 59291
+    },
+    {
       "icon_id": "5668811",
       "name": "趋势线角度",
       "font_class": "qushixianjiaodu",

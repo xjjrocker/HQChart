@@ -64,7 +64,7 @@ function GetBlackStyle()
             PriceColor: "rgb(25,180,231)",
             AreaPriceColor:"rgba(63,158,255,.3)",
             AvPriceColor: "rgb(255,236,0)",
-            PositionColor:'rgb(218,165,32)', 
+            PositionColor:'rgb(201, 9, 224)', 
             VolTitleColor:"rgb(190,190,190)",
             Before:
             {
@@ -81,7 +81,20 @@ function GetBlackStyle()
             {
                 BGColor:"rgba(105,105,105,0.5)",
                 AvPriceColor:'rgb(248,248,255)'     //均线
+            },
+            NightDay:
+            { 
+                NightBGColor:"rgb(22,22,22)",
+                Font:`${12*GetDevicePixelRatio()}px 微软雅黑`,
+                Day: { Color:"rgb(153,153,153)", BGColor:"rgb(51,51,51)", BorderColor:"rgb(51,51,51)", Margin:{ Left:5, Top:2, Bottom:2, Right:5 } },
+                Night: { Color:"rgb(153,153,153)", BGColor:"rgb(51,51,51)", BorderColor:"rgb(51,51,51)", Margin:{ Left:5, Top:2, Bottom:2, Right:5 } },
             }
+        },
+
+        PopMinuteChart:
+        {
+            BGColor:"rgba(0,0,0,0.85)",
+            BorderColor:"rgb(230,230,230)",
         },
     
     
@@ -105,7 +118,9 @@ function GetBlackStyle()
                 UpColor:"rgb(238,21,21)",   //上涨
                 DownColor:"rgb(25,158,0)",  //下跌
                 UnchangeColor:"rgb(190, 190 ,190)"  //不变
-            }
+            },
+
+            NameArrow:{ Color:"rgb(190, 190 ,190)", Space:2, Symbol:'▼' },
         },
     
         Title:
@@ -136,9 +151,9 @@ function GetBlackStyle()
            
             PercentageText:      //百分比坐标文字颜色
             { 
-                PriceColor:'rgb(101,104,112)', 
-                PercentageColor:"rgb(101,104,112)", 
-                SplitColor:"rgb(101,104,112)",
+                PriceColor:'rgb(220,220,220)', 
+                PercentageColor:"rgb(220,220,220)", 
+                SplitColor:"rgb(220,220,220)",
                 Font:14*GetDevicePixelRatio() +"px 微软雅黑"
             }
         }, 
@@ -173,7 +188,9 @@ function GetBlackStyle()
                 BGColor:'rgb(43,54,69)', 
                 PenColor:'rgb(255,255,255)',
                 Icon: { Text:'\ue6a3', Color:'rgb(255,255,255)', Family:"iconfont", Size:18 }
-            } 
+            },
+
+            CorssPoint:{ Center:{ Color:"rgb(50,171,205)" }, Border:{ Color:'rgba(0,0,0,0.8)', Width:1*GetDevicePixelRatio() } }
         },
     
         //订单流配置
@@ -329,6 +346,12 @@ function GetBlackStyle()
                 Color:"rgb(156,156,156)"
             },
 
+            AddIndexWindow:
+            {
+                MoveOnColor:"rgb(255,255,255)",
+                Color:"rgb(156,156,156)"
+            },
+
             Tooltip:
             {
                 //Font:12*GetDevicePixelRatio() +"px 微软雅黑",
@@ -365,6 +388,7 @@ function GetBlackStyle()
             DateTimeColor:'rgb(210,210,210)',
             VolColor:"rgb(255, 185, 15)",       //标题成交量
             AmountColor:"rgb(210,210,210)",    //成交金额
+            PositionColor:"rgb(255,215,0)",  //持仓量
         },
 
         PCTooltipPaint:
@@ -377,7 +401,76 @@ function GetBlackStyle()
             VolColor:"rgb(161,154,3)",       //标题成交量
             AmountColor:"rgb(161,154,3)",    //成交金额
         },
-    
+
+        DialogTooltip:
+        {
+            BGColor:'rgb(20,20,20)',            //背景色
+            BorderColor:'rgb(170,170,170)',     //边框颜色
+            TitleColor:'rgb(250,250,250)',       //标题颜色
+            VolColor:"rgb(255, 185, 15)",       //标题成交量
+            AmountColor:"rgb(210,210,210)",      //成交金额
+            DateTimeColor:'rgb(210,210,210)',
+            TurnoverRateColor:'rgb(43,54,69)',       //换手率
+            PositionColor:"rgb(255,0,255)",            //持仓
+
+            TextColor:"rgb(210,210,210)",             //数值名称
+            ValueColor:"rgb(210,210,210)",            //数值
+
+            TitleBGColor:"rgb(200, 66, 69)",
+        },
+
+        FloatTooltip:
+        {
+            BGColor:'rgb(20,20,20)',            //背景色
+            BorderColor:'rgb(170,170,170)',     //边框颜色
+            
+            VolColor:"rgb(255, 185, 15)",       //标题成交量
+            AmountColor:"rgb(210,210,210)",      //成交金额
+            DateTimeColor:'rgb(210,210,210)',
+            TurnoverRateColor:'rgb(43,54,69)',       //换手率
+            PositionColor:"rgb(255,0,255)",            //持仓
+
+            TextColor:"rgb(210,210,210)",             //数值名称
+            ValueColor:"rgb(210,210,210)",            //数值
+        },
+
+        DialogSelectRect:
+        {
+            BGColor:'rgb(20,20,20)',            //背景色
+            BorderColor:'rgb(170,170,170)',     //边框颜色
+            TitleColor:'rgb(210,210,210)',       //标题颜色
+            VolColor:"rgb(255, 185, 15)",       //标题成交量
+            AmountColor:"rgb(210,210,210)",      //成交金额
+            TextColor:"rgb(210,210,210)",             //数值名称
+            ValueColor:"rgb(210,210,210)",            //数值
+            TurnoverRateColor:'rgb(43,54,69)',       //换手率
+            PositionColor:"rgb(255,0,255)"            //持仓
+        },
+
+        DialogSearchIndex:
+        {
+            BGColor:'rgb(20,20,20)',            //背景色
+            BorderColor:'rgb(170,170,170)',     //边框颜色
+            TitleColor:'rgb(230,230,230)',       //标题颜色
+
+            IndexNameColor:"rgb(210,210,210)",       
+            GroupNameColor:"rgb(210,210,210)",      
+            InputTextColor:"rgb(210,210,210)", 
+        },
+
+        DialogPopKeyboard:
+        {
+            BGColor:'rgb(20,20,20)',            //背景色
+            BorderColor:'rgb(170,170,170)',     //边框颜色
+            TitleColor:'rgb(240,240,240)',       //标题颜色
+
+            Input:
+            {
+                BGColor:"rgb(20,20,20)",
+                TextColor:"rgb(250,250,250)",
+            }
+        },
+        
         //走势图 信息地雷
         MinuteInfo:
         {
@@ -407,7 +500,17 @@ function GetBlackStyle()
         StockChip:
         {
             InfoColor:'rgb(255,255,255)', //文字颜色
-            DayInfoColor:'rgb(0,0,0)' //周期颜色内文字颜色
+            DayInfoColor:'rgb(0,0,0)', //周期颜色内文字颜色
+
+            //手机端
+            PhoneCloseButton:
+            {
+                Family:"iconfont", 
+                Size:16*GetDevicePixelRatio(), 
+                Text:"\ue60c", 
+                Color:"rgb(255,255,255)",
+                Border:{ BGColor:"rgb(40,42,44)" }
+            }
         },
     
         //深度图
@@ -433,6 +536,37 @@ function GetBlackStyle()
             }
         },
 
+        ChartSimpleTable:
+        {
+            TextColor:"rgb(250,250,250)",
+            BGColor:"rgba(0,0,0,0.85)",
+            BorderColor:"rgb(90,90,90)",
+        },
+
+        ChartSimplePie:
+        {
+            BorderColor:"rgb(220,220,220)",
+        },
+
+        ChartSimpleDoughnut:
+        {
+            BorderColor:"rgb(220,220,220)",
+        },
+
+        ChartSimpleRadar:
+        {
+            //TextFont:{ Family:'微软雅黑' , Size:12 },
+            BorderColor:"rgb(230, 230, 230)",
+            //Offset:{ X:-5, Y:5 },
+            TextColor:"rgb(250, 250, 250)",
+            AryBGColor:['rgba(63,61,82,0.9)','rgba(56,55,80,0.9)'],
+            AryArea:
+            [ 
+                { Color:"rgba(242,154,118,0.4)", LineColor:"rgb(242,154,118)"}, 
+                { Color:"rgba(121,197,228,0.4)", LineColor:"rgb(92,165,196)"}, 
+            ],
+        },
+
         ChartDrawVolProfile:
         {
             BGColor:"rgba(244,250,254,0.3)",
@@ -454,6 +588,13 @@ function GetBlackStyle()
             LineWidth:1*GetDevicePixelRatio(),
             LineDotted:[3,3], 
             AreaColor:"rgba(26,13,7,0.5)",     //面积
+        },
+
+        RectDrag:
+        {
+            LineColor:"rgb(220,220,220)",          
+            LineWidth:1*GetDevicePixelRatio(),
+            BGColor:"rgba(220,220,220,0.2)",     //面积
         },
 
         SelectedChart:
@@ -519,13 +660,19 @@ function GetBlackStyle()
             {
                 Color:"RGB(245,245,245)",
                 SortColor:"rgb(255,0,0)",
-                Mergin:{ Left:5, Right:5, Top:4, Bottom:2 },
+                //Mergin:{ Left:5, Right:5, Top:4, Bottom:2 },
                 Font:{ Size:12, Name:"微软雅黑" }
+            },
+
+             //排序图标
+            SortIcon:
+            {
+                Color:['rgb(105,105,105)', "rgb(255,255,255)", "rgb(255,255,255)"],
             },
     
             Item:
             {
-                Mergin:{ Top:2, Bottom:0,Left:5, Right:5 },
+                Mergin:{ Top:2, Bottom:4,Left:5, Right:5 },
                 Font:{ Size:15, Name:"微软雅黑"},
                 BarMergin:{ Top:2, Left:3, Right:3, Bottom:2 },
                 NameFont:{ Size:14, Name:"微软雅黑" },
@@ -553,6 +700,12 @@ function GetBlackStyle()
                 Vol:"rgb(192,192,0)",       //成交量
                 BarTitle:'rgb(245,245,245)',   //柱子文字
                 Text:"rgb(245,245,245)",    //默认文本
+            },
+
+            NameSymbolV2:
+            {
+                Name:{ Size:14, Name:"微软雅黑", Color: "rgb(250,250,250)"},
+                Symbol:{ Size:12, Name:"微软雅黑", Color: "rgb(190, 190, 190)"},
             },
 
             CloseLine:
@@ -585,7 +738,7 @@ function GetBlackStyle()
     
                 TabTitleColor:'rgb(153,153,153)',
                 TabSelectedTitleColor:'rgb(255,255,255)',
-                TabSelectedBGColor:"rgb(13,12,15)",
+                TabSelectedBGColor:"rgb(234,85,4)",
                 TabMoveOnTitleColor:"rgb(255,255,255)",
                 TabBGColor:"rgb(28,28,31)"
             },
@@ -615,6 +768,34 @@ function GetBlackStyle()
                 BarColor:"rgba(48,48,48,0.9)",
                 BorderColor:'rgba(48,48,48,0.9)',
                 BGColor:"rgba(211,211,211,0.5)",
+            },
+
+            CheckBox:
+            {
+                Family:"iconfont", Size:15,
+                Checked:{ Color:"rgb(69,147,238)", Symbol:"\ue6b3", DisableColor:"rgb(120,120,120)", MouseOnColor:"rgb(69,147,238)" },
+                Unchecked:{ Color:"rgb(210,210,210)", Symbol:"\ue6b4", DisableColor:"rgb(120,120,120)", MouseOnColor:"rgb(69,147,238)" },
+            },
+
+            Link:
+            {
+                Font:`${12*GetDevicePixelRatio()}px 微软雅黑`,
+                TextColor:"rgb(0,144,255)",
+
+                Disable:{ TextColor:"rgb(211,211,211)" },
+                MouseOn:{ TextColor:"rgb(0,144,255)" },
+            },
+
+            ProgressBar:
+            {
+                BGColor:"rgb(20,24,28)",
+                BarColor:"rgb(47,124,197)",
+                Margin:{ Left:2, Right:2, Bottom:2, Top:2 },
+                BarMargin:{ Left:2, Right:2, Bottom:2, Top:2 },
+                TextColor:"rgb(230,230,230)",
+                Font:`${12*GetDevicePixelRatio()}px 微软雅黑`,
+                TextMargin:{ Left:40, Right:2, Bottom:2, Top:2},
+                Disable:{ BGColor:"rgb(61,61,61)", BarColor:"rgb(131,131,131)", TextColor:"rgb(159,161,159)"}
             }
         },
 
@@ -668,6 +849,33 @@ function GetBlackStyle()
             MarkBorder:
             {
                 MaxPositionColor:"rgb(192,192,0)"
+            },
+        },
+
+        //键盘精灵
+        Keyboard:
+        {
+            BorderColor:'rgb(38,38,41)',    //边框线
+            SelectedColor:"rgb(49,48,56)",  //选中行
+            TextColor:"rgb(245,245,245)",
+
+            Item:
+            {
+                Mergin:{ Top:2, Bottom:0,Left:1, Right:1 }, //单元格四周间距
+                Font:{ Size:15, Name:"微软雅黑"},
+                BarMergin:{ Top:2, Left:0, Right:0, Bottom:2 },//单元格字体
+                NameFont:{ Size:14, Name:"微软雅黑" },
+                SymbolFont:{ Size:12, Name:"微软雅黑" }
+            },
+
+            VScrollbar:
+            {
+                ScrollBarHeight:50,
+                ButtonColor:"rgba(13,12,15,0.8)",
+                BarColor:"rgba(48,48,48,0.9)",
+                BorderColor:'rgba(48,48,48,0.9)',
+                BGColor:"rgba(211,211,211,0.5)",
+                BarWidth:{ Size:8 }
             },
         },
 

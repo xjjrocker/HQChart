@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 1040563 */
-  src: url('iconfont.woff2?t=1714022152085') format('woff2'),
-       url('iconfont.woff?t=1714022152085') format('woff'),
-       url('iconfont.ttf?t=1714022152085') format('truetype');
+  src: url('iconfont.woff2?t=1734955349527') format('woff2'),
+       url('iconfont.woff?t=1734955349527') format('woff'),
+       url('iconfont.ttf?t=1734955349527') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,42 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-sortup:before {
+  content: "\e81b";
+}
+
+.icon-sort1:before {
+  content: "\e704";
+}
+
+.icon-sort-down:before {
+  content: "\f0c9";
+}
+
+.icon-chicangzuheicon:before {
+  content: "\e6b6";
+}
+
+.icon-sort:before {
+  content: "\e6b5";
+}
+
+.icon-Unchecked-box:before {
+  content: "\e6b4";
+}
+
+.icon-check-box:before {
+  content: "\e6b3";
+}
+
+.icon-paixujiantou:before {
+  content: "\e6b1";
+}
+
+.icon-up:before {
+  content: "\e6b2";
 }
 
 .icon-accountbox:before {

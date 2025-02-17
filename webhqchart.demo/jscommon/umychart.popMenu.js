@@ -19,9 +19,12 @@ function JSPopMenu()
     this.ArySubRootDOM=[];
 
     this.ClickCallback=null;        //点击回调
+    this.RestoreFocusCallback=null;
     this.CheckedClassName="UMyChart_MenuItem_Span_Checked  iconfont icon-checked";   //选中图标
     this.RightArrowClassName="UMyChart_MenuItem_Span_Arrow  iconfont icon-menu_arraw_right";  //右侧箭头
     this.SelectedClassName="UMyChart_MenuItem_Tr_Selected";
+
+    this.RestoreFocusDelay=1000;
 
     this.AryTDClassName=
     [
@@ -31,8 +34,9 @@ function JSPopMenu()
         "UMyChart_MenuItem_Td_Arrow"        //箭头
     ];
 
-    this.Inital=function()
+    this.Inital=function(hqchart, option)
     {
+        this.HQChart=hqchart;
         window.addEventListener('mousedown', (e)=>{ this.OnWindowMouseDown(e)});
     }
 
@@ -56,6 +60,7 @@ function JSPopMenu()
         
         
         var rootData={ Root:root, TBody:tbody, Table:table };
+        root.JSMenuData=rootData;
         for(var i=0;i<data.Menu.length;++i)
         {
             var item=data.Menu[i];
@@ -76,6 +81,7 @@ function JSPopMenu()
 
         if (IFrameSplitOperator.IsNumber(data.Position)) this.Data.Position=data.Position;
         if (data.ClickCallback) this.ClickCallback=data.ClickCallback;
+        if (data.RestoreFocusCallback) this.RestoreFocusCallback=data.RestoreFocusCallback;
        
     }
 
@@ -128,7 +134,7 @@ function JSPopMenu()
             }
             else if (i==2)  //快捷方式
             {
-
+                if (item.Text) tdDom.innerText=item.Text;
             }
             else if (i==3)  //箭头
             {
@@ -158,6 +164,7 @@ function JSPopMenu()
             subTable.appendChild(subTbody);
        
             var subRootData={ Root:subRoot, TBody:subTbody, Table:subTable };
+            subRoot.JSMenuData=subRootData;
             var preTrDom=null;
             for(var i=0;i<item.SubMenu.length;++i)
             {
@@ -224,6 +231,8 @@ function JSPopMenu()
         if (!this.RootDOM) return;  
         if (!rtTab) return;
 
+        if (this.HQChart) this.HQChart.ClearRestoreFocusTimer();
+
         var xLeft=rtTab.Left;
         var yTop=rtTab.Top-this.RootDOM.offsetHeight;
 
@@ -237,6 +246,8 @@ function JSPopMenu()
     {
         if (!this.RootDOM) return;  
         if (!IFrameSplitOperator.IsNumber(x) || !IFrameSplitOperator.IsNumber(y)) return;
+
+        if (this.HQChart) this.HQChart.ClearRestoreFocusTimer();
 
         //菜单在当前屏幕无法显示需要调整
         var menuHeight=this.RootDOM.offsetHeight;
@@ -259,6 +270,8 @@ function JSPopMenu()
     {
         if (!this.RootDOM) return;  
         if (!rtButton) return;
+
+        if (this.HQChart) this.HQChart.ClearRestoreFocusTimer();
 
         var xLeft=rtButton.Left;
         var yTop=rtButton.Bottom;
@@ -292,6 +305,17 @@ function JSPopMenu()
         {
             parentItem.PopMenu.style.visibility="hidden";
             if (parentItem.PopRow) parentItem.PopRow.classList.remove(this.SelectedClassName);
+
+            var popMenuData=parentItem.PopMenu.JSMenuData;
+            for(var i=0;i<50;++i)   //隐藏子菜单 最多50层
+            {
+                if (!popMenuData) break;
+                if (!popMenuData.PopMenu) break;
+
+                popMenuData.PopMenu.style.visibility="hidden";
+
+                popMenuData=popMenuData.PopMenu;
+            }
 
             parentItem.PopMenu=null;
             parentItem.PopRow=null;
@@ -356,6 +380,8 @@ function JSPopMenu()
         console.log("[JSPopMenu::OnWindowMouseDown] e=", e);
 
         this.Clear();
+
+        if (this.HQChart) this.HQChart.RestoreFocus(this.RestoreFocusDelay);
     }
 }
 

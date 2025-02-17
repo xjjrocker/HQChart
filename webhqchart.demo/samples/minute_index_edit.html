@@ -36,6 +36,8 @@
 
             <button class="toolsButton" id="daycount_5">5日分时</button>
             <button class="toolsButton" id="daycount_1">1日分时</button>
+            <button class="toolsButton" id="style_black">黑色风格</button>
+            <button class="toolsButton" id="style_white">白色风格</button>
 
         </div>
         <div class="table" id="tools_table">
@@ -102,18 +104,29 @@
     <script src="../jscommon/umychart.style.js"></script>       <!-- 白色风格和黑色风格配置信息 -->
     <script src="../jscommon/umychart.popMenu.js"></script>
     <script src="../jscommon/umychart.DialogDrawTool.js"></script>
+    <script src="../jscommon/umychart.DialogTooltip.js"></script>
+    <script src="../jscommon/umychart.DialogSelectRect.js"></script>
+    <script src="../jscommon/umychart.DialogSearchIndex.js"></script>
+    <script src="../jscommon/umychart.version.js"></script>
 
-     <!-- 公式编辑器 -->
+    <!-- 公式编辑器 -->
     <script src="../jscommon/umychart.resource/js/codemirror/codemirror.js"></script>
     <script src="../jscommon/umychart.resource/js/codemirror/javascript.js"></script>
    
 
-    <script src="../jscommon/umychart.testdata/60000.sh.day.minute.js"></script>
-    <script src="../jscommon/umychart.testdata/60000.sh.5day.minute.js"></script>
+    <!-- 单日分时数据 -->
+    <script src="../jscommon/umychart.testdata/DayMinute/000151.sz.1day.minute.js"></script>
+    <script src="../jscommon/umychart.testdata/DayMinute/000001.sz.1day.minute.js"></script>
+    <script src="../jscommon/umychart.testdata/DayMinute/600000.sh.1day.minute.js"></script>
+
+
+    <!-- 多日分时数据 -->
+    <script src="../jscommon/umychart.testdata/Day5Minute/600000.sh.5day.minute.js"></script>
+    <script src="../jscommon/umychart.testdata/Day5Minute/000001.sz.5day.minute.js"></script>
+    <script src="../jscommon/umychart.testdata/Day5Minute/000151.sz.5day.minute.js"></script>
 
     <script src="../jscommon/umychart.testdata.js"></script>
    
-
     <script>
 
         MARKET_SUFFIX_NAME.GetMarketStatus = function (symbol)  { return 2; }
@@ -140,7 +153,8 @@
 
                 Windows: //窗口指标
                 [
-                    { Index:"MACD" }
+                    //{ Index:"AMO", YAxis:{StringFormat:1} }
+                    { Index:"MACD", AddIndexWindow:true }
                 ], 
 
                 OverlayIndex:
@@ -164,26 +178,41 @@
                 EnablePopMenuV2:true,
                 EnableDrawToolDialogV2:true,
                 EnableNewIndex:true,
+                TooltipDialog:{ Enable:true, Style:1 },
                 
                 CorssCursorInfo:
                 {  
+                    HPenType:1,VPenType:1,
                     Left:1, Right:1, Bottom:1, 
                     IsFixXLastTime:true, 
                     RightButton:{ Enable:true }, 
                     //IsOnlyDrawMinute:true 
+                    EnableKeyboard:true
                 },
     
 
                 SelectRect:
                 {
-                    ShowRangeText:{ Enable:true, Position:1 }
+                    ShowRangeText:{ Enable:true, Position:1 },
+                    //Mark:{ IsShow:true }
                 },
+
+                SelectRectDialog:{ Enable:true },
                 
+                /*
+                DragSelectRect:
+                {
+                    Enable:true
+                },
+                */
+
                 MinuteLine:
                 {
                     IsDrawAreaPrice:true,      //是否画价格面积图
                     //IsShowAveragePrice:false,   //不显示均线
                     //SplitType:2,
+
+                    
                 },
 
                 MinuteTitle:
@@ -194,6 +223,8 @@
                     IsShowVolTitle:true,
                     //IsAlwaysShowLastData:true,
                     IsTitleShowLatestData:true,
+
+                    //ShowPostion:{ Type:0, Margin:{ Bottom:10 } }
                 },
 
                 MinuteVol:
@@ -209,12 +240,17 @@
                 SelectedChart:{ EnableSelected: true, EnableMoveOn:true },
                 EnableIndexChartDrag:true,
 
+                FloatTooltip:{ Enable:true, },
+                SearchIndexDialog:{ Enable:true },
+                ModifyIndexParamDialog:{ Enable:true },
+
                 EnableSelectRect:true,
+                EnableNightDayBG:true,
     
                 Border: //边框
                 {
-                    Left:50,    //左边间距
-                    Right:20,     //右边间距
+                    Left:80,    //左边间距
+                    Right:80,     //右边间距
                     Top:25,
                     Bottom:25,
 
@@ -224,7 +260,10 @@
                 
                 Frame:  //子框架设置
                 [
-                    { SplitCount:5,  IsShowLeftText:true ,RightTextFormat:0,YTextBaseline:1, IsShowYLine:true,
+                    { 
+                        SplitCount:5,  IsShowLeftText:true ,RightTextFormat:0,YTextBaseline:1, IsShowYLine:true,
+                        //HorizontalReserved:{ Top:4, Bottom:20},
+                        //BottomSpace:40,
                         Custom:
                         [
                             
@@ -233,7 +272,7 @@
                             }
                         ]
                     },
-                    { SplitCount:5 },
+                    { SplitCount:5,},
                     { SplitCount:5 },
                     { SplitCount:11, IsShowXLine:false },
                 ],
@@ -242,7 +281,8 @@
                 Overlay:    //叠加股票
                 [
                     //{Symbol:'603190.sh', OverlayType:1, IsCalcuateMaxMin:true, Color:"rgb(250,0,0)" },
-                    //{Symbol:'000001.sz'}
+                    //{Symbol:'000001.sz'},
+                    //{Symbol:'000151.sz'}
                 ],
 
                 ExtendChart:    //扩展图形
@@ -282,6 +322,23 @@
                     {
                         event:JSCHART_EVENT_ID.ON_MENU_COMMAND,
                         callback:(event, data, obj)=>{ this.OnMenuCommand(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_CUSTOM_MINUTE_NIGHT_DAY_X_INDEX,
+                        callback:(event, data, obj)=>{ this.OnCustomNightDayXIndex(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_CUSTOM_MINUTE_BG,
+                        callback:(event, data, obj)=>{ this.OnCustomMinuteBG(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_SPLIT_YCOORDINATE, 
+                        callback:(event, data, obj)=>{ this.OnSplitYCoordinate(event, data, obj); }
+                    },
+
+                    {
+                        event:JSCHART_EVENT_ID.SEARCH_DIALOG_ON_CLICK_INDEX,
+                        callback:(event, data, obj)=>{ this.OnClickIndex(event, data, obj); }
                     },
                 ];
 
@@ -395,13 +452,101 @@
                 {
                     var newItem={ Name:`主图${indexInfo.API.Name}示例`, Data:{ ID: JSCHART_MENU_ID.CMD_ADD_OVERLAY_INDEX_ID, Args:[0, indexInfo]}, Checked:false};
                 }
-                
+
                 data.MenuData.Menu.push(newItem);
+
+                //测试叠加
+                var aryOverlaySymbol=[];                    //叠加的股票列表
+                for(var i=0; i<obj.OverlayChartPaint.length; ++i)
+                {
+                    var item=obj.OverlayChartPaint[i];
+                    if (item && item.Symbol) aryOverlaySymbol.push(item.Symbol)
+                }
+
+                var overlay=
+                { 
+                    Name:"叠加品种", 
+                    SubMenu:
+                    [
+                        { Name:"000001.sz", Data:{ ID: JSCHART_MENU_ID.CMD_OVERLAY_SYMBOL_ID, Args:["000001.sz", !aryOverlaySymbol.includes("000001.sz")]}, Checked:aryOverlaySymbol.includes("000001.sz") },
+                        { Name:"000151.sz", Data:{ ID: JSCHART_MENU_ID.CMD_OVERLAY_SYMBOL_ID, Args:["000151.sz", !aryOverlaySymbol.includes("000151.sz")]}, Checked:aryOverlaySymbol.includes("000151.sz") },
+                        { Name:"600000.sh", Data:{ ID: JSCHART_MENU_ID.CMD_OVERLAY_SYMBOL_ID, Args:["600000.sh", !aryOverlaySymbol.includes("600000.sh")]}, Checked:aryOverlaySymbol.includes("600000.sh") },
+                    ]
+                };
+
+                var aryMenu=data.MenuData.Menu;
+                for(var i=0;i<aryMenu.length;++i)
+                {
+                    var item=aryMenu[i];
+                    if (item.Name=="叠加品种")
+                    {
+                        aryMenu[i]=overlay;
+                        break;
+                    }
+                }
+
+                //删除叠加菜单
+                for(var i=0;i<aryMenu.length;++i)
+                {
+                    var item=aryMenu[i];
+                    if (item.Name=="叠加品种")
+                    {
+                        for(var j=0;j<item.SubMenu.length;++j)
+                        {
+                            if (item.SubMenu[j].Checked)
+                            {
+                                item.SubMenu.push({ Name:JSPopMenu.SEPARATOR_LINE_NAME });
+                                item.SubMenu.push({ Name:"取消叠加", Data:{ ID: JSCHART_MENU_ID.CMD_DELETE_ALL_OVERLAY_SYMBOL_ID} });
+                                break;
+                            }
+                        }
+                    }
+                }
             }
 
             this.OnMenuCommand=function(event, data, obj)
             {
                 console.log("[KLineChart::OnMenuCommand] data=", data);
+            }
+
+            this.OnCustomNightDayXIndex=function(event, data, obj)
+            {
+                //data.XIndex=120;
+            }
+
+            this.OnCustomMinuteBG=function(event, data, obj)
+            {
+                return;
+                
+                if (data.DayCount==1) 
+                {
+                    data.AryDay[0].BGColor="rgb(100,100,0)";    //设置背景
+                }
+                else if (data.DayCount>1)
+                {
+                    for(var i=0;i<data.AryDay.length;++i)
+                    {
+                        var item=data.AryDay[i];
+                        if (i>=2) item.BGColor="rgb(219,112,147)";  //设置背景
+                    }
+                }
+            }
+
+            this.OnSplitYCoordinate=function(event, data, obj)
+            {
+                /*if (data.ID==0) 
+                {
+                    var frame=data.Frame;
+
+                    for(var i=0;i<frame.HorizontalInfo.length;++i)
+                    {
+                        var item=frame.HorizontalInfo[i];
+                        if (i==0)
+                            item.YOffset=[ { Offset:5 }, { Offset:5 }];
+                    }
+
+                }
+                */
             }
 
             this.OnSize=function(option)  //自适应大小调整
@@ -447,6 +592,33 @@
                 alert(log);
                 console.log('[ComplierError]', error);
             }
+
+
+            this.ChangeStyle=function(styleName)
+            {
+                var buttonColor=[null,null];
+                if (styleName=='black') 
+                {
+                    var style=HQChartStyle.GetStyleConfig(STYLE_TYPE_ID.BLACK_ID); //读取风格配置
+                }
+                else if (styleName=='white') 
+                {
+                    var style=HQChartStyle.GetStyleConfig(STYLE_TYPE_ID.WHITE_ID); //读取风格配置
+                    style.BGColor='rgb(255,255,255)';
+                }
+                else 
+                {
+                    return;
+                }
+
+                style.ToolbarButtonStyle=1;
+                JSChart.SetStyle(style);
+                this.DivKLine.style.backgroundColor=style.BGColor;   //修改div背景色
+                
+                this.Chart.ReloadResource({ Resource:null, Draw:true , Update:true });  //动态更新颜色配置  
+
+            }
+
 
             this.GetIndexInfo=function()
             {
@@ -676,6 +848,11 @@
 
                 document.getElementById('window_index').value=item.WindowIndex;
             }
+
+            this.OnClickIndex=function(event, data, obj)
+            {
+                console.log("[KLineChart::OnClickIndex] data=", data);
+            }
         
         }
 
@@ -692,6 +869,10 @@
 
         $(function () 
         {
+            var a=4664.7300000000004, b=4664.73;
+            var test=NumberCompare.LT(a,b);
+            var test2=NumberCompare.GT(a,b);
+
             const font = new FontFace("iconfont",`url('../jscommon/umychart.resource/font/iconfont.woff?t=1690947130935') format('woff')`);
             document.fonts.add(font);    //把字体添加到 document.font（FontFaceSet）中
             font.load();    // 加载字体
@@ -725,7 +906,9 @@
             $("#daycount_5").click(function(){ klineControl.Chart.ChangeDayCount(5); });
             $("#daycount_1").click(function(){ klineControl.Chart.ChangeDayCount(1); });
 
-            
+            $("#style_black").click(function(){ klineControl.ChangeStyle('black') })
+            $("#style_white").click(function(){ klineControl.ChangeStyle('white'); })
+
             
 
             DeleteLocalIndex=(e, name)=>{ klineControl.DeleteLocalIndex(e, name); }

@@ -23,7 +23,8 @@ function GetBlackStyle()
         UpBarColor: "rgb(238,21,21)",
         DownBarColor: "rgb(25,158,0)",
         UnchagneBarColor: "rgb(199,199,199)",
-
+        EmptyBarBGColor:'rgb(0,0,0)',   //空心柱子背景色
+        
         Minute: {
         VolBarColor: null,
         PriceColor: "rgb(25,180,231)",
@@ -43,6 +44,18 @@ function GetBlackStyle()
         DownTextColor: "rgb(25,158,0)",
         UnchagneTextColor: "rgb(101,104,112)",
         CloseLineColor: 'rgb(178,34,34)',
+
+        IndexTitle:
+        {
+            UpDownArrow:    //数值涨跌箭头
+            {
+                //UpColor:"rgb(238,21,21)",   //上涨
+                //DownColor:"rgb(25,158,0)",  //下跌
+                UnchangeColor:"rgb(190, 190 ,190)"  //不变
+            },
+
+            //NameArrow:{ Color:"rgb(190, 190 ,190)", Space:2, Symbol:'▼' },
+        },
 
         Title:
         {
@@ -78,6 +91,11 @@ function GetBlackStyle()
         CorssCursorTextFont: "12px 微软雅黑",
         CorssCursorHPenColor: "rgb(130,130,130)",           //十字光标线段颜色
         CorssCursorVPenColor: "rgb(130,130,130)",           //十字光标线段颜色
+
+        CorssCursor:
+        {
+            CorssPoint:{ Center:{ Color:"rgb(50,171,205)" }, Border:{ Color:'rgba(0,0,0,0.8)', Width:1 } }
+        },
 
         KLine:
         {
@@ -168,6 +186,12 @@ function GetBlackStyle()
                 "rgb(89,135,255)",          //moveon颜色
                 "rgb(0,0,0)"                //空心点背景色
             ],
+        },
+
+        StockChip:
+        {
+            Color:"rgb(255,255,255)",
+            Border:{ BGColor:"rgb(40,42,44)" }
         },
 
         TooltipPaint:   //Tooltip
@@ -283,6 +307,14 @@ function GetWhiteStyle()
             VolBarColor : "rgb(238,127,9)",
             PriceColor : "rgb(50,171,205)",
             AvPriceColor : "rgb(238,127,9)",
+
+            NightDay:
+            { 
+                NightBGColor:"rgb(22,22,22)",
+                Font:`12px 微软雅黑`,
+                Day: { Color:"rgb(153,153,153)", BGColor:"rgb(51,51,51)", BorderColor:"rgb(51,51,51)", Margin:{ Left:5, Top:2, Bottom:2, Right:5 } },
+                Night: { Color:"rgb(153,153,153)", BGColor:"rgb(51,51,51)", BorderColor:"rgb(51,51,51)", Margin:{ Left:5, Top:2, Bottom:2, Right:5 } },
+            }
         },
 
         DefaultTextColor: "rgb(43,54,69)",
@@ -295,6 +327,18 @@ function GetWhiteStyle()
         DownTextColor: "rgb(25,158,0)",
         UnchagneTextColor: "rgb(0,0,0)",
         CloseLineColor: 'rgb(178,34,34)',
+
+        IndexTitle:
+        {
+            UpDownArrow:    //数值涨跌箭头
+            {
+                UpColor:"rgb(238,21,21)",   //上涨
+                DownColor:"rgb(25,158,0)",  //下跌
+                UnchangeColor:"rgb(0, 0 ,0)"  //不变
+            },
+
+            NameArrow:{ Color:"rgb(190, 190 ,190)", Space:2, Symbol:'▼' },
+        },
 
         FrameBorderPen: "rgb(225,236,242)",     //边框
         FrameSplitPen: "rgb(225,236,242)",          //分割线
@@ -309,7 +353,7 @@ function GetWhiteStyle()
 
         KLine:
         {
-            MaxMin: { Font: '12px 微软雅黑', Color: 'rgb(111,111,111)' },   //K线最大最小值显示
+            MaxMin: { Font: '12px 微软雅黑', Color: 'rgb(111,111,111)', RightArrow:"→", LeftArrow:"←", HighYOffset:0, LowYOffset:0 },   //K线最大最小值显示
             Info:  //信息地雷
             {
                 Color: 'rgb(205,149,12)',

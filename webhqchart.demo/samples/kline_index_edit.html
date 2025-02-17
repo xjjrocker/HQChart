@@ -42,10 +42,16 @@
             <button class="toolsButton" id="overlayindex_run">执行(叠加指标)</button>
             
             
-            <a href="https://jones2000.blog.csdn.net/article/details/129125330" target="_blank">函数帮助</a>
+            
             
             <button class="toolsButton" id="style_black">黑色风格</button>
             <button class="toolsButton" id="style_white">白色风格</button>
+            <button class="toolsButton" id="showAllKLine">显示全部K线</button>
+
+            <span>K线支持键盘精灵</span>
+
+            <a href="https://jones2000.blog.csdn.net/article/details/129125330" target="_blank">函数帮助</a>
+            <a href="https://github.com/jones2000/HQChart" target="_blank">HQChart插件地址</a>
 
         </div>
         <div class="table" id="tools_table">
@@ -112,29 +118,63 @@
     <script src="../jscommon/umychart.style.js"></script>       <!-- 白色风格和黑色风格配置信息 -->
     <script src="../jscommon/umychart.popMenu.js"></script>
     <script src="../jscommon/umychart.DialogDrawTool.js"></script>
+    <script src="../jscommon/umychart.PopMinuteChart.js"></script>
+    <script src="../jscommon/umychart.report.js"></script>
+    <script src="../jscommon/umychart.keyboard.js"></script>
+    <script src="../jscommon/umychart.PopKeyboard.js"></script>
+    <script src="../jscommon/umychart.DialogTooltip.js"></script>
+    <script src="../jscommon/umychart.DialogSelectRect.js"></script>
+    <script src="../jscommon/umychart.DialogSearchIndex.js"></script>
+    <script src="../jscommon/umychart.version.js"></script>
     
-     <!-- 公式编辑器 -->
+    <!-- 公式编辑器 -->
     <script src="../jscommon/umychart.resource/js/codemirror/codemirror.js"></script>
     <script src="../jscommon/umychart.resource/js/codemirror/javascript.js"></script>
    
-    <script src="../jscommon/umychart.testdata/60000.sh.1day.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/60000.sh.day.kline.js"></script>
+  
     <script src="../jscommon/umychart.testdata/60000.sh.capital.kline.js"></script>
-
-    <script src="../jscommon/umychart.testdata/60000.sh.minute.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/60000.sh.1minute.kline.js"></script>
-
-    <script src="../jscommon/umychart.testdata/000151.sz.day.kline.js"></script>
-    <script src="../jscommon/umychart.testdata/000001.sz.minute.kline.js"></script>
-    
-
     <script src="../jscommon/umychart.testdata/60000.sh.NewsInteract.js"></script>
     <script src="../jscommon/umychart.testdata/60000.sh.BlockTrading.js"></script>
     <script src="../jscommon/umychart.testdata/60000.sh.TradeDetal.js"></script>
+    <script src="../jscommon/umychart.testdata/60000.sh.finance_7.js"></script>
+
+    <script src="../jscommon/umychart.testdata/symbollist_shsz.js"></script>
+
+    <!-- 分钟K线 -->
+    <script src="../jscommon/umychart.testdata/M1KLine/600000.sh.minute.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/M1KLine/000001.sh.minute.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/M1KLine/000300.sh.minute.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/M1KLine/399001.sz.minute.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/M1KLine/000001.sz.minute.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/M1KLine/399006.sz.minute.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/M1KLine/399005.sz.minute.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/M1KLine/000151.sz.minute.kline.js"></script>
+
+    <script src="../jscommon/umychart.testdata/M1KLine/ICL8.cfe.minute.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/M1KLine/IML8.cfe.minute.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/M1KLine/IFL8.cfe.minute.kline.js"></script>
+
+    <!--日K -->
+    <script src="../jscommon/umychart.testdata/DayKLine/600000.sh.day.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/DayKLine/000001.sh.day.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/DayKLine/000300.sh.day.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/DayKLine/399001.sz.day.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/DayKLine/000001.sz.day.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/DayKLine/399006.sz.day.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/DayKLine/399005.sz.day.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/DayKLine/000151.sz.day.kline.js"></script>
+
+    <script src="../jscommon/umychart.testdata/DayKLine/ICL8.cfe.day.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/DayKLine/IML8.cfe.day.kline.js"></script>
+    <script src="../jscommon/umychart.testdata/DayKLine/IFL8.cfe.day.kline.js"></script>
+
+    <!-- 单日分时图 -->
+    <script src="../jscommon/umychart.testdata/DayMinute/000001.sz.1day.minute.js"></script>
+    <script src="../jscommon/umychart.testdata/DayMinute/600000.sh.1day.minute.js"></script>
+    <script src="../jscommon/umychart.testdata/DayMinute/000151.sz.1day.minute.js"></script>
+
 
     <script src="../jscommon/umychart.testdata.js"></script>
-
-
 
     <script>
 
@@ -155,6 +195,8 @@
 
             this.MapIndex=new Map();    //本地指标
 
+            this.JSPopMenu=null;
+
             this.JSPopMenu=new JSPopMenu();
             this.JSPopMenu.Inital();
           
@@ -168,8 +210,13 @@
                 Windows: //窗口指标
                 [
                     //{Index:"EMPTY", TitleHeight:1},
-                    {Index:"MA", Overlay:true },
-                    {Index:"MACD", Overlay:true},
+                    {
+                        Index:"MA", Overlay:true, AddIndexWindow:true
+                        //TitleArrowType:1,
+                        //HorizontalReserved:{ Top:50, Bottom:50 }
+                    },
+                    //{ Index:"OX", Overlay:true, },
+                    {Index:"MACD", },
                     {Index:"VOL", Overlay:true, YAxis: { FloatPrecision:0, StringFormat:2 } },
                 ], 
 
@@ -220,10 +267,32 @@
                 EnablePopMenuV2:true,
                 EnableDrawToolDialogV2:true,
                 EnableModifyDrawDialogV2:true,
+                EnableResize:true,
+                EnableTooltipDialog:true,
+
+                TooltipDialog:{ Enable:true, Style:1 },
+                SelectRectDialog:{ Enable:true },
+                KLineTooltip:{ Enable:true, EnableKeyDown:false },
+                FloatTooltip:{ Enable:true, },
+                SearchIndexDialog:{ Enable:true },
+                ModifyIndexParamDialog:{ Enable:true },
+
+                //双击K线图 弹分时图配置
+                PopMinuteChart:
+                { 
+                    Enable:true, 
+                    Option:
+                    { 
+                        Windows:
+                        [
+                            { Index:"RSI", Overlay:false,MaxMin:false }
+                        ]
+                    }
+                },
 
                 //EnableVerifyRecvData:true,
 
-                CorssCursorInfo: { Right:1, DateFormatType:3, HPenType:1, VPenType:1, IsShowClose:false, VLineType:0,RightButton:{ Enable:true }, IsShowCorss:true, PriceFormatType:0, DataFormatType:0 },
+                CorssCursorInfo: { Right:1, Bottom:1, DateFormatType:3, HPenType:1, VPenType:1, IsShowClose:false, VLineType:0,RightButton:{ Enable:true }, IsShowCorss:true, PriceFormatType:0, DataFormatType:0, EnableKeyboard:true },
                 EnableZoomIndexWindow:true,
 
                 DrawTool:       //画图工具
@@ -236,17 +305,19 @@
                     DragMode:1,                 //拖拽模式 0=禁止拖拽 1=数据拖拽 2=区间选择
                     Right:1,                    //复权 0 不复权 1 前复权 2 后复权
                     Period:0,                   //周期 0 日线 1 周线 2 月线 3 年线 
-                    MaxRequestDataCount:3000,   //数据个数
-                    MaxRequestMinuteDayCount:5, //分钟数据获取几天数据  默认取5天数据
+                    MaxRequestDataCount:8000,   //数据个数
+                    MaxRequestMinuteDayCount:100, //分钟数据获取几天数据  默认取5天数据
                     
                     //Info:["互动易","大宗交易",'龙虎榜',"调研","业绩预告","公告"],       //信息地雷
                     //Info:["公告"], 
+                    //InfoPosition:0,
                     IsShowTooltip:true,                 //是否显示K线提示信息
                     DrawType:0,      //K线类型 0=实心K线柱子 1=收盘价线 2=美国线 3=空心K线柱子 4=收盘价面积图
                     //FirstShowDate:20161201,
-                    KLineDoubleClick:false, //禁止双击弹框
+                    //KLineDoubleClick:true, //禁止双击弹框 (废弃 使用(PopMinuteChart:{ }))
                     RightSpaceCount:2,
                     ZoomType:0,
+                    //OneLimitBarType:1,
                     
                     //PageSize:30,               //一屏显示多少数据
                     DataWidth:10,
@@ -266,6 +337,11 @@
                 EnableIndexChartDrag:true,
 
                 GlobalOption:{ SelectedBorder:{ Mode:1} },
+
+                SelectRect:
+                {
+                    Mark:{ IsShow:true, Position:{ Top:"TopEx" } }
+                },
     
                 KLineTitle: //标题设置
                 {
@@ -274,6 +350,15 @@
                     IsTitleShowLatestData:true,
                 },
 
+                //DragDownload: { Day:{ Enable:true } },   //拖拽下载
+
+                
+                DragSelectRect:
+                {
+                    Enable:true,
+                    ShowMode:2,
+                    //ZIndex:3,
+                },
                 
                 Border: //边框
                 {
@@ -342,8 +427,8 @@
                         
                     },
 
-                    { SplitCount:5, BottomSpace:18 },
-                    { SplitCount:4 }
+                    { SplitCount:5, BottomSpace:18,FilterType:1 },
+                    { SplitCount:4,FilterType:1 }
                 ],
 
                 ExtendChart:    //扩展图形
@@ -351,12 +436,13 @@
                     //{Name:'KLineTooltip' },  //手机端tooltip
                     //{Name:"FrameSplitPaint", LineColor:"rgb(200,0,0)" }
                     //{Name:"SessionBreaksPaint"}
+                    //{ Name:"StockChipPhone" }
                 ],
 
 
                 Overlay:
                 [
-                    //{Symbol:'399300.sz', DrawType:1, Color:'rgb(0,0,255)'},
+                    //{ Symbol:'399300.sz', DrawType:1, Color:'rgb(0,0,255)'},
                     //{ Symbol:'600999.sh' }
                 ],
             };
@@ -364,22 +450,19 @@
             this.Create=function()  //创建图形
             {
                 var self=this;
-                //$(window).resize(function() { self.OnSize( {Type:1} ); });    //绑定窗口大小变化事件
-                $(window).resize(function() { self.OnSize(  ); });    //绑定窗口大小变化事件
-
-                var blackStyle=HQChartStyle.GetStyleConfig(STYLE_TYPE_ID.BLACK_ID); //读取黑色风格配置
-                JSChart.SetStyle(blackStyle);
-                this.DivKLine.style.backgroundColor=blackStyle.BGColor; //设置最外面的div背景
+                $(window).resize(function() { self.OnSize(); });    //绑定窗口大小变化事件
+                //$(window).resize(function() { self.OnSize(  ); });    //绑定窗口大小变化事件
+                
                 var resource=JSChart.GetResource();
-                resource.ToolbarButtonStyle=1;
-                resource.FrameYLineDash=[2,2];
-                resource.UpBarColor='rgb(248,41,71)';
-                resource.DownBarColor='rgb(84,255,255)';
-                resource.Frame.XBottomOffset=4;
-                resource.IndexTitleMerginLeft=3*GetDevicePixelRatio();
+                this.DivKLine.style.backgroundColor=resource.BGColor; //设置最外面的div背景
 
+                
                 this.Option.EventCallback=
                 [
+                    {
+                        event:JSCHART_EVENT_ID.ON_FORMAT_KLINE_FLOAT_TOOLTIP,
+                        callback:(event, data, obj)=>{ this.OnFormatKLineFloatTooltip(event, data, obj); }
+                    },
                     {
                         event:JSCHART_EVENT_ID.ON_CREATE_FRAME,
                         callback:(event, data, obj)=>{ this.OnCreateFrame(event, data, obj); }
@@ -433,17 +516,44 @@
                     {
                         event:JSCHART_EVENT_ID.ON_CLICK_CROSSCURSOR_RIGHT, 
                         callback:(event, data, obj)=>{ this.ClickCrossCursor(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.RECV_HISTROY_DATA,
+                        callback:(event, data, obj)=>{ this.OnRecvHistoryData(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_FORMAT_KLINE_HIGH_LOW_TITLE,
+                        callback:(event, data, obj)=>{ this.OnFormatKLineHighLowTitle(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_FORMAT_INDEX_OUT_TEXT,
+                        callback:(event, data, obj)=>{ this.OnFormatIndexOutText(event, data, obj); }
+                    },
+                    {
+                        event:JSCHART_EVENT_ID.ON_CALCULATE_CHIP_DATA,
+                        callback:(event, data, obj)=>{ this.OnCalculateChipData(event, data, obj); }
                     }
 
                 ];
 
                 this.OnSize();  //让K线全屏
+                this.Option.OnCreatedCallback=(chart)=>{ this.OnCreateHQChart(chart); }
                 this.Option.ScriptError=(error)=> { this.ExecuteScriptError(error); }
                 this.Option.NetworkFilter=(data, callback)=>{ this.NetworkFilter(data, callback); }
                 this.Chart.SetOption(this.Option);  //设置K线配置
 
 
                 this.UpdateWindowsSelectDOM();
+            }
+
+            this.OnCreateHQChart=function(chart)
+            {
+                var chart=chart.GetRectSelectPaint();
+                if (chart)
+                {
+                    //chart.IsOnlyOnePoint=true;
+                }
+
             }
 
             this.NetworkFilter=function(data, callback)
@@ -455,39 +565,12 @@
                     case 'JSSymbolData::GetSymbolData':                 //分时图数据对接
                         this.GetSymbolData(data, callback);
                         break;
-                    case "APIScriptIndex::ExecuteScript":
-                        this.GetAPIIndexData(data, callback);
+                    case "KLineChartContainer::RequestDragDayData":
                         break;
                     default:
                         HQData.NetworkFilter(data, callback);
                         break;
                 }
-            }
-
-            this.GetAPIIndexData=function(data, callback)
-            {
-                data.PreventDefault=true;
-                var request=data.Request;
-                if (request.Data.indexname=='CLOSE_LINE')
-                    this.GetAPIIndx_CLOSE_LINE(data, callback)
-            }
-
-            this.GetAPIIndx_CLOSE_LINE=function(data, callback)
-            {
-                var hqchart=data.HQChart;
-                var kData=hqchart.ChartPaint[0].Data;
-
-                var closeLine={ name:'价', type:0, data:kData.GetClose() };
-
-                var apiData=
-                {
-                    code:0, 
-                    stock:{ name:hqchart.Name, symbol:hqchart.Symbol }, 
-                    outdata: { date:kData.GetDate() ,time:kData.GetTime(), outvar:[closeLine] } 
-                };
-               
-                console.log('[KLineChart::GetAPIIndx_CLOSE_LINE] apiData ', apiData);
-                callback(apiData);
             }
 
             this.GetSymbolData=function(data, callback)
@@ -552,6 +635,8 @@
                             { Title:"VMACD", ID:"F_BTN_05",TooltipText:"VMACD:说明......", Data:{ IndexID:"VMACD"}},
                             { Title:"BRAR", ID:"F_BTN_06", TooltipText:"BRAR:说明......", Data:{ IndexID:"BRAR"}},
                             { Title:"更多指标", ID:"F_BTN_07", TooltipText:"更多更多......", SVGButton:{ Symbol:"\ue694", }, Data:{ } },
+
+                            { Title:"新增窗口", ID:"F_BTN_08", TooltipText:"新增加一个新的指标窗口", Data:{ }}, 
                             //{ SVGButton:{ Symbol:"\ue694", }, ID:"F_BTN_08", Data:{ } }
                         ];
                     
@@ -560,8 +645,10 @@
 
 
                     //frame.HorizontalReserved={ Top:50, Bottom:30 };
-                    
+                
                 }
+
+                this.UpdateWindowsSelectDOM();
             }
 
             this.OnDeleteFrame=function(event, data, obj)
@@ -656,6 +743,29 @@
                     data.Frame.CustomHorizontalInfo.push(info);
                     
                 }
+                else if (data.ID==1)
+                {
+                    /*
+                    var info=new CoordinateInfo();
+                    info.Type=10;
+                    info.Value="TopEx";
+                    info.LineColor="rgb(255,0,0)";
+                    info.LineType=-1;
+                    info.ExtendLine=[null,{Width:20}]
+                    info.Message=[null, "顶部刻度 888"]
+                    
+                    data.Frame.CustomHorizontalInfo.push(info);
+
+                    var info=new CoordinateInfo();
+                    info.Type=10;
+                    info.Value="BottomEx";
+                    info.LineColor="rgb(0,255,0)";
+                    info.TextColor="rgb(0,0,0)";
+                    info.Message=[null, "底部刻度 666"]
+                    
+                    data.Frame.CustomHorizontalInfo.push(info);
+                    */
+                }
             }
 
             this.OnSize=function(option)  //自适应大小调整
@@ -665,9 +775,9 @@
                 
                 this.DivKLine.style.top='0px';
                 this.DivKLine.style.left='0px';
-                this.DivKLine.style.width=width+'px';
+                //this.DivKLine.style.width=width+'px';
                 this.DivKLine.style.height=height+'px';
-                this.Chart.OnSize(option);
+                //this.Chart.OnSize(option);
             }
 
             this.ChangeSymbol=function(symbol)
@@ -992,11 +1102,30 @@
                     var frameItem=subFrame.Frame;
                     frameItem.YLineExtend=[{ Width:5, Color:penBorder}, { Width:5, Color:penBorder} ];
                     frameItem.XLineExtend=[{ Mode:1, Color:penBorder }];
+
+                    for(var j=0;j<subFrame.OverlayIndex.length;++j)
+                    {
+                        var overlayItem=subFrame.OverlayIndex[j];
+                        var overlayFrame=overlayItem.Frame;
+                        overlayFrame.PenBorder=penBorder;
+
+                        for(var k=0;k<overlayFrame.CustomToolbar.length;++k)
+                        {
+                            var item=overlayFrame.CustomToolbar[k];
+                            if (item.ID=="8889")
+                            {
+                                item.Style.MoveOnColor=buttonColor[1];
+                                item.Style.Color=buttonColor[0];
+                            }
+                        }
+                    }
                 }
 
                 style.ToolbarButtonStyle=1;
+                style.OverlayFrame.BolderPen=style.FrameBorderPen;
                 JSChart.SetStyle(style);
                 this.DivKLine.style.backgroundColor=style.BGColor;   //修改div背景色
+                
                 this.Chart.ReloadResource({ Resource:null, Draw:true , Update:true });  //动态更新颜色配置  
 
             }
@@ -1012,14 +1141,14 @@
 
                 if (!data.Info) return;
 
-                if (this.OnClickIndexButton(data.Info, data.e)) 
+                if (this.OnClickIndexButton(data.Info, data.e, obj)) 
                 {
                     data.PreventDefault=true;
                 }
             }
 
 
-            this.OnClickIndexButton=function(btnInfo, e)
+            this.OnClickIndexButton=function(btnInfo, e, hqchart)
             {
                 if (btnInfo.Chart.ClassName!="FrameButtomToolbarPaint") return false;
 
@@ -1065,6 +1194,13 @@
 
                     if(e.preventDefault) e.preventDefault();
                     if(e.stopPropagation) e.stopPropagation();
+                }
+                else if (btnInfo.ID=="F_BTN_08")
+                {
+                    if(e.preventDefault) e.preventDefault();
+                    if(e.stopPropagation) e.stopPropagation();
+
+                    hqchart.ShowAddIndexWindowDialog({ });
                 }
                 
 
@@ -1143,6 +1279,7 @@
                     { 
                         Menu:
                         [ 
+                            this.Chart.JSChartContainer.GetModifyOverlayIndexMenuData(data.Info.Data.IndexGuid),
                             this.Chart.JSChartContainer.GetShowOverlayIndexMenuData(data.Info.Data.IndexGuid),
                             this.Chart.JSChartContainer.GetShowOverlayIndexYAxisMenuData(data.Info.Data.IndexGuid),
                             this.Chart.JSChartContainer.GetOverlayIndexShareYMenuData(data.Info.Data.IndexGuid),
@@ -1158,12 +1295,24 @@
                 else
                 {
                     var menuItem=this.Chart.JSChartContainer.GetShowIndexMenuData(data.Info.FrameID);
+                    var modifyMenu=this.Chart.JSChartContainer.GetModifyIndexMenuData(data.Info.FrameID);
+                    var frame=this.Chart.JSChartContainer.Frame.SubFrame[data.Info.FrameID].Frame;
+
                     var menuData=
                     { 
                         Menu:
                         [ 
+                            modifyMenu,
                             menuItem,
-                            { Name:"设置2", ID:"INDEX_DRAPDOWN_MENU_2", Data:{ WindowIndex:data.Info.FrameID } },  
+                            { 
+                                Name:"Y轴分割方式", 
+                                SubMenu:
+                                [
+                                    { Name:"自动", Data:{ ID:"CHANGE_Y_SPLIT_TYPE", Args:[data.Info.FrameID, 0] }, Checked:frame.YSplitOperator.SplitType===0 },
+                                    { Name:"数值最大最小", Data:{ ID:"CHANGE_Y_SPLIT_TYPE", Args:[data.Info.FrameID, 1] },Checked:frame.YSplitOperator.SplitType===1  },
+                                ]
+                            },
+                            { Name:"设置2",  Data:{ ID:"INDEX_DRAPDOWN_MENU_2", WindowIndex:data.Info.FrameID } },  
                         ],
 
                         Position:JSPopMenu.POSITION_ID.TAB_MENU_ID,
@@ -1172,7 +1321,6 @@
                     };
                 }
                
-
                 this.Chart.PopupMenuByDrapdown(menuData, rtButton);
 
                 if(e.preventDefault) e.preventDefault();
@@ -1183,15 +1331,24 @@
             {
                 if (menuData.Data.ID==JSCHART_MENU_ID.CMD_SHOW_INDEX_ID || menuData.Data.ID==JSCHART_MENU_ID.CMD_SHOW_OVERLAY_INDEX_ID || 
                     menuData.Data.ID==JSCHART_MENU_ID.CMD_DELETE_OVERLAY_INDEX_ID || menuData.Data.ID==JSCHART_MENU_ID.CMD_SHOW_OVERLAY_Y_AXIS_ID ||
-                    menuData.Data.ID==JSCHART_MENU_ID.CMD_ENABLE_OVERLAY_SHARE_Y_ID)
+                    menuData.Data.ID==JSCHART_MENU_ID.CMD_ENABLE_OVERLAY_SHARE_Y_ID ||
+                    menuData.Data.ID==JSCHART_MENU_ID.CMD_MODIFY_INDEX_PARAM || menuData.Data.ID==JSCHART_MENU_ID.CMD_MODIFY_OVERLAY_INDEX_PARAM )
                 {
                     this.Chart.JSChartContainer.ExecuteMenuCommand(menuData.Data.ID, menuData.Data.Args);
+                }
+                else if (menuData.Data.ID=="CHANGE_Y_SPLIT_TYPE")
+                {
+                    var frameID=menuData.Data.Args[0];
+                    var frame=this.Chart.JSChartContainer.Frame.SubFrame[frameID].Frame;
+                    frame.YSplitOperator.SplitType=menuData.Data.Args[1];
+                    this.Chart.JSChartContainer.ResetFrameXYSplit();
+                    this.Chart.JSChartContainer.Draw();
                 }
                 else
                 {
                     console.log("[KLineChart::OnClickIndexDrapdownMenu] menuData=", menuData);
 
-                    var text=`指标下拉菜单\r\n窗口:${menuData.Data.WindowIndex}\r\n菜单ID:${menuData.ID}`;
+                    var text=`指标下拉菜单\r\n窗口:${menuData.Data.WindowIndex}\r\n菜单ID:${menuData.Data.ID}`;
                     alert(text);
                 }
                 
@@ -1317,12 +1474,31 @@
                     else if (item.Name=="指标切换")
                     {
                         item.SubMenu.push({ Name:JSPopMenu.SEPARATOR_LINE_NAME });
-                        var indexInfo={ API: { ID:"CLOSE_LINE", Name:'收盘线(后台指标)',Args:null, Url:'local'} };
+                        var indexInfo={ API: { ID:"API-DRAWTEXTREL", Name:'收盘线(后台)',Args:null, Url:'local'} };
+                        //indexInfo.Window={ HorizontalReserved:{ Top:100, Bottom:50 } };
+                        var newItem={ Name:indexInfo.API.Name, Data:{ ID: JSCHART_MENU_ID.CMD_CHANGE_API_INDEX_ID, Args:[frameID, indexInfo]}};
+                        item.SubMenu.push(newItem);
+                        
+                        var indexInfo={ API: { ID:"API-MULTI_POINT", Name:'MULTI_POINT指标(后台)',Args:null, Url:'local'} };
                         var newItem={ Name:indexInfo.API.Name, Data:{ ID: JSCHART_MENU_ID.CMD_CHANGE_API_INDEX_ID, Args:[frameID, indexInfo]}};
                         item.SubMenu.push(newItem);
 
+                        var indexInfo={ API: { ID:"API-DRAWCOLORKLINE", Name:'DRAWCOLORKLINE指标(后台)',Args:null, Url:'local'} };
+                        var newItem={ Name:indexInfo.API.Name, Data:{ ID: JSCHART_MENU_ID.CMD_CHANGE_API_INDEX_ID, Args:[frameID, indexInfo]}};
+                        item.SubMenu.push(newItem);
+
+                        var indexInfo={ API: { ID:"API-DRAWBAND", Name:'DRAWBAND指标(后台)',Args:null, Url:'local'} };
+                        var newItem={ Name:indexInfo.API.Name, Data:{ ID: JSCHART_MENU_ID.CMD_CHANGE_API_INDEX_ID, Args:[frameID, indexInfo]}};
+                        item.SubMenu.push(newItem);
+
+                        var indexInfo={ API: { ID:"API-MULTI_LINE", Name:'MULTI_LINE指标(后台)',Args:null, Url:'local'} };
+                        var newItem={ Name:indexInfo.API.Name, Data:{ ID: JSCHART_MENU_ID.CMD_CHANGE_API_INDEX_ID, Args:[frameID, indexInfo]}};
+                        item.SubMenu.push(newItem);
+                        
+
                         var indexInfo={ Name:"高低均价(自定义脚本)", ID:"HIGH_LOW_AV", Script:"均价:(H+L)/2;高:H;低:L;" };
-                        var newItem={ Name:indexInfo.Name, Data:{ ID: JSCHART_MENU_ID.CMD_CHANGE_SCRIPT_INDEX_ID, Args:[frameID, indexInfo]}};
+                        var option=null; //{ Window:{ HorizontalReserved:{ Top:100, Bottom:50 }} };
+                        var newItem={ Name:indexInfo.Name, Data:{ ID: JSCHART_MENU_ID.CMD_CHANGE_SCRIPT_INDEX_ID, Args:[frameID, indexInfo, option]}};
                         item.SubMenu.push(newItem);
                     }
                 }
@@ -1344,6 +1520,8 @@
 
             this.UpdateWindowsSelectDOM=function()
             {
+                if (!this.Chart.JSChartContainer) return;
+                
                 var selectDom=document.getElementById('window_index');
                 selectDom.options.length=0;
 
@@ -1356,7 +1534,77 @@
                     selectDom.add(new Option(name, i));
                 }
             }
+
+
+            this.ShowAllKLine=function()
+            {
+                this.Chart.JSChartContainer.ShowAllKLine();
+            }
         
+
+            this.OnRecvHistoryData=function(event, data, obj)
+            {
+                console.log("[KLineChart::OnRecvHistoryData] data=", data);
+            }
+
+            this.OnFormatKLineHighLowTitle=function(event, data, obj)
+            {
+                console.log("[KLineChart::OnFormatKLineHighLowTitle] data=", data);
+
+                return;
+
+                data.PreventDefault=true;
+                data.Title.High+="!!"
+                data.Title.HighColor="rgb(255,0,255)";
+                data.Title.Low+="!!"
+                data.Title.LowColor="rgb(34,139,34)";
+            }
+
+            this.OnFormatIndexOutText=function(event, data, obj)
+            {
+                console.log("[KLineChart::OnFormatIndexOutText] data=", data);
+            }
+
+            this.OnFormatKLineFloatTooltip=function(event, data, obj)
+            {
+                return;
+                
+                var aryText=data.AryText;   //显示的数据
+                var kItem=data.data;        //K线数据
+
+                var item=
+                { 
+                    Title:"字段1", 
+                    Text:'99999万',
+                    Color:'rgb(255,0,255)'
+                };
+                aryText.push(item)
+            }
+
+
+            this.OnCalculateChipData=function(event, data, obj)
+            {
+                console.log("[KLineChart::OnCalculateChipData] data=", data);
+            }
+        }
+
+
+        KLineChart.InitalStyle=function()
+        {
+            var blackStyle=HQChartStyle.GetStyleConfig(STYLE_TYPE_ID.BLACK_ID); //读取黑色风格配置
+            JSChart.SetStyle(blackStyle);
+            var resource=JSChart.GetResource();
+
+            resource.BGColor=blackStyle.BGColor;
+            resource.ToolbarButtonStyle=1;
+            resource.FrameYLineDash=[2,2];
+            resource.UpBarColor='rgb(248,41,71)';
+            resource.DownBarColor='rgb(84,255,255)';
+            resource.Frame.XBottomOffset=4;
+            resource.IndexTitleMerginLeft=3*GetDevicePixelRatio();
+            resource.DOTLINE.LineDash=[10,10];
+            //resource.IndexTitle.ArrowType=1;
+            resource.IndexTitle.EnableIndexArrow=false;
         }
 
         function DeleteLocalIndex(e, name)
@@ -1375,6 +1623,8 @@
             const font = new FontFace("iconfont",`url('../jscommon/umychart.resource/font/iconfont.woff?t=1690947130935') format('woff')`);
             document.fonts.add(font);    //把字体添加到 document.font（FontFaceSet）中
             font.load();    // 加载字体
+
+            KLineChart.InitalStyle();
 
             var klineControl=new KLineChart(document.getElementById('kline'));
              // 等待到所有的字体都加载完毕
@@ -1397,6 +1647,9 @@
 
             klineControl.IndexEdit=jsEditor;
 
+
+            var hqKeyboard=new JSPopKeyboard();
+
             //执行指标
             $("#index_run").click(function() { klineControl.ExecuteIndexScript(); } );
             $("#add_index_window").click(function() { klineControl.AddScriptIndexWindow(); } );
@@ -1407,16 +1660,68 @@
             $("#SplashScreen").click(function(){ klineControl.SplashScreen(true); })
             $("#SplashScreen2").click(function(){ klineControl.SplashScreen(false); })
 
-            $("#style_black").click(function(){ klineControl.ChangeStyle('black') })
-            $("#style_white").click(function(){ klineControl.ChangeStyle('white'); })
+            $("#style_black").click(function(){ klineControl.ChangeStyle('black'); hqKeyboard.ReloadResource(); })
+            $("#style_white").click(function(){ klineControl.ChangeStyle('white'); hqKeyboard.ReloadResource(); })
+
+            $("#showAllKLine").click(function(){ klineControl.ShowAllKLine(); })
 
             DeleteLocalIndex=(e, name)=>{ klineControl.DeleteLocalIndex(e, name); }
             SelectLocalIndex=(e, name)=> { klineControl.SelectLocalIndex(e, name); }
 
-
+            //自定义函数和变量
             JSComplier.AddFunction({ Name:'FUNC_DEMO',   Description:'自定义函数1', IsDownload:false } );
             JSComplier.AddVariant({ Name:'VAR_DEMO',   Description:'自定义变量1' } );
 
+            
+            hqKeyboard.Keyboard.Option.EventCallback=
+            [
+                {
+                    event:JSCHART_EVENT_ID.ON_KEYBOARD_SELECTED,
+                    callback:(event, data, obj)=>
+                    { 
+                        console.log("[JSCHART_EVENT_ID.ON_KEYBOARD_SELECTED] data", data)
+                        hqKeyboard.Hide();
+
+                        if (!data || !data.RowData) return;
+                        
+                        var selItem=data.RowData;
+                        if (selItem.Data.Type===0)
+                        {
+                            klineControl.Chart.Focus();
+                            klineControl.ChangeSymbol(selItem.Data.Symbol);
+                        }
+                        else if (selItem.Data.Type===1)
+                        {
+                            klineControl.Chart.Focus();
+                            var windowIndex=0;
+                            if (klineControl.Chart.JSChartContainer.GlobalOption.SelectedBorder)
+                            {
+                                var item=klineControl.Chart.JSChartContainer.GlobalOption.SelectedBorder;
+                                if (item.Mode==1 && item.SelFrame>=0) windowIndex=item.SelFrame;
+                            }
+                            klineControl.Chart.ChangeIndex(windowIndex,selItem.Data.Index);
+                        }
+                        else if (selItem.Data.Type===2)
+                        {
+                            alert(`跳转'${selItem.Data.PageName}'页面`);
+                        }
+                    }
+                },
+            ]
+            hqKeyboard.Inital();
+            hqKeyboard.Create();
+            HQData.Keyboard_RequestSymbolList(null, (data)=>{ hqKeyboard.SetSymbolData(data); });
+
+            document.addEventListener('keydown', (event) =>
+            {
+                var div=document.getElementById('kline'); 
+                if (div.contains(event.target) && event.target.tagName!="INPUT") //在K线上才出来键盘精灵
+                {
+                    hqKeyboard.OnGlobalKeydown(event) 
+                }
+            });
+
+            document.addEventListener("mousedown", (event)=>{  hqKeyboard.OnGlobalMouseDown(event) })
         })
 
       
@@ -1431,7 +1736,7 @@
 
 #kline
 {
-    width: 900px;
+    width:100%;
     height:400px;
     position: relative;
     overflow:hidden;

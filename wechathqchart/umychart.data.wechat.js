@@ -37,6 +37,18 @@ function IsNumber(value)
     return true;
 }
 
+//深拷贝
+function CloneData(data)
+{
+    if (!data) return null;
+
+    var strData=JSON.stringify(data);
+    var item= JSON.parse(strData);
+    
+    return item;
+}
+
+
 //历史K线数据
 function HistoryData()
 {
@@ -49,7 +61,7 @@ function HistoryData()
     this.Vol;
     this.Amount;
     this.Time;  //分钟 HHMM / 秒HHMMSS
-    this.FlowCapital = 0;   //流通股本
+    this.FlowCapital=null;   //流通股本
     this.Position = null;   //持仓量
 
     //指数才有的数据
@@ -1028,6 +1040,65 @@ function ChartData()
             {
                 result[i]=new HistoryData();
                 result[i].Date=date;
+                ++i;
+            }
+        }
+
+        return result;
+    }
+
+    this.GetOverlayMinuteData=function(overlayData, bApiPeriod)
+    {
+        var result=[];
+
+        for(var i=0,j=0;i<this.Data.length;)
+        {
+            var date=this.Data[i].Date;
+            var time=this.Data[i].Time;
+
+            if (j>=overlayData.length)
+            {
+                result[i]=new HistoryData();
+                result[i].Date=date;
+                result[i].Time=time;
+                ++i;
+                continue;;
+            }
+
+            var overlayDate=overlayData[j].Date;
+            var overlayTime=overlayData[j].Time;
+
+            if (overlayDate==date && overlayTime==time)
+            {
+                result[i]=new HistoryData();
+                result[i].Date=overlayData[j].Date;
+                result[i].Time=overlayData[j].Time;
+                result[i].YClose=overlayData[j].YClose;
+                result[i].Open=overlayData[j].Open;
+                result[i].High=overlayData[j].High;
+                result[i].Low=overlayData[j].Low;
+                result[i].Close=overlayData[j].Close;
+                result[i].Vol=overlayData[j].Vol;
+                result[i].Amount=overlayData[j].Amount;
+
+                //涨跌家数数据
+                result[i].Stop=overlayData[j].Stop;
+                result[i].Up=overlayData[j].Up;
+                result[i].Down=overlayData[j].Down;
+                result[i].Unchanged=overlayData[j].Unchanged;
+
+                ++j;
+                ++i;
+            }
+            else if (overlayDate<date || (overlayDate==date && overlayTime<time))
+            {
+                ++j;
+            }
+            else
+            {
+                result[i]=new HistoryData();
+                result[i].Date=date;
+                result[i].Time=time;
                 ++i;
             }
         }
@@ -2102,6 +2173,46 @@ ChartData.GetPeriodName = function (period)
     return '';
 }
 
+ChartData.GetKValue=function(kItem, valueName)
+{
+    if (!kItem) return null;
+    switch(valueName)
+    {
+        case "HIGH":
+        case "H":
+            return kItem.High;
+        case "L":
+        case "LOW":
+            return kItem.Low;
+        case "C":
+        case "CLOSE":
+            return kItem.Close;
+        case "O":
+        case "OPEN":
+            return KItem.Open;
+        default:
+            return null;
+    }
+}
+
+function RectV2(x, y, width, height)
+{
+    this.X=x;
+    this.Y=y;
+    this.Width=width;
+    this.Height=height;
+
+    this.PtInRect=function(x,y)
+    {
+        var left=this.X, right=this.X+this.Width;
+        var top=this.Y, bottom=this.Y+this.Height;
+
+        if (x>=left && x<=right && y>=top && y<=bottom) return true;
+
+        return false;
+    }
+}
+
 function Rect(x, y, width, height) 
 {
     this.Left = x,
@@ -2179,6 +2290,8 @@ var JSCHART_EVENT_ID =
     ON_DRAW_REPORT_FIXEDROW_TEXT:58,        //报价列表固定行绘制
     ON_CLICK_REPORT_FIXEDROW:59,            //点击报价列表点击固定行
     ON_RCLICK_REPORT_FIXEDROW:60,           //点击报价列表右键点击固定行
+    
+    ON_CLICK_EXTENDCHART_BUTTON:72,  
 
     ON_FORMAT_CORSSCURSOR_Y_TEXT:75,    //格式化十字光标Y轴文字
     ON_FORMAT_INDEX_OUT_TEXT:76,           //格式化指标标题文字
@@ -2198,6 +2311,13 @@ var JSCHART_EVENT_ID =
     ON_SIZE_FRAME:107,
     
     ON_TOUCH_SCROLL_UP_DOWN:108,
+    ON_CREATE_CUSTOM_Y_COORDINATE:119,  //自定义Y轴刻度
+    
+    ON_FORMAT_KLINE_HIGH_LOW_TITLE:154,     //K线最高最低价格式化内容
+    ON_CUSTOM_CORSSCURSOR_POSITION:155,     //自定义十字光标X轴的输出的位置
+    ON_CUSTOM_MINUTE_NIGHT_DAY_X_INDEX:156,   //日盘夜盘的分界线
+
+    ON_CALCULATE_CHIP_DATA:164,                //计算筹码数据 (筹码图用)
 }
 
 var JSCHART_DATA_FIELD_ID=
@@ -2228,6 +2348,15 @@ var OVERLAY_STATUS_ID=
     STATUS_RECVDATA_ID:2,       //接收到数据
     STATUS_FINISHED_ID:3,       //数据下载完成
 };
+
+var JSCHART_BUTTON_ID=
+{
+    CHIP_DEFULT:8,
+    CHIP_LONG:9,
+    CHIP_RECENT:10,
+
+    CHIP_CLOSE:45,          //关闭筹码图
+}
 
 function PhoneDBClick()
 {
@@ -2314,6 +2443,7 @@ export
     CUSTOM_SECOND_PERIOD_START,
     CUSTOM_SECOND_PERIOD_END,
     Rect,
+    RectV2,
     DataPlus,
     g_DataPlus,
     Guid,
@@ -2321,9 +2451,11 @@ export
     ToFixedRect,
     JSCHART_EVENT_ID,
     JSCHART_DATA_FIELD_ID,
+    JSCHART_BUTTON_ID,
     PhoneDBClick,
     HQ_DATA_TYPE,
-    OVERLAY_STATUS_ID
+    OVERLAY_STATUS_ID,
+    CloneData,
 };
 
 /*
