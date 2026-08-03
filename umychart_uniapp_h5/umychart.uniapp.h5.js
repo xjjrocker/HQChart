@@ -34100,16 +34100,25 @@ function ChartKLine()
                 this.Canvas.beginPath();
                 if (isHScreen)
                 {
-                    this.Canvas.moveTo(ToFixedPoint(y),ToFixedPoint(x));
-                    this.Canvas.lineTo(ToFixedPoint(drawType==3?Math.max(yClose,yOpen):yClose),ToFixedPoint(x));
+                    if (isEmptyBar)
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(yHigh),ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yClose),ToFixedPoint(x));
+                    }
+                    else
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(y),ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yClose),ToFixedPoint(x));
+                    }
+                    
                 }
                 else
                 {
                     if (isEmptyBar)
                     {
                         var xFixed=left+dataWidth/2;
-                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(y));
-                        this.Canvas.lineTo(ToFixedPoint(xFixed),ToFixedPoint(Math.min(yClose,yOpen)));
+                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(yHigh));
+                        this.Canvas.lineTo(ToFixedPoint(xFixed),ToFixedPoint(yClose));
                     }
                     else
                     {
@@ -34173,15 +34182,24 @@ function ChartKLine()
                 this.Canvas.beginPath();
                 if (isHScreen)
                 {
-                    this.Canvas.moveTo(ToFixedPoint(drawType==3?Math.min(yClose,yOpen):y),ToFixedPoint(x));
-                    this.Canvas.lineTo(ToFixedPoint(yLow),ToFixedPoint(x));
+                    if (isEmptyBar)
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(yOpen),ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yLow),ToFixedPoint(x));
+                    }
+                    else
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(y),ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yLow),ToFixedPoint(x));
+                    }
+                    
                 }
                 else
                 {
                     if (isEmptyBar)
                     {
                         var xFixed=left+dataWidth/2;
-                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(Math.max(yClose,yOpen)));
+                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(yOpen));
                         this.Canvas.lineTo(ToFixedPoint(xFixed),ToFixedPoint(yLow));
                     }
                     else
@@ -34230,16 +34248,25 @@ function ChartKLine()
                 this.Canvas.beginPath();
                 if (isHScreen)
                 {
-                    this.Canvas.moveTo(ToFixedPoint(y),ToFixedPoint(x));
-                    this.Canvas.lineTo(ToFixedPoint(yOpen),ToFixedPoint(x));
+                    if (isEmptyBar)
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(yHigh),ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yOpen),ToFixedPoint(x));
+                    }
+                    else
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(y),ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yOpen),ToFixedPoint(x));
+                    }
+                    
                 }
                 else
                 {
                     if (isEmptyBar)
                     {
                         var xFixed=left+dataWidth/2;
-                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(y));
-                        this.Canvas.lineTo(ToFixedPoint(xFixed),ToFixedPoint(Math.min(yClose,yOpen)));
+                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(yHigh));
+                        this.Canvas.lineTo(ToFixedPoint(xFixed),ToFixedPoint(yOpen));
                     }
                     else
                     {
@@ -34258,8 +34285,23 @@ function ChartKLine()
             this.Canvas.fillStyle=downColor;
             if (isHScreen)
             {
-                if (Math.abs(yClose-y)<1) this.Canvas.fillRect(ToFixedRect(y),ToFixedRect(left),1,ToFixedRect(dataWidth));    //高度小于1,统一使用高度1
-                else this.Canvas.fillRect(ToFixedRect(y),ToFixedRect(left),ToFixedRect(yClose-y),ToFixedRect(dataWidth));
+                if (Math.abs(yClose-y)<1) 
+                {
+                    this.Canvas.fillRect(ToFixedRect(y),ToFixedRect(left),1,ToFixedRect(dataWidth));    //高度小于1,统一使用高度1
+                }
+                else 
+                {
+                    if (isEmptyBar) //空心柱
+                    {
+                        this.Canvas.beginPath();
+                        this.Canvas.rect(ToFixedPoint(y),ToFixedPoint(left),ToFixedRect(yClose-y),ToFixedRect(dataWidth));
+                        this.Canvas.stroke();
+                    }
+                    else
+                    {
+                        this.Canvas.fillRect(ToFixedRect(y),ToFixedRect(left),ToFixedRect(yClose-y),ToFixedRect(dataWidth));
+                    }
+                }
             }
             else
             {
@@ -34288,15 +34330,23 @@ function ChartKLine()
                 this.Canvas.beginPath();
                 if (isHScreen)
                 {
-                    this.Canvas.moveTo(ToFixedPoint(y),ToFixedPoint(x));
-                    this.Canvas.lineTo(ToFixedPoint(yLow),ToFixedPoint(x));
+                    if (isEmptyBar)
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(yClose),ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yLow),ToFixedPoint(x));
+                    }
+                    else
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(y),ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yLow),ToFixedPoint(x));
+                    }
                 }
                 else
                 {
                     if (isEmptyBar)
                     {
                         var xFixed=left+dataWidth/2;
-                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(Math.max(yClose,yOpen)));
+                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(yClose));
                         this.Canvas.lineTo(ToFixedPoint(xFixed),ToFixedPoint(yLow));
                     }
                     else
@@ -161575,7 +161625,7 @@ function ScrollBarBGChart()
 
 
 
-var HQCHART_VERSION="1.1.15885";
+var HQCHART_VERSION="1.1.15897";
 
 function PrintHQChartVersion()
 {

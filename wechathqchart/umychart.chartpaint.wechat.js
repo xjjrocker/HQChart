@@ -899,8 +899,16 @@ function ChartKLine()
                 this.Canvas.beginPath();
                 if (isHScreen) 
                 {
-                    this.Canvas.moveTo(ToFixedPoint(y), ToFixedPoint(x));
-                    this.Canvas.lineTo(ToFixedPoint(this.DrawType == 3 ? Math.max(yClose, yOpen) : yClose), ToFixedPoint(x));
+                    if (isEmptyBar)
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(yHigh),ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yClose),ToFixedPoint(x));
+                    }
+                    else
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(y), ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yClose), ToFixedPoint(x));
+                    }
                 }
                 else 
                 {
@@ -908,7 +916,7 @@ function ChartKLine()
                     {
                         var xFixed=left+dataWidth/2;
                         this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(y));
-                        this.Canvas.lineTo(ToFixedPoint(xFixed),ToFixedPoint(Math.min(yClose,yOpen)));
+                        this.Canvas.lineTo(ToFixedPoint(xFixed),ToFixedPoint(yClose));
                     }
                     else
                     {
@@ -973,8 +981,17 @@ function ChartKLine()
                 this.Canvas.beginPath();
                 if (isHScreen) 
                 {
-                    this.Canvas.moveTo(ToFixedPoint(this.DrawType == 3 ? Math.min(yClose, yOpen) : y), ToFixedPoint(x));
-                    this.Canvas.lineTo(ToFixedPoint(yLow), ToFixedPoint(x));
+                    if (isEmptyBar)
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(yOpen),ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yLow),ToFixedPoint(x));
+                    }
+                    else
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(y), ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yLow), ToFixedPoint(x));
+                    }
+                    
                 }
                 else 
                 {
@@ -1029,16 +1046,24 @@ function ChartKLine()
                 this.Canvas.beginPath();
                 if (isHScreen)
                 {
-                    this.Canvas.moveTo(ToFixedPoint(y), ToFixedPoint(x));
-                    this.Canvas.lineTo(ToFixedPoint(yOpen), ToFixedPoint(x));
+                    if (isEmptyBar)
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(yHigh), ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yOpen), ToFixedPoint(x));
+                    }
+                    else
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(y), ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yOpen), ToFixedPoint(x));
+                    }
                 }
                 else 
                 {
                     if (isEmptyBar)
                     {
                         var xFixed=left+dataWidth/2;
-                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(y));
-                        this.Canvas.lineTo(ToFixedPoint(xFixed),ToFixedPoint(Math.min(yClose,yOpen)));
+                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(yHigh));
+                        this.Canvas.lineTo(ToFixedPoint(xFixed),ToFixedPoint(yOpen));
                     }
                     else
                     {
@@ -1064,8 +1089,17 @@ function ChartKLine()
                 }
                 else 
                 {
-                    //宽度是负数竟然不会画, h5就可以
-                    this.Canvas.fillRect(ToFixedRect(Math.min(yClose, y)), ToFixedRect(left), ToFixedRect(Math.abs(yClose - y)), ToFixedRect(dataWidth));
+                    if (isEmptyBar) //空心柱
+                    {
+                        this.Canvas.beginPath();
+                        this.Canvas.rect(ToFixedPoint(Math.min(yClose, y)),ToFixedPoint(left),ToFixedRect(Math.abs(yClose - y)),ToFixedRect(dataWidth));
+                        this.Canvas.stroke();
+                    }
+                    else
+                    {
+                        //宽度是负数竟然不会画, h5就可以
+                        this.Canvas.fillRect(ToFixedRect(Math.min(yClose, y)), ToFixedRect(left), ToFixedRect(Math.abs(yClose - y)), ToFixedRect(dataWidth));
+                    }
                 }
             }
             else 
@@ -1094,15 +1128,23 @@ function ChartKLine()
                 this.Canvas.beginPath();
                 if (isHScreen) 
                 {
-                    this.Canvas.moveTo(ToFixedPoint(y), ToFixedPoint(x));
-                    this.Canvas.lineTo(ToFixedPoint(yLow), ToFixedPoint(x));
+                    if (isEmptyBar)
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(yClose), ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yLow), ToFixedPoint(x));
+                    }
+                    else
+                    {
+                        this.Canvas.moveTo(ToFixedPoint(y), ToFixedPoint(x));
+                        this.Canvas.lineTo(ToFixedPoint(yLow), ToFixedPoint(x));
+                    }
                 }
                 else 
                 {
                     if (isEmptyBar)
                     {
                         var xFixed=left+dataWidth/2;
-                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(Math.max(yClose,yOpen)));
+                        this.Canvas.moveTo(ToFixedPoint(xFixed),ToFixedPoint(yClose));
                         this.Canvas.lineTo(ToFixedPoint(xFixed),ToFixedPoint(yLow));
                     }
                     else

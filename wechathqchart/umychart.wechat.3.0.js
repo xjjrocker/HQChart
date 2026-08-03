@@ -9959,7 +9959,7 @@ function KLineChartContainer(uielement)
     this.TryPhoneClickMineInfo=function(x, y, e)
     {
         var event=this.GetEventCallback(JSCHART_EVENT_ID.ON_TOUCH_MINE_INFO);
-        if (!event && event.Callback) return false;
+        if (!event || !event.Callback) return false;
 
         var klineChart=this.ChartPaint[0];
         if (!klineChart) return false;
