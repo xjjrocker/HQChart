@@ -5929,7 +5929,7 @@ function ChartMultiText()
     delete this.newMethod;
 
     this.ClassName ='ChartMultiText';
-    this.Texts = [];  //[ {Date, Time:, Value:, Text:, Color:, Font: , Baseline:, Line:{ Color:, Dash:[虚线点], KData:"H/L", Offset:[5,10], Width:线粗细 } } ]
+    this.Texts = [];  //[ {Date, Time:, Value:, Text:, Color:, BGColor:,Margin={ Top:5, Bottom:5, Left:5, Right:5, XOffset:5, YOffset:-4 }, Font: , Baseline:, Line:{ Color:, Dash:[虚线点], KData:"H/L", Offset:[5,10], Width:线粗细 } } ]
     this.Font = g_JSChartResource.DefaultTextFont;
     this.Color = g_JSChartResource.DefaultTextColor;
     this.IsHScreen = false;   //是否横屏
@@ -6006,6 +6006,8 @@ function ChartMultiText()
             var bottom=border.BottomEx;
         }
 
+        this.Canvas.textAlign="left";
+        this.Canvas.textBaseline='bottom';
         for(var i=this.Data.DataOffset,j=0;i<this.Data.Data.length && j<xPointCount;++i,++j,xOffset+=(dataWidth+distanceWidth))
         {
             var kItem=this.Data.Data[i];
@@ -6038,52 +6040,136 @@ function ChartMultiText()
                 {
                     var price=item.Value;
                     if (IFrameSplitOperator.IsString(item.Value)) price=this.GetKValue(kItem,item.Value);
-                    
                     y=this.ChartFrame.GetYFromData(price, false);
                 }
                 
-
-                if (item.Color)  this.Canvas.fillStyle = item.Color;
-                else this.Canvas.fillStyle = this.Color;
                 if (item.Font) this.Canvas.font = item.Font;
                 else this.Canvas.font=this.Font;
 
                 var textWidth=this.Canvas.measureText(item.Text).width;
-                this.Canvas.textAlign='center';
-                if (x+textWidth/2>=chartright) 
+                var textHeight=this.Canvas.measureText("擎").width;
+                var cellWidth=textWidth;
+                var cellHeight=textHeight;
+
+               
+                var xTextOffset=0, yTextOffset=0;
+                if (item.Margin)
                 {
-                    this.Canvas.textAlign='right';
-                    x=chartright;
-                }
-                else if (x-textWidth/2<chartleft)
-                {
-                    this.Canvas.textAlign = 'left';
-                    x=chartleft;
+                    if (IFrameSplitOperator.IsNumber(item.Margin.Left)) cellWidth+=item.Margin.Left;
+                    if (IFrameSplitOperator.IsNumber(item.Margin.Right)) cellWidth+=item.Margin.Right;
+                    if (IFrameSplitOperator.IsNumber(item.Margin.Top)) cellHeight+=item.Margin.Top;
+                    if (IFrameSplitOperator.IsNumber(item.Margin.Bottom)) cellHeight+=item.Margin.Bottom;
+
+                    if (IFrameSplitOperator.IsNumber(item.Margin.XOffset)) xTextOffset=item.Margin.XOffset;
+                    if (IFrameSplitOperator.IsNumber(item.Margin.YOffset)) yTextOffset=item.Margin.YOffset;
                 }
                 
-                if (item.Baseline==1) this.Canvas.textBaseline='top';
-                else if (item.Baseline==2) this.Canvas.textBaseline='bottom';
-                else this.Canvas.textBaseline = 'middle';
+                if (this.IsHScreen)
+                {
+                    var rtText={ Left:y-cellHeight/2, Width:cellHeight,  Top:x-cellWidth/2, Height:cellWidth };
+                    rtText.Right=rtText.Left+rtText.Width;
+                    rtText.Bottom=rtText.Top+rtText.Height;
+
+                    if (item.Baseline==1) //y=顶部
+                    {
+                        rtText.Right=y;
+                        rtText.Left=rtText.Right-rtText.Width;
+                    }
+                    else if (item.Baseline==2)  //y=底部
+                    {
+                        rtText.Left=y;
+                        rtText.Right=rtText.Left+rtText.Width;
+                    }
+
+                    if (IFrameSplitOperator.IsNumber(item.YMove))
+                    {
+                        rtText.Left-=item.YMove;
+                        rtText.Right-=item.YMove;
+                    }
+                }
+                else
+                {
+                    var rtText={ Left:x-cellWidth/2, Width:cellWidth,  Top:y-cellHeight/2, Height:cellHeight };
+                    rtText.Right=rtText.Left+rtText.Width;
+                    rtText.Bottom=rtText.Top+rtText.Height;
+                    if (rtText.Left<chartleft)
+                    {
+                        rtText.Left=chartleft;
+                        rtText.Right=rtText.Left+rtText.Width;
+                    }
+                    else if (rtText.Right>chartright)
+                    {
+                        rtText.Right=chartright;
+                        rtText.Left=rtText.Right-rtText.Width;
+                    }
+                
+                    if (item.Baseline==1) //y=顶部
+                    {
+                        rtText.Top=y;
+                        rtText.Bottom=rtText.Top+rtText.Height;
+                    }
+                    else if (item.Baseline==2)  //y=底部
+                    {
+                        rtText.Bottom=y;
+                        rtText.Top=rtText.Bottom-rtText.Height;
+                    }
+
+                    if (IFrameSplitOperator.IsNumber(item.YMove))
+                    {
+                        rtText.Top+=item.YMove;
+                        rtText.Bottom+=item.YMove;
+                    }
+                }
 
                 if (this.IsHScreen)
                 {
+                    if (item.BGColor)
+                    {
+                        this.Canvas.fillStyle=item.BGColor;
+                        this.Canvas.fillRect(rtText.Left, rtText.Top, rtText.Width, rtText.Height);
+                    }
+
+                    var yText=rtText.Top+xTextOffset;
+                    var xText=rtText.Left-yTextOffset;
+
                     this.Canvas.save(); 
-                    this.Canvas.translate(y, x);
+                    this.Canvas.translate(xText, yText);
                     this.Canvas.rotate(90 * Math.PI / 180);
+                    if (item.Color)  this.Canvas.fillStyle = item.Color;
+                    else this.Canvas.fillStyle = this.Color;
                     this.Canvas.fillText(item.Text,0,0);
                     this.Canvas.restore();
                 }
                 else
                 {
-                    if (IFrameSplitOperator.IsNumber(item.YMove)) y+=item.YMove;
-                    this.Canvas.fillText(item.Text, x, y);
+                    if (item.BGColor)
+                    {
+                        this.Canvas.fillStyle=item.BGColor;
+                        this.Canvas.fillRect(rtText.Left, rtText.Top, rtText.Width, rtText.Height);
+                    }
+
+                    if (item.Color)  this.Canvas.fillStyle = item.Color;
+                    else this.Canvas.fillStyle = this.Color;
+                    this.Canvas.fillText(item.Text, rtText.Left+xTextOffset, rtText.Bottom+yTextOffset);
                 }
 
                 if (item.Line)
                 {
                     var price=item.Line.KData=="H"? kItem.High:kItem.Low;
                     var yPrice=this.ChartFrame.GetYFromData(price, false);
-                    var yText=y;
+                    var yText=yPrice;
+
+                    if (this.IsHScreen)
+                    {
+                        if (yPrice<rtText.Left) yText=rtText.Left;
+                        else if (yPrice>rtText.Right) yText=rtText.Right;
+                    }
+                    else
+                    {
+                        if (yPrice>rtText.Bottom) yText=rtText.Bottom;
+                        else if (yPrice<rtText.Top) yText=rtText.Top;
+                    }
+
                     if (Array.isArray(item.Line.Offset) && item.Line.Offset.length==2)
                     {
                         if (yText>yPrice) //文字在下方
@@ -9876,7 +9962,7 @@ function ChartMultiSVGIconV2()
             if (!IFrameSplitOperator.IsNumber(value)) continue;
             if (!item.Image) continue;
 
-            var y=this.ChartFrame.GetYFromData(item.Value,false);
+            var y=this.ChartFrame.GetYFromData(value,false);
             var imageHeight=item.Image.Height;
             var imageWidth=item.Image.Width;
             
