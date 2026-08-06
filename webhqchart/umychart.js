@@ -48554,7 +48554,7 @@ function ChartMultiText()
     delete this.newMethod;
 
     this.ClassName="ChartMultiText";
-    this.Texts=[];  //[ {Date:, Time, Value:, Text:, Color:, BGColor:, Font: , Baseline:, Line:{ Color:, Dash:[虚线点], KData:"H/L", Offset:[5,10], Width:线粗细 }} ]
+    this.Texts=[];  //[ {Date:, Time, Value:, Text:, Color:, BGColor:, Font: , Baseline:, Align:, Line:{ Color:, Dash:[虚线点], KData:"H/L", Offset:[5,10], Width:线粗细 }} ]
     this.Font=g_JSChartResource.DefaultTextFont;
     this.Color=g_JSChartResource.DefaultTextColor;
     this.IsHScreen=false;   //是否横屏
@@ -48701,16 +48701,58 @@ function ChartMultiText()
                     var rtText={ Left:x-cellWidth/2, Width:cellWidth,  Top:y-cellHeight/2, Height:cellHeight };
                     rtText.Right=rtText.Left+rtText.Width;
                     rtText.Bottom=rtText.Top+rtText.Height;
-                    if (rtText.Left<chartleft)
-                    {
-                        rtText.Left=chartleft;
-                        rtText.Right=rtText.Left+rtText.Width;
-                    }
-                    else if (rtText.Right>chartright)
-                    {
-                        rtText.Right=chartright;
-                        rtText.Left=rtText.Right-rtText.Width;
-                    }
+
+                    //左右对齐 默认居中
+					if (item.Align==1) //左
+					{
+						rtText.Left=x;
+						rtText.Right=rtText.Left+rtText.Width;
+						if (item.XLine && IFrameSplitOperator.IsNumber(item.XLine.Width))
+						{
+							rtText.Left+=item.XLine.Width;
+							rtText.Right+=item.XLine.Width;
+							
+							if (item.XLine.Color)	//画线
+							{
+								this.Canvas.save();
+								this.Canvas.lineWidth=1   //线宽
+								this.Canvas.strokeStyle = item.XLine.Color;
+								this.Canvas.beginPath();
+								var arrawSize=6*GetDevicePixelRatio();
+								if (IFrameSplitOperator.IsNumber(item.XLine.ArrawSize)) arrawSize=item.XLine.ArrawSize;
+								// 箭头主干横线
+								this.Canvas.moveTo(x, y);
+								this.Canvas.lineTo(rtText.Left, y);
+								
+								this.Canvas.moveTo(x, y);
+								this.Canvas.lineTo(x+arrawSize/2,  y+arrawSize/3);
+								
+								this.Canvas.moveTo(x, y);
+								this.Canvas.lineTo(x+arrawSize/2,  y-arrawSize/3);
+								
+								this.Canvas.stroke();
+								this.Canvas.restore();
+							}
+						}
+					}
+					else if (item.Align==2) //右
+					{
+						rtText.Right=x;
+						rtText.Left=rtText.Right-rtText.Width;
+					}
+					else
+					{
+						if (rtText.Left<chartleft)
+						{
+						    rtText.Left=chartleft;
+						    rtText.Right=rtText.Left+rtText.Width;
+						}
+						else if (rtText.Right>chartright)
+						{
+						    rtText.Right=chartright;
+						    rtText.Left=rtText.Right-rtText.Width;
+						}
+					}
                 
                     if (item.Baseline==1) //y=顶部
                     {

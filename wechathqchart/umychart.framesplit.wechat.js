@@ -719,7 +719,8 @@ function FrameSplitKLinePriceY()
         if (bFilter) this.Frame.HorizontalInfo = this.Filter(this.Frame.HorizontalInfo, false);
         this.Frame.HorizontalMax = splitData.Max;
         this.Frame.HorizontalMin = splitData.Min;
-
+        this.ReservedHeight(splitData); //预留高度
+        
         if (this.GetEventCallback)
         {
             var event=this.GetEventCallback(JSCHART_EVENT_ID.ON_SPLIT_YCOORDINATE);
