@@ -48715,7 +48715,7 @@ function ChartMultiText()
 							if (item.XLine.Color)	//画线
 							{
 								this.Canvas.save();
-								this.Canvas.lineWidth=1   //线宽
+								this.Canvas.lineWidth=1*GetDevicePixelRatio();  //线宽
 								this.Canvas.strokeStyle = item.XLine.Color;
 								this.Canvas.beginPath();
 								var arrawSize=6*GetDevicePixelRatio();

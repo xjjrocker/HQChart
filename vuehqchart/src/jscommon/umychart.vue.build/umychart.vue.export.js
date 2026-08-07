@@ -121,6 +121,7 @@ export default {
         JSCHART_CORSSCURSOR_STATUS_ID:JSCHART_CORSSCURSOR_STATUS_ID,    //十字光标状态
         CONDITION_PERIOD:CONDITION_PERIOD,          //指标周期条件枚举
         DECIMAL_ID:DECIMAL_ID,                      //指标标题栏 显示小数位数枚举
+        JSCHART_TEMPORARY_ATTRIBUTE:JSCHART_TEMPORARY_ATTRIBUTE,    //图形临时属性
     },
 
 

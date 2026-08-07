@@ -52872,7 +52872,7 @@ function ChartMultiText()
 							if (item.XLine.Color)	//画线
 							{
 								this.Canvas.save();
-								this.Canvas.lineWidth=1   //线宽
+								this.Canvas.lineWidth=1*GetDevicePixelRatio();  //线宽
 								this.Canvas.strokeStyle = item.XLine.Color;
 								this.Canvas.beginPath();
 								var arrawSize=6*GetDevicePixelRatio();
@@ -182919,7 +182919,7 @@ class ChartCalendar
 
 
 
-var HQCHART_VERSION="1.1.15907";
+var HQCHART_VERSION="1.1.15911";
 
 function PrintHQChartVersion()
 {
@@ -183095,6 +183095,7 @@ export default {
         JSCHART_CORSSCURSOR_STATUS_ID:JSCHART_CORSSCURSOR_STATUS_ID,    //十字光标状态
         CONDITION_PERIOD:CONDITION_PERIOD,          //指标周期条件枚举
         DECIMAL_ID:DECIMAL_ID,                      //指标标题栏 显示小数位数枚举
+        JSCHART_TEMPORARY_ATTRIBUTE:JSCHART_TEMPORARY_ATTRIBUTE,    //图形临时属性
     },
 
 
