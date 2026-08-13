@@ -727,7 +727,7 @@ React 例子:[demo-react.md](/教程/demo-react.md) <br>
 
 # Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=jones2000/HQChart&type=Date)](https://star-history.com/#jones2000/HQChart&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=jones2000/HQChart&type=Date)](https://star-history.dera.page/#jones2000/HQChart&Date)
 
 
 # HQChart付费技术支持
